@@ -25,46 +25,38 @@ namespace StatusMessageDBUpdater.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Manager.Status")]
-        public string TopicName {
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public string MgrActive_Local {
             get {
-                return ((string)(this["TopicName"]));
+                return ((string)(this["MgrActive_Local"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=gigasax;Initial Catalog=DMS_Pipeline_T3;integrated security=SSPI")]
-        public string DBConnectionStr {
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=proteinseqs;Initial Catalog=manager_control_T3;Integrated Security=SS" +
+            "PI")]
+        public string MgrCnfgDbConnectStr {
             get {
-                return ((string)(this["DBConnectionStr"]));
+                return ((string)(this["MgrCnfgDbConnectStr"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("GRK.Utility.Monitor")]
-        public string MonitorTopicName {
+        [global::System.Configuration.DefaultSettingValueAttribute("WD16503_StatusMsgDBUpdater")]
+        public string MgrName {
             get {
-                return ((string)(this["MonitorTopicName"]));
+                return ((string)(this["MgrName"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("failover:(tcp://Proto-4.pnl.gov:61616,tcp://proto-7.pnl.gov:61616)?")]
-        public string BrokerURL {
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public string UsingDefaults {
             get {
-                return ((string)(this["BrokerURL"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30")]
-        public int DBUpdateInterval {
-            get {
-                return ((int)(this["DBUpdateInterval"]));
+                return ((string)(this["UsingDefaults"]));
             }
         }
     }
