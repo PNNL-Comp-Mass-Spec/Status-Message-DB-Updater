@@ -1,0 +1,8 @@
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\StatusMessageDBUpdater\StatusMessageDBUpdater\obj\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\StatusMessageDBUpdater\StatusMessageDBUpdater\bin\Debug\StatusMessageDBUpdater.exe.config
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\StatusMessageDBUpdater\StatusMessageDBUpdater\bin\Debug\StatusMessageDBUpdater.exe
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\StatusMessageDBUpdater\StatusMessageDBUpdater\bin\Debug\StatusMessageDBUpdater.pdb
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\StatusMessageDBUpdater\StatusMessageDBUpdater\bin\Debug\Apache.NMS.ActiveMQ.dll
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\StatusMessageDBUpdater\StatusMessageDBUpdater\bin\Debug\Apache.NMS.dll
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\StatusMessageDBUpdater\StatusMessageDBUpdater\obj\Debug\StatusMessageDBUpdater.exe
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\StatusMessageDBUpdater\StatusMessageDBUpdater\obj\Debug\StatusMessageDBUpdater.pdb
