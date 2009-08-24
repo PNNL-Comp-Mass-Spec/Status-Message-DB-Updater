@@ -15,3 +15,4 @@ C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\Status
 C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\Status_Message_DB_Updater\StatusMessageDBUpdater\bin\Debug\Apache.NMS.ActiveMQ.dll
 C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\Status_Message_DB_Updater\StatusMessageDBUpdater\bin\Debug\Apache.NMS.dll
 C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\Status_Message_DB_Updater\StatusMessageDBUpdater\bin\Debug\log4net.dll
+C:\Documents and Settings\d3j410\My Documents\Visual Studio 2008\Projects\Status_Message_DB_Updater\StatusMessageDBUpdater\bin\Debug\Logging.config

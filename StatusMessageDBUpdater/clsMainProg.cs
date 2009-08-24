@@ -7,9 +7,11 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Collections.Specialized;
+using log4net;
 
 namespace StatusMessageDBUpdater {
     class clsMainProg {
+        private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
 
         #region "Enums"
         private enum BroadcastCmdType {
@@ -20,12 +22,14 @@ namespace StatusMessageDBUpdater {
         #endregion
 
         #region "Class variables"
-        private clsMgrSettings m_MgrSettings;
-//        private IStatusFile m_StatusFile;
-//        private clsMessageHandler m_MsgHandler;
-//        private bool m_Running = false;
-//        private bool m_MgrActive = false;
-//        private BroadcastCmdType m_BroadcastCmdType;
+        string mgrName = null;
+        private DBAccess dba = null;
+        private int dbUpdateIntervalMS;
+        private bool run = true;
+        bool restart = false;
+
+        private clsMessageHandler messageHandler = null;
+        private MessageAccumulator m_ma = null;
         #endregion
 
         #region "Methods"
@@ -36,59 +40,62 @@ namespace StatusMessageDBUpdater {
         /// <returns>TRUE for success, FALSE for failure</returns>
         public bool InitMgr() {
             //Get the manager settings
+            clsMgrSettings mgrSettings = null;
             try {
-                m_MgrSettings = new clsMgrSettings();
+                mgrSettings = new clsMgrSettings();
+                mainLog.Info("Read manager settings from Manager Control Database");
             }
             catch {
-                //Failures are logged by clsMgrSettings to local emergency log file
-                return false;
+                return false; //Failures are logged by clsMgrSettings to local emergency log file
             }
 
-            //Setup the logger
+            // processor name
+            this.mgrName = mgrSettings.GetParam("MgrName");
+            mainLog.Info("Manager:" + this.mgrName);
 
-            //Make the initial log entry
+            //---- initialize the connection parameter fields ----
+            string messageBrokerURL = mgrSettings.GetParam("MessageQueueURI");
+            string messageTopicName = mgrSettings.GetParam("StatusMsgIncomingTopic");
+            string monitorTopicName = mgrSettings.GetParam("MessageQueueTopicMgrStatus"); // topic to send
+            string brodcastTopicName = mgrSettings.GetParam("BroadcastQueueTopic");
+            mgrSettings.GetParam("LogStatusToMessageQueue");
 
-            //Setup the message queue
+            this.messageHandler = new clsMessageHandler();
+            this.messageHandler.MgrName = mgrName;
+            this.messageHandler.BrokerUri = messageBrokerURL;
+            this.messageHandler.InputStatusTopicName = messageTopicName;
+            this.messageHandler.OutputStatusTopicName = monitorTopicName;
+            this.messageHandler.BroadcastTopicName = brodcastTopicName;
+            this.messageHandler.Init();
 
-            //Connect message handler events
+            // make a new processor message accumulator and start it running
+            this.m_ma = new MessageAccumulator();
 
-            //Everything worked
+            this.messageHandler.InputMessageReceived += this.m_ma.subscriber_OnMessageReceived;
+            this.messageHandler.BroadcastReceived += this.OnMsgHandler_BroadcastReceived;
+
+            //---- seconds between database updates ----
+            string interval = mgrSettings.GetParam("StatusMsgDBUpdateInterval");
+            this.dbUpdateIntervalMS = 1000 * int.Parse(interval);
+
+            // create a new database access object
+            string dbConnStr = mgrSettings.GetParam("connectionstring");
+            this.dba = new DBAccess(dbConnStr);
+
+            //---- Connect message handler events ----
+
+            //---- Everything worked ----
             return true;
         }
 
-
-
-        public void DoProcess() {
-            // seconds between database updates
-            string interval = m_MgrSettings.GetParam("StatusMsgDBUpdateInterval");
-            int dbUpdateIntervalMS = 1000 * int.Parse(interval); 
-
-            // initialize the connection parameter fields
-            string messageBrokerURL = m_MgrSettings.GetParam("MessageQueueURI");
-            string messageTopicName = m_MgrSettings.GetParam("StatusMsgIncomingTopic");
-
-            // get a unique name for the message client
-            DateTime tn = DateTime.Now; // Alternative: System.Guid.NewGuid().ToString();
-            string clientID = System.Net.Dns.GetHostEntry("localhost").HostName + '_' + tn.Ticks.ToString();
-
-            // get topic to send
-            string monitorTopicName = m_MgrSettings.GetParam("MessageQueueTopicMgrStatus");
-
-            // make a new processor message accumulator and start it running
-            MessageAccumulator m_ma = new MessageAccumulator();
-
-            // object that connects to the message broker and gets messages from it
-            string cid = clientID;
-            SimpleTopicSubscriber m_ts = new SimpleTopicSubscriber(messageTopicName, messageBrokerURL, ref cid);
-            m_ts.OnMessageReceived += m_ma.subscriber_OnMessageReceived;
-
-            // create a new database access object
-            string dbConnStr = m_MgrSettings.GetParam("connectionstring");
-            DBAccess dba = new DBAccess(dbConnStr);
-
-            while (true) {
+        public bool DoProcess() {
+            mainLog.Info("Process started");
+            while (this.run) {
                 // wait a minute
-                Thread.Sleep(dbUpdateIntervalMS);
+                Thread.Sleep(this.dbUpdateIntervalMS);
+                if (!run) {
+                    break;
+                }
 
                 // from the message accumulator, get list of processors 
                 // that have received messages since the last refresh and
@@ -98,9 +105,8 @@ namespace StatusMessageDBUpdater {
                 int msgCount = m_ma.msgCount;
                 m_ma.msgCount = 0;
 
-                string progMsg = "MsgDB program updated " + Processors.Length.ToString() + " at " + DateTime.Now.ToString() + Environment.NewLine;
-                System.Diagnostics.Debug.WriteLine("----");
-                System.Diagnostics.Debug.Write(progMsg);
+                string progMsg = "MsgDB program updated " + Processors.Length.ToString() + " at " + DateTime.Now.ToString();
+                mainLog.Info(progMsg);
 
                 try {
                     dba.Connect();
@@ -115,39 +121,92 @@ namespace StatusMessageDBUpdater {
                             concatMessages += n.OuterXml;
                         }
                     }
-                    System.Diagnostics.Debug.WriteLine("Size:" + concatMessages.Length.ToString());
+                    progMsg = "Size:" + concatMessages.Length.ToString();
+                    mainLog.Info(progMsg);
 
                     // update the database
                     string message = "";
                     bool err = dba.UpdateDatabase(concatMessages, ref message);
                     //                    if(message != "") progMsg += "msg:" + message + Environment.NewLine;
                     //                    if (monitorTopicName != "") m_ts.SendMessage(monitorTopicName, progMsg);
-                    System.Diagnostics.Debug.WriteLine(message);
+                    mainLog.Info("Result:" + message);
                 }
                 catch (Exception e) {
-                    System.Diagnostics.Debug.WriteLine(e.Message);
+                    mainLog.Error(e.Message);
                 }
                 dba.Disconnect();
             }
+            mainLog.Info("Process interrupted, " + "Restart:" + this.restart.ToString());
+            this.messageHandler.Dispose();
+            return this.restart;
         }
 
-/*
-m_MgrSettings.GetParam("machname");
-m_MgrSettings.GetParam("debuglevel");
-m_MgrSettings.GetParam("mgractive");
-m_MgrSettings.GetParam("statusfilelocation");
-m_MgrSettings.GetParam("configfilename");
-m_MgrSettings.GetParam("localmgrpath");
-m_MgrSettings.GetParam("remotemgrpath");
-m_MgrSettings.GetParam("programfoldername");
-m_MgrSettings.GetParam("modulename");
-m_MgrSettings.GetParam("showinmgrctrl");
-m_MgrSettings.GetParam("showinanmonitor");
-m_MgrSettings.GetParam("logfilename");
-m_MgrSettings.GetParam("cmdtimeout");
-m_MgrSettings.GetParam("LogStatusToMessageQueue");
-m_MgrSettings.GetParam("BroadcastQueueTopic");
-*/
+        /*
+        m_MgrSettings.GetParam("machname");
+        m_MgrSettings.GetParam("debuglevel");
+        m_MgrSettings.GetParam("mgractive");
+        m_MgrSettings.GetParam("statusfilelocation");
+        m_MgrSettings.GetParam("configfilename");
+        m_MgrSettings.GetParam("localmgrpath");
+        m_MgrSettings.GetParam("remotemgrpath");
+        m_MgrSettings.GetParam("programfoldername");
+        m_MgrSettings.GetParam("modulename");
+        m_MgrSettings.GetParam("showinmgrctrl");
+        m_MgrSettings.GetParam("showinanmonitor");
+        m_MgrSettings.GetParam("logfilename");
+        m_MgrSettings.GetParam("cmdtimeout");
+        m_MgrSettings.GetParam("LogStatusToMessageQueue");
+        m_MgrSettings.GetParam("BroadcastQueueTopic");
+        */
+
+        /// <summary>
+        /// Handles broacast messages for control of the manager
+        /// </summary>
+        /// <param name="cmdText">Text of received message</param>
+        void OnMsgHandler_BroadcastReceived(string cmdText) {
+            mainLog.Info("clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: " + cmdText);
+
+            // parse command XML and get command text and
+            // list of machines that command applies to
+            List<string> MachineList = new List<string>();
+            string MachCmd;
+            try {
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(cmdText);
+                foreach (XmlNode xn in doc.SelectNodes("//Managers/*")) {
+                    MachineList.Add(xn.InnerText);
+                }
+                MachCmd = doc.SelectSingleNode("//Message").InnerText;
+            }
+            catch (Exception Ex) {
+                mainLog.Error("Exception while parsing broadcast string:" + Ex.Message);
+                return;
+            }
+
+            // Determine if the message applies to this machine
+            if (!MachineList.Contains(this.mgrName)) {
+                // Received command doesn't apply to this manager
+                mainLog.Debug("Received command not applicable to this manager instance");
+                return;
+            }
+
+            // Get the command and take appropriate action
+            switch (MachCmd.ToLower()) {
+                case "shutdown":
+                    mainLog.Info("Shutdown message received");
+                    this.run = false;
+                    this.restart = false;
+                    break;
+                case "readconfig":
+                    mainLog.Info("Reload config message received");
+                    this.run = false;
+                    this.restart = true;
+                    break;
+                default:
+                    mainLog.Warn("Invalid broadcast command received: " + cmdText);
+                    break;
+            }
+        }	// End sub
         #endregion
     } // end class
 } // end namespace

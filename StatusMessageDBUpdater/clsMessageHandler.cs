@@ -5,12 +5,17 @@ using System.Text;
 using Apache.NMS;
 using Apache.NMS.ActiveMQ;
 using Apache.NMS.ActiveMQ.Commands;
+using log4net;
 
 namespace StatusMessageDBUpdater {
+    // received input messages are sent to a delegate function with this signature
+    public delegate void MessageReceivedDelegate(string processor, string message);
     // received commands are sent to a delegate function with this signature
     public delegate void MessageProcessorDelegate(string cmdText);
 
     class clsMessageHandler : IDisposable {
+        private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
+
         #region "Class variables"
         private string m_BrokerUri = null;
         private string m_InputStatusTopicName = null;
@@ -29,7 +34,7 @@ namespace StatusMessageDBUpdater {
         #endregion
 
         #region "Events"
-        public event MessageProcessorDelegate InputMessageReceived;
+        public event MessageReceivedDelegate InputMessageReceived;
         public event MessageProcessorDelegate BroadcastReceived;
         #endregion
 
@@ -73,21 +78,18 @@ namespace StatusMessageDBUpdater {
                 this.m_HasConnection = true;
                 // temp debug
                 // Console.WriteLine("--- New connection made ---" + Environment.NewLine); //+ e.ToString()
-                string msg = "Connected to broker";
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.INFO, msg);
-            } catch (Exception Ex) {
+                mainLog.Info("Connected to message broker");
+            }
+            catch (Exception Ex) {
                 // we couldn't make a viable set of connection objects 
                 // - this has "long day" written all over it,
                 // but we don't have to do anything specific at this point (except eat the exception)
-
-                // Console.WriteLine("=== Error creating connection ===" + Environment.NewLine); //+ e.ToString() // temp debug
-                string msg = "Exception creating broker connection";
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.ERROR, msg, Ex);
+                mainLog.Error("Exception creating message broker connection:" + Ex.Message);
             }
         }	// End sub
 
         /// <summary>
-        /// Create the message broker communication objects and register the listener function
+        /// Create the message broker communication objects
         /// </summary>
         /// <returns>TRUE for success; FALSE otherwise</returns>
         public bool Init() {
@@ -99,23 +101,23 @@ namespace StatusMessageDBUpdater {
                 ISession inputSession = m_Connection.CreateSession();
                 m_InputConsumer = inputSession.CreateConsumer(new ActiveMQTopic(this.m_InputStatusTopicName));
                 m_InputConsumer.Listener += new MessageListener(OnInputMessageReceived);
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, "Inut listener established");
+                mainLog.Info("Inut listener established");
 
                 // topic for commands broadcast to all folder makers
                 ISession broadcastSession = m_Connection.CreateSession();
                 m_BroadcastConsumer = broadcastSession.CreateConsumer(new ActiveMQTopic(this.m_BroadcastTopicName));
                 m_BroadcastConsumer.Listener += new MessageListener(OnBroadcastReceived);
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, "Broadcast listener established");
+                mainLog.Info("Broadcast listener established");
 
                 // topic to send status information over
                 this.m_StatusSession = m_Connection.CreateSession();
                 this.m_StatusSender = m_StatusSession.CreateProducer(new ActiveMQTopic(m_OutputStatusTopicName));
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, "Status sender established");
+                mainLog.Info("Status sender established");
 
                 return true;
-            } catch (Exception Ex) {
-                string msg = "Exception while initializing messages sessiions";
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.ERROR, msg, Ex);
+            }
+            catch (Exception Ex) {
+                mainLog.Error("Exception while initializing messages sessiions:" + Ex.Message);
                 DestroyConnection();
                 return false;
             }
@@ -128,18 +130,11 @@ namespace StatusMessageDBUpdater {
         /// <param name="message">Incoming message</param>
         private void OnInputMessageReceived(IMessage message) {
             ITextMessage textMessage = message as ITextMessage;
-            string Msg = "clsMessageHandler(), Command message received";
-///            clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, Msg);
+            String processor = message.Properties.GetString("ProcessorName");
             if (this.InputMessageReceived != null) {
-                // call the delegate to process the commnd
-                Msg = "clsMessageHandler().OnInputMessageReceived: At lease one event handler assigned";
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, Msg);
-                this.InputMessageReceived(textMessage.Text);
-            } else {
-                Msg = "clsMessageHandler().OnInputMessageReceived: No event handlers assigned";
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, Msg);
+                this.InputMessageReceived(processor, textMessage.Text);
             }
-        }	// End sub
+        }
 
         /// <summary>
         /// Broadcast listener function. Received Broadcasts will cause this to be called
@@ -148,16 +143,13 @@ namespace StatusMessageDBUpdater {
         /// <param name="message">Incoming message</param>
         private void OnBroadcastReceived(IMessage message) {
             ITextMessage textMessage = message as ITextMessage;
-            string Msg = "clsMessageHandler(), Broadcast message received";
-///           clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, Msg);
+            mainLog.Debug("clsMessageHandler(), Broadcast message received");
             if (this.BroadcastReceived != null) {
                 // call the delegate to process the commnd
-                Msg = "clsMessageHandler().OnBroadcastReceived: At lease one event handler assigned";
-///                clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, Msg);
                 this.BroadcastReceived(textMessage.Text);
-            } else {
-                Msg = "clsMessageHandler().OnBroadcastReceived: No event handlers assigned";
-///               clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.DEBUG, Msg);
+            }
+            else {
+                mainLog.Debug("clsMessageHandler().OnBroadcastReceived: No event handlers assigned");
             }
         }	// End sub
 
@@ -169,7 +161,8 @@ namespace StatusMessageDBUpdater {
             if (!this.m_IsDisposed) {
                 ITextMessage textMessage = this.m_StatusSession.CreateTextMessage(message);
                 this.m_StatusSender.Send(textMessage);
-            } else {
+            }
+            else {
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
         }	// End sub
@@ -184,7 +177,7 @@ namespace StatusMessageDBUpdater {
                 this.m_Connection.Dispose();
                 this.m_HasConnection = false;
                 string msg = "Message connection closed";
- ///               clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.INFO, msg);
+                ///               clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.INFO, msg);
             }
         }	// End sub
 
