@@ -157,9 +157,10 @@ namespace StatusMessageDBUpdater {
         /// Sends a status message
         /// </summary>
         /// <param name="message">Outgoing message string</param>
-        public void SendMessage(string message) {
+        public void SendMessage(string processor, string message) {
             if (!this.m_IsDisposed) {
                 ITextMessage textMessage = this.m_StatusSession.CreateTextMessage(message);
+                textMessage.Properties.SetString("ProcessorName", processor);
                 this.m_StatusSender.Send(textMessage);
             }
             else {

@@ -40,10 +40,11 @@ namespace StatusMessageDBUpdater {
                 catch (Exception Err) {
                     // Report any exceptions not handled at a lover leve to the system application log
                     ErrMsg = "Critical exception starting application: " + Err.Message;
-                    System.Diagnostics.EventLog ev = new System.Diagnostics.EventLog("Application", ".", "DMS_StatusMsgDBUpdater");
-                    System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.EventLogTraceListener("DMS_StatusMsgDBUpdater"));
-                    System.Diagnostics.Trace.WriteLine(ErrMsg);
-                    ev.Close();
+//                    System.Diagnostics.EventLog ev = new System.Diagnostics.EventLog("Application", ".", "DMS_StatusMsgDBUpdater");
+//                    System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.EventLogTraceListener("DMS_StatusMsgDBUpdater"));
+//                    System.Diagnostics.Trace.WriteLine(ErrMsg);
+//                    ev.Close();
+                    System.Diagnostics.Debug.WriteLine(ErrMsg);
                 }
             } while(restart);
 

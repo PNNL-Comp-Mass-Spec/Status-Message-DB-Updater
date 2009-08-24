@@ -32,7 +32,7 @@ namespace StatusMessageDBUpdater {
         // post message to database
         public bool UpdateDatabase(string statusMessages, ref string result) {
             SqlCommand sc;
-            bool Outcome = false;
+            bool Err = false;
 
             try {
                 // create the command object
@@ -77,7 +77,7 @@ namespace StatusMessageDBUpdater {
 
                 // if we made it this far, we succeeded
                 //
-                Outcome = (ret == 0);
+                Err = (ret != 0);
             }
             catch (Exception e) {
                 Console.WriteLine(e.Message);
@@ -85,7 +85,7 @@ namespace StatusMessageDBUpdater {
             }
             finally {
             }
-            return Outcome;
+            return Err;
         }
 
         public void Disconnect() {

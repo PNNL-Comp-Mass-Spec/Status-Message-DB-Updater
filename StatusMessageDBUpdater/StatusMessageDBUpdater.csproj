@@ -70,6 +70,9 @@
   <ItemGroup>
     <Content Include="lib\Apache.NMS.ActiveMQ.dll" />
     <Content Include="lib\Apache.NMS.dll" />
+    <Content Include="status_template.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

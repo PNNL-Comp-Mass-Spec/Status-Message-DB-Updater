@@ -27,9 +27,11 @@ namespace StatusMessageDBUpdater {
         private int dbUpdateIntervalMS;
         private bool run = true;
         bool restart = false;
+        bool LogStatusToMessageQueue;
 
         private clsMessageHandler messageHandler = null;
         private MessageAccumulator m_ma = null;
+        XmlDocument doc = null;
         #endregion
 
         #region "Methods"
@@ -53,12 +55,19 @@ namespace StatusMessageDBUpdater {
             this.mgrName = mgrSettings.GetParam("MgrName");
             mainLog.Info("Manager:" + this.mgrName);
 
+            // status message skeleton
+            this.doc = new XmlDocument();
+            this.doc.Load("status_template.xml");
+            this.doc.SelectSingleNode("//MgrName").InnerText = this.mgrName;
+            this.doc.SelectSingleNode("//LastStartTime").InnerText = System.DateTime.Now.ToString();
+            this.doc.SelectSingleNode("//MgrStatus").InnerText = "Running";
+
             //---- initialize the connection parameter fields ----
             string messageBrokerURL = mgrSettings.GetParam("MessageQueueURI");
             string messageTopicName = mgrSettings.GetParam("StatusMsgIncomingTopic");
             string monitorTopicName = mgrSettings.GetParam("MessageQueueTopicMgrStatus"); // topic to send
             string brodcastTopicName = mgrSettings.GetParam("BroadcastQueueTopic");
-            mgrSettings.GetParam("LogStatusToMessageQueue");
+            this.LogStatusToMessageQueue = (mgrSettings.GetParam("LogStatusToMessageQueue") == "True");
 
             this.messageHandler = new clsMessageHandler();
             this.messageHandler.MgrName = mgrName;
@@ -88,6 +97,11 @@ namespace StatusMessageDBUpdater {
             return true;
         }
 
+        /// <summary>
+        /// Repetitively updates database with accumulated status messages
+        /// since last update
+        /// </summary>
+        /// <returns>TRUE for restart required, FALSE for restart not required</returns>
         public bool DoProcess() {
             mainLog.Info("Process started");
             while (this.run) {
@@ -127,12 +141,29 @@ namespace StatusMessageDBUpdater {
                     // update the database
                     string message = "";
                     bool err = dba.UpdateDatabase(concatMessages, ref message);
-                    //                    if(message != "") progMsg += "msg:" + message + Environment.NewLine;
-                    //                    if (monitorTopicName != "") m_ts.SendMessage(monitorTopicName, progMsg);
-                    mainLog.Info("Result:" + message);
+
+                    // send status
+                    if (this.LogStatusToMessageQueue) {
+                        this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
+                        if (err) {
+                            mainLog.Error(message);
+                            this.doc.SelectSingleNode("//Status").InnerText = "Error";
+                            this.doc.SelectSingleNode("//ErrMsg").InnerText = "message";
+                            this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
+                        }
+                        else {
+                            mainLog.Info("Result:" + message);
+                            this.doc.SelectSingleNode("//Status").InnerText = "Good";
+                            this.doc.SelectSingleNode("//MostRecentLogMessage").InnerText = message;
+                            this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
+                        }
+                    }
                 }
                 catch (Exception e) {
                     mainLog.Error(e.Message);
+                    this.doc.SelectSingleNode("//Status").InnerText = "Exception";
+                    this.doc.SelectSingleNode("//ErrMsg").InnerText = "message";
+                    this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
                 }
                 dba.Disconnect();
             }
@@ -155,8 +186,6 @@ namespace StatusMessageDBUpdater {
         m_MgrSettings.GetParam("showinanmonitor");
         m_MgrSettings.GetParam("logfilename");
         m_MgrSettings.GetParam("cmdtimeout");
-        m_MgrSettings.GetParam("LogStatusToMessageQueue");
-        m_MgrSettings.GetParam("BroadcastQueueTopic");
         */
 
         /// <summary>

@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes'?>
+<Root>
+  <Manager>
+    <MgrName></MgrName>
+    <MgrStatus></MgrStatus>
+    <LastUpdate></LastUpdate>
+    <LastStartTime></LastStartTime>
+    <CPUUtilization></CPUUtilization>
+    <FreeMemoryMB></FreeMemoryMB>
+    <RecentErrorMessages>
+      <ErrMsg />
+    </RecentErrorMessages>
+  </Manager>
+  <Task>
+    <Tool></Tool>
+    <Status></Status>
+    <Duration></Duration>
+    <DurationMinutes></DurationMinutes>
+    <Progress></Progress>
+    <CurrentOperation />
+    <TaskDetails>
+      <Status></Status>
+      <Job></Job>
+      <Step></Step>
+      <Dataset></Dataset>
+      <MostRecentLogMessage />
+      <MostRecentJobInfo></MostRecentJobInfo>
+      <SpectrumCount></SpectrumCount>
+    </TaskDetails>
+  </Task>
+</Root>
