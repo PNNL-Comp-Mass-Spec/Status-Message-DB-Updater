@@ -1,841 +1,276 @@
+INFO 9 MainLog - Started
+INFO 9 MainLog - Read manager settings from Manager Control Database
+INFO 9 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 9 MainLog - Connected to message broker
+INFO 9 MainLog - Inut listener established
+INFO 9 MainLog - Broadcast listener established
+INFO 9 MainLog - Status sender established
+INFO 9 MainLog - Process started
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:43:18 PM
+INFO 9 MainLog - Size:28841
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:43:23 PM
+INFO 9 MainLog - Size:29458
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:43:28 PM
+INFO 9 MainLog - Size:29869
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 32 at 8/25/2009 2:43:34 PM
+INFO 9 MainLog - Size:26172
+INFO 9 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
+INFO 9 MainLog - MsgDB program updated 34 at 8/25/2009 2:43:39 PM
+INFO 9 MainLog - Size:29126
+INFO 9 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:43:44 PM
+INFO 9 MainLog - Size:29292
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 37 at 8/25/2009 2:43:49 PM
+INFO 9 MainLog - Size:29970
+INFO 9 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
+INFO 9 MainLog - MsgDB program updated 34 at 8/25/2009 2:43:54 PM
+INFO 9 MainLog - Size:27665
+INFO 9 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
+INFO 9 MainLog - MsgDB program updated 35 at 8/25/2009 2:43:59 PM
+INFO 9 MainLog - Size:28990
+INFO 9 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
+INFO 9 MainLog - MsgDB program updated 37 at 8/25/2009 2:44:05 PM
+INFO 9 MainLog - Size:29969
+INFO 9 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
+INFO 9 MainLog - MsgDB program updated 35 at 8/25/2009 2:44:10 PM
+INFO 9 MainLog - Size:28480
+INFO 9 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:44:15 PM
+INFO 9 MainLog - Size:30077
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 33 at 8/25/2009 2:44:20 PM
+INFO 9 MainLog - Size:26844
+INFO 9 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:44:25 PM
+INFO 9 MainLog - Size:29447
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 31 at 8/25/2009 2:44:30 PM
+INFO 9 MainLog - Size:25365
+INFO 9 MainLog - Result:Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
+INFO 9 MainLog - MsgDB program updated 38 at 8/25/2009 2:44:35 PM
+INFO 9 MainLog - Size:31371
+INFO 9 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
+INFO 9 MainLog - MsgDB program updated 35 at 8/25/2009 2:44:41 PM
+INFO 9 MainLog - Size:28478
+INFO 9 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
+INFO 9 MainLog - MsgDB program updated 34 at 8/25/2009 2:44:46 PM
+INFO 9 MainLog - Size:27827
+INFO 9 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
+INFO 9 MainLog - MsgDB program updated 35 at 8/25/2009 2:44:51 PM
+INFO 9 MainLog - Size:28628
+INFO 9 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
+INFO 9 MainLog - MsgDB program updated 34 at 8/25/2009 2:44:56 PM
+INFO 9 MainLog - Size:27670
+INFO 9 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
+INFO 9 MainLog - MsgDB program updated 39 at 8/25/2009 2:45:01 PM
+INFO 9 MainLog - Size:31457
+INFO 9 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
+INFO 9 MainLog - MsgDB program updated 32 at 8/25/2009 2:45:06 PM
+INFO 9 MainLog - Size:26172
+INFO 9 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
+INFO 9 MainLog - MsgDB program updated 32 at 8/25/2009 2:45:11 PM
+INFO 9 MainLog - Size:26040
+INFO 9 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
+INFO 9 MainLog - MsgDB program updated 37 at 8/25/2009 2:45:17 PM
+INFO 9 MainLog - Size:30123
+INFO 9 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
+INFO 9 MainLog - MsgDB program updated 34 at 8/25/2009 2:45:22 PM
+INFO 9 MainLog - Size:27816
+INFO 9 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
+INFO 9 MainLog - MsgDB program updated 34 at 8/25/2009 2:45:27 PM
+INFO 9 MainLog - Size:27666
+INFO 9 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
+INFO 9 MainLog - MsgDB program updated 37 at 8/25/2009 2:45:32 PM
+INFO 9 MainLog - Size:29956
+INFO 9 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:45:37 PM
+INFO 9 MainLog - Size:29168
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 34 at 8/25/2009 2:45:42 PM
+INFO 9 MainLog - Size:27810
+INFO 9 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
+INFO 9 MainLog - MsgDB program updated 34 at 8/25/2009 2:45:47 PM
+INFO 9 MainLog - Size:27667
+INFO 9 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
+INFO 9 MainLog - MsgDB program updated 38 at 8/25/2009 2:45:53 PM
+INFO 9 MainLog - Size:30780
+INFO 9 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
+INFO 9 MainLog - MsgDB program updated 37 at 8/25/2009 2:45:58 PM
+INFO 9 MainLog - Size:29971
+INFO 9 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
+INFO 9 MainLog - MsgDB program updated 33 at 8/25/2009 2:46:03 PM
+INFO 9 MainLog - Size:26854
+INFO 9 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
+INFO 9 MainLog - MsgDB program updated 37 at 8/25/2009 2:46:08 PM
+INFO 9 MainLog - Size:30114
+INFO 9 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:46:13 PM
+INFO 9 MainLog - Size:29289
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 37 at 8/25/2009 2:46:19 PM
+INFO 9 MainLog - Size:30126
+INFO 9 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
+INFO 9 MainLog - MsgDB program updated 31 at 8/25/2009 2:46:24 PM
+INFO 9 MainLog - Size:25225
+INFO 9 MainLog - Result:Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:46:29 PM
+INFO 9 MainLog - Size:31097
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 39 at 8/25/2009 2:46:34 PM
+INFO 9 MainLog - Size:31598
+INFO 9 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
+INFO 9 MainLog - MsgDB program updated 35 at 8/25/2009 2:46:39 PM
+INFO 9 MainLog - Size:29308
+INFO 9 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
+INFO 9 MainLog - MsgDB program updated 36 at 8/25/2009 2:46:44 PM
+INFO 9 MainLog - Size:29293
+INFO 9 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
+INFO 9 MainLog - MsgDB program updated 35 at 8/25/2009 2:46:50 PM
+INFO 9 MainLog - Size:28324
+INFO 9 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
+INFO 9 MainLog - MsgDB program updated 31 at 8/25/2009 2:46:55 PM
+INFO 9 MainLog - Size:25380
+INFO 9 MainLog - Result:Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
+INFO 11 MainLog - Started
+INFO 11 MainLog - Read manager settings from Manager Control Database
+INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 11 MainLog - Connected to message broker
+INFO 11 MainLog - Inut listener established
+INFO 11 MainLog - Broadcast listener established
+INFO 11 MainLog - Status sender established
+INFO 11 MainLog - Process started
+INFO 11 MainLog - MsgDB program updated 47 at 8/25/2009 2:50:38 PM
+INFO 11 MainLog - Size:37374
+INFO 11 MainLog - Result:Messages:47, ErrMsg:47, Preserved:47, Removed:47, Inserted:47
+DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
+INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<Managers>
+		<Mgr>WD16503_StatusMsgDBUpdater</Mgr>
+	</Managers>
+	<Message>readconfig</Message>
+</root>
+INFO 16 MainLog - Reload config message received
+INFO 11 MainLog - Process interrupted, Restart:True
+INFO 11 MainLog - Read manager settings from Manager Control Database
+INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 11 MainLog - Connected to message broker
+INFO 11 MainLog - Inut listener established
+INFO 11 MainLog - Broadcast listener established
+INFO 11 MainLog - Status sender established
+INFO 11 MainLog - Process started
 INFO 10 MainLog - Started
-INFO 10 MainLog - MsgDB program updated 36 at 8/24/2009 9:33:33 AM
-INFO 10 MainLog - Size:29569
-INFO 10 MainLog - 
-INFO 10 MainLog - MsgDB program updated 35 at 8/24/2009 9:33:38 AM
-INFO 10 MainLog - Size:28463
-INFO 10 MainLog - 
-INFO 10 MainLog - MsgDB program updated 34 at 8/24/2009 9:33:43 AM
-INFO 10 MainLog - Size:27686
-INFO 10 MainLog - 
-INFO 10 MainLog - Started
-INFO 10 MainLog - MsgDB program updated 39 at 8/24/2009 9:36:37 AM
-INFO 10 MainLog - Size:32161
-INFO 10 MainLog - 
-INFO 10 MainLog - MsgDB program updated 47 at 8/24/2009 9:36:42 AM
-INFO 10 MainLog - Size:38689
-INFO 10 MainLog - 
-INFO 10 MainLog - MsgDB program updated 47 at 8/24/2009 9:36:47 AM
-INFO 10 MainLog - Size:38723
-INFO 10 MainLog - 
+INFO 10 MainLog - Read manager settings from Manager Control Database
+INFO 10 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 10 MainLog - Connected to message broker
+INFO 10 MainLog - Inut listener established
+INFO 10 MainLog - Broadcast listener established
+INFO 10 MainLog - Status sender established
+INFO 10 MainLog - Process started
+INFO 10 MainLog - Manager is inactive
+INFO 10 MainLog - Manager is inactive
 INFO 11 MainLog - Started
-INFO 11 MainLog - MsgDB program updated 46 at 8/24/2009 9:38:07 AM
-INFO 11 MainLog - Size:37740
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 49 at 8/24/2009 9:38:12 AM
-INFO 11 MainLog - Size:40110
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 44 at 8/24/2009 9:38:17 AM
-INFO 11 MainLog - Size:36234
-INFO 11 MainLog - Result:
+INFO 11 MainLog - Read manager settings from Manager Control Database
+INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 11 MainLog - Connected to message broker
+INFO 11 MainLog - Inut listener established
+INFO 11 MainLog - Broadcast listener established
+INFO 11 MainLog - Status sender established
+INFO 11 MainLog - Process started
+INFO 11 MainLog - MsgDB program updated 51 at 8/25/2009 2:59:46 PM
+INFO 11 MainLog - Size:43256
+INFO 11 MainLog - Result:Messages:51, ErrMsg:51, Preserved:51, Removed:51, Inserted:51
+DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
+INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<Managers>
+		<Mgr>WD16503_StatusMsgDBUpdater</Mgr>
+	</Managers>
+	<Message>readconfig</Message>
+</root>
+INFO 16 MainLog - Reload config message received
+INFO 11 MainLog - Process interrupted, Restart:True
+INFO 11 MainLog - Read manager settings from Manager Control Database
+INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 11 MainLog - Connected to message broker
+INFO 11 MainLog - Inut listener established
+INFO 11 MainLog - Broadcast listener established
+INFO 11 MainLog - Status sender established
+INFO 11 MainLog - Process started
+INFO 11 MainLog - Manager is inactive
+DEBUG 22 MainLog - clsMessageHandler(), Broadcast message received
+INFO 22 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<Managers>
+		<Mgr>WD16503_StatusMsgDBUpdater</Mgr>
+	</Managers>
+	<Message>readconfig</Message>
+</root>
+INFO 22 MainLog - Reload config message received
+INFO 11 MainLog - Process interrupted, Restart:True
+INFO 11 MainLog - Read manager settings from Manager Control Database
+INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 11 MainLog - Connected to message broker
+INFO 11 MainLog - Inut listener established
+INFO 11 MainLog - Broadcast listener established
+INFO 11 MainLog - Status sender established
+INFO 11 MainLog - Process started
+INFO 11 MainLog - Manager is inactive
+INFO 11 MainLog - Manager is inactive
 INFO 11 MainLog - Started
-INFO 11 MainLog - MsgDB program updated 51 at 8/24/2009 9:49:14 AM
-INFO 11 MainLog - Size:43989
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 43 at 8/24/2009 9:49:19 AM
-INFO 11 MainLog - Size:35153
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 50 at 8/24/2009 9:49:24 AM
-INFO 11 MainLog - Size:41564
-INFO 11 MainLog - Result:
-INFO 11 MainLog - Started
-INFO 11 MainLog - MsgDB program updated 49 at 8/24/2009 9:50:19 AM
-INFO 11 MainLog - Size:39813
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 53 at 8/24/2009 9:50:24 AM
-INFO 11 MainLog - Size:43257
-INFO 11 MainLog - Result:
-INFO 11 MainLog - Started
-INFO 11 MainLog - MsgDB program updated 49 at 8/24/2009 9:51:22 AM
-INFO 11 MainLog - Size:40274
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 46 at 8/24/2009 9:51:27 AM
-INFO 11 MainLog - Size:38100
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 47 at 8/24/2009 9:51:32 AM
-INFO 11 MainLog - Size:38655
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 49 at 8/24/2009 9:51:37 AM
-INFO 11 MainLog - Size:40120
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 50 at 8/24/2009 9:51:42 AM
-INFO 11 MainLog - Size:40916
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 50 at 8/24/2009 9:51:47 AM
-INFO 11 MainLog - Size:41337
-INFO 11 MainLog - Result:
-INFO 11 MainLog - Started
-INFO 11 MainLog - MsgDB program updated 51 at 8/24/2009 9:55:37 AM
-INFO 11 MainLog - Size:42224
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 49 at 8/24/2009 9:55:42 AM
-INFO 11 MainLog - Size:39933
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 49 at 8/24/2009 9:55:47 AM
-INFO 11 MainLog - Size:40117
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 45 at 8/24/2009 9:55:52 AM
-INFO 11 MainLog - Size:38265
-INFO 11 MainLog - Result:
-INFO 11 MainLog - MsgDB program updated 50 at 8/24/2009 9:55:57 AM
-INFO 11 MainLog - Size:40934
-INFO 11 MainLog - Result:
-INFO 11 MainLog - Started
-INFO 11 MainLog - MsgDB program updated 45 at 8/24/2009 9:57:15 AM
-INFO 11 MainLog - Size:36993
-INFO 11 MainLog - Result:Messages:45, ErrMsg:45, Preserved:45, Removed:45, Inserted:45
-INFO 11 MainLog - MsgDB program updated 54 at 8/24/2009 9:57:21 AM
-INFO 11 MainLog - Size:44049
+INFO 11 MainLog - Read manager settings from Manager Control Database
+INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 11 MainLog - Connected to message broker
+INFO 11 MainLog - Inut listener established
+INFO 11 MainLog - Broadcast listener established
+INFO 11 MainLog - Status sender established
+INFO 11 MainLog - Process started
+INFO 11 MainLog - Manager is inactive
+DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
+INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<Managers>
+		<Mgr>WD16503_StatusMsgDBUpdater</Mgr>
+	</Managers>
+	<Message>readconfig</Message>
+</root>
+INFO 16 MainLog - Reload config message received
+INFO 11 MainLog - Process interrupted, Restart:True
+INFO 11 MainLog - Read manager settings from Manager Control Database
+INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
+INFO 11 MainLog - Connected to message broker
+INFO 11 MainLog - Inut listener established
+INFO 11 MainLog - Broadcast listener established
+INFO 11 MainLog - Status sender established
+INFO 11 MainLog - Process started
+INFO 11 MainLog - MsgDB program updated 54 at 8/25/2009 3:04:44 PM
+INFO 11 MainLog - Size:45397
 INFO 11 MainLog - Result:Messages:54, ErrMsg:54, Preserved:54, Removed:54, Inserted:54
-INFO 11 MainLog - MsgDB program updated 52 at 8/24/2009 9:57:26 AM
-INFO 11 MainLog - Size:42720
-INFO 11 MainLog - Result:Messages:52, ErrMsg:52, Preserved:52, Removed:52, Inserted:52
-INFO 10 MainLog - Started
-INFO 10 MainLog - MsgDB program updated 43 at 8/24/2009 10:05:37 AM
-INFO 10 MainLog - Size:35912
-INFO 10 MainLog - Result:Messages:43, ErrMsg:43, Preserved:43, Removed:43, Inserted:43
-INFO 10 MainLog - Started
-INFO 10 MainLog - Read manager settings from Manager Control Database
-INFO 10 MainLog - Connected to message broker
-INFO 10 MainLog - Inut listener established
-INFO 10 MainLog - Broadcast listener established
-INFO 10 MainLog - Status sender established
-INFO 10 MainLog - MsgDB program updated 50 at 8/24/2009 10:56:04 AM
-INFO 10 MainLog - Size:41025
-INFO 10 MainLog - Result:Messages:50, ErrMsg:50, Preserved:50, Removed:50, Inserted:50
-INFO 10 MainLog - MsgDB program updated 46 at 8/24/2009 10:56:09 AM
-INFO 10 MainLog - Size:38069
-INFO 10 MainLog - Result:Messages:46, ErrMsg:46, Preserved:46, Removed:46, Inserted:46
-INFO 10 MainLog - MsgDB program updated 51 at 8/24/2009 10:56:14 AM
-INFO 10 MainLog - Size:42140
-INFO 10 MainLog - Result:Messages:51, ErrMsg:51, Preserved:51, Removed:51, Inserted:51
-INFO 10 MainLog - MsgDB program updated 51 at 8/24/2009 10:56:19 AM
-INFO 10 MainLog - Size:42170
-INFO 10 MainLog - Result:Messages:51, ErrMsg:51, Preserved:51, Removed:51, Inserted:51
-INFO 10 MainLog - MsgDB program updated 47 at 8/24/2009 10:56:24 AM
-INFO 10 MainLog - Size:38859
-INFO 10 MainLog - Result:Messages:47, ErrMsg:47, Preserved:47, Removed:47, Inserted:47
-INFO 10 MainLog - MsgDB program updated 47 at 8/24/2009 10:56:30 AM
-INFO 10 MainLog - Size:38733
-INFO 10 MainLog - Result:Messages:47, ErrMsg:47, Preserved:47, Removed:47, Inserted:47
-INFO 10 MainLog - MsgDB program updated 53 at 8/24/2009 10:56:35 AM
-INFO 10 MainLog - Size:43330
-INFO 10 MainLog - Result:Messages:53, ErrMsg:53, Preserved:53, Removed:53, Inserted:53
-INFO 10 MainLog - Started
-INFO 10 MainLog - Read manager settings from Manager Control Database
-INFO 10 MainLog - Connected to message broker
-INFO 10 MainLog - Inut listener established
-INFO 10 MainLog - Broadcast listener established
-INFO 10 MainLog - Status sender established
-INFO 10 MainLog - MsgDB program updated 48 at 8/24/2009 11:05:09 AM
-INFO 10 MainLog - Size:39706
-INFO 10 MainLog - Result:Messages:48, ErrMsg:48, Preserved:48, Removed:48, Inserted:48
-INFO 10 MainLog - MsgDB program updated 45 at 8/24/2009 11:05:14 AM
-INFO 10 MainLog - Size:37251
-INFO 10 MainLog - Result:Messages:45, ErrMsg:45, Preserved:45, Removed:45, Inserted:45
-INFO 10 MainLog - MsgDB program updated 51 at 8/24/2009 11:05:19 AM
-INFO 10 MainLog - Size:42021
-INFO 10 MainLog - Result:Messages:51, ErrMsg:51, Preserved:51, Removed:51, Inserted:51
 INFO 11 MainLog - Started
 INFO 11 MainLog - Read manager settings from Manager Control Database
+INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
 INFO 11 MainLog - Connected to message broker
 INFO 11 MainLog - Inut listener established
 INFO 11 MainLog - Broadcast listener established
 INFO 11 MainLog - Status sender established
-INFO 11 MainLog - MsgDB program updated 44 at 8/24/2009 11:35:27 AM
-INFO 11 MainLog - Size:35962
-INFO 11 MainLog - Result:Messages:44, ErrMsg:44, Preserved:44, Removed:44, Inserted:44
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 11:35:32 AM
-INFO 11 MainLog - Size:29151
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 42 at 8/24/2009 11:35:38 AM
-INFO 11 MainLog - Size:35347
-INFO 11 MainLog - Result:Messages:42, ErrMsg:42, Preserved:42, Removed:42, Inserted:42
-INFO 10 MainLog - Started
-INFO 10 MainLog - Read manager settings from Manager Control Database
-INFO 10 MainLog - Connected to message broker
-INFO 10 MainLog - Inut listener established
-INFO 10 MainLog - Broadcast listener established
-INFO 10 MainLog - Status sender established
-INFO 10 MainLog - Process started
-INFO 10 MainLog - MsgDB program updated 39 at 8/24/2009 11:46:22 AM
-INFO 10 MainLog - Size:31966
-INFO 10 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-INFO 10 MainLog - MsgDB program updated 38 at 8/24/2009 11:46:27 AM
-INFO 10 MainLog - Size:31291
-INFO 10 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
+INFO 11 MainLog - Process started
+INFO 11 MainLog - MsgDB program updated 55 at 8/25/2009 3:06:12 PM
+INFO 11 MainLog - Size:43850
+INFO 11 MainLog - Result:Messages:55, ErrMsg:55, Preserved:55, Removed:55, Inserted:55
+INFO 11 MainLog - MsgDB program updated 54 at 8/25/2009 3:06:42 PM
+INFO 11 MainLog - Size:43161
+INFO 11 MainLog - Result:Messages:54, ErrMsg:54, Preserved:54, Removed:54, Inserted:54
 DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
-INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>test</Message>
-</BroadcastCommand>
-WARN 16 MainLog - Invalid broadcast command received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>test</Message>
-</BroadcastCommand>
-INFO 10 MainLog - MsgDB program updated 41 at 8/24/2009 11:46:32 AM
-INFO 10 MainLog - Size:33760
-INFO 10 MainLog - Result:Messages:41, ErrMsg:41, Preserved:41, Removed:41, Inserted:41
-INFO 10 MainLog - MsgDB program updated 33 at 8/24/2009 11:46:38 AM
-INFO 10 MainLog - Size:27213
-INFO 10 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 10 MainLog - MsgDB program updated 33 at 8/24/2009 11:46:43 AM
-INFO 10 MainLog - Size:27185
-INFO 10 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 10 MainLog - MsgDB program updated 38 at 8/24/2009 11:46:48 AM
-INFO 10 MainLog - Size:31145
-INFO 10 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 10 MainLog - MsgDB program updated 35 at 8/24/2009 11:46:53 AM
-INFO 10 MainLog - Size:28669
-INFO 10 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 10 MainLog - MsgDB program updated 36 at 8/24/2009 11:46:58 AM
-INFO 10 MainLog - Size:29604
-INFO 10 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
-INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503xx_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>test</Message>
-</BroadcastCommand>
-DEBUG 16 MainLog - Received command not applicable to this manager instance
-INFO 10 MainLog - MsgDB program updated 41 at 8/24/2009 11:47:03 AM
-INFO 10 MainLog - Size:33607
-INFO 10 MainLog - Result:Messages:41, ErrMsg:41, Preserved:41, Removed:41, Inserted:41
-INFO 10 MainLog - MsgDB program updated 38 at 8/24/2009 11:47:08 AM
-INFO 10 MainLog - Size:30986
-INFO 10 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 10 MainLog - MsgDB program updated 36 at 8/24/2009 11:47:13 AM
-INFO 10 MainLog - Size:29356
-INFO 10 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 10 MainLog - MsgDB program updated 33 at 8/24/2009 11:47:19 AM
-INFO 10 MainLog - Size:27194
-INFO 10 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 10 MainLog - MsgDB program updated 39 at 8/24/2009 11:47:24 AM
-INFO 10 MainLog - Size:34270
-INFO 10 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
-INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>shutdown</Message>
-</BroadcastCommand>
+INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<Managers>
+		<Mgr>WD16503_StatusMsgDBUpdater</Mgr>
+	</Managers>
+	<Message>shutdown</Message>
+</root>
 INFO 16 MainLog - Shutdown message received
-INFO 10 MainLog - Process interrupted, Restart:False
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 11:48:38 AM
-INFO 11 MainLog - Size:27050
-INFO 11 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 11:48:44 AM
-INFO 11 MainLog - Size:27192
-INFO 11 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 39 at 8/24/2009 11:48:49 AM
-INFO 11 MainLog - Size:31958
-INFO 11 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 11:48:54 AM
-INFO 11 MainLog - Size:28531
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 11:48:59 AM
-INFO 11 MainLog - Size:29477
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 40 at 8/24/2009 11:49:04 AM
-INFO 11 MainLog - Size:32777
-INFO 11 MainLog - Result:Messages:40, ErrMsg:40, Preserved:40, Removed:40, Inserted:40
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 11:49:09 AM
-INFO 11 MainLog - Size:30787
-INFO 11 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 11:49:14 AM
-INFO 11 MainLog - Size:29451
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 11:49:20 AM
-INFO 11 MainLog - Size:26896
-INFO 11 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 11:49:25 AM
-INFO 11 MainLog - Size:31559
-INFO 11 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 11:49:30 AM
-INFO 11 MainLog - Size:28420
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
-INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>readconfig</Message>
-</BroadcastCommand>
-INFO 16 MainLog - Reload config message received
-INFO 11 MainLog - Process interrupted, Restart:True
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 45 at 8/24/2009 11:50:58 AM
-INFO 11 MainLog - Size:36609
-INFO 11 MainLog - Result:Messages:45, ErrMsg:45, Preserved:45, Removed:45, Inserted:45
-DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
-INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>readconfig</Message>
-</BroadcastCommand>
-INFO 16 MainLog - Reload config message received
-INFO 11 MainLog - Process interrupted, Restart:True
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
-INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>readconfig</Message>
-</BroadcastCommand>
-INFO 16 MainLog - Reload config message received
-INFO 11 MainLog - Process interrupted, Restart:True
-INFO 10 MainLog - Started
-INFO 10 MainLog - Read manager settings from Manager Control Database
-INFO 10 MainLog - Connected to message broker
-INFO 10 MainLog - Inut listener established
-INFO 10 MainLog - Broadcast listener established
-INFO 10 MainLog - Status sender established
-INFO 10 MainLog - Process started
-INFO 10 MainLog - MsgDB program updated 43 at 8/24/2009 11:53:59 AM
-INFO 10 MainLog - Size:35070
-INFO 10 MainLog - Result:Messages:43, ErrMsg:43, Preserved:43, Removed:43, Inserted:43
-DEBUG 15 MainLog - clsMessageHandler(), Broadcast message received
-INFO 15 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>readconfig</Message>
-</BroadcastCommand>
-INFO 15 MainLog - Reload config message received
-INFO 10 MainLog - Process interrupted, Restart:True
-INFO 10 MainLog - Read manager settings from Manager Control Database
-INFO 10 MainLog - Connected to message broker
-INFO 10 MainLog - Inut listener established
-INFO 10 MainLog - Broadcast listener established
-INFO 10 MainLog - Status sender established
-INFO 10 MainLog - Process started
-INFO 10 MainLog - MsgDB program updated 37 at 8/24/2009 11:54:18 AM
-INFO 10 MainLog - Size:30266
-INFO 10 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 10 MainLog - MsgDB program updated 35 at 8/24/2009 11:54:23 AM
-INFO 10 MainLog - Size:28669
-INFO 10 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 10 MainLog - MsgDB program updated 35 at 8/24/2009 11:54:28 AM
-INFO 10 MainLog - Size:28630
-INFO 10 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 10 MainLog - MsgDB program updated 34 at 8/24/2009 11:54:33 AM
-INFO 10 MainLog - Size:27871
-INFO 10 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 10 MainLog - MsgDB program updated 37 at 8/24/2009 11:54:38 AM
-INFO 10 MainLog - Size:30127
-INFO 10 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 10 MainLog - Started
-INFO 10 MainLog - Read manager settings from Manager Control Database
-INFO 10 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 10 MainLog - Started
-INFO 10 MainLog - Read manager settings from Manager Control Database
-INFO 10 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:08:03 PM
-INFO 11 MainLog - Size:27568
-ERROR 11 MainLog - Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:08:08 PM
-INFO 11 MainLog - Size:29435
-ERROR 11 MainLog - Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:08:13 PM
-INFO 11 MainLog - Size:28560
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:08:18 PM
-INFO 11 MainLog - Size:29568
-ERROR 11 MainLog - Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:08:23 PM
-INFO 11 MainLog - Size:28544
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 39 at 8/24/2009 3:08:29 PM
-INFO 11 MainLog - Size:31868
-ERROR 11 MainLog - Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:08:34 PM
-INFO 11 MainLog - Size:25980
-ERROR 11 MainLog - Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:08:39 PM
-INFO 11 MainLog - Size:30376
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:11:06 PM
-INFO 11 MainLog - Size:30378
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 49 at 8/24/2009 3:11:46 PM
-INFO 11 MainLog - Size:41376
-ERROR 11 MainLog - Messages:49, ErrMsg:49, Preserved:49, Removed:49, Inserted:49
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:11:51 PM
-INFO 11 MainLog - Size:30891
-ERROR 11 MainLog - Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:11:56 PM
-INFO 11 MainLog - Size:30043
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:12:01 PM
-INFO 11 MainLog - Size:29408
-ERROR 11 MainLog - Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:12:06 PM
-INFO 11 MainLog - Size:28718
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:12:11 PM
-INFO 11 MainLog - Size:26264
-ERROR 11 MainLog - Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:12:17 PM
-INFO 11 MainLog - Size:30227
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 31 at 8/24/2009 3:12:22 PM
-INFO 11 MainLog - Size:25430
-ERROR 11 MainLog - Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 3:12:27 PM
-INFO 11 MainLog - Size:27107
-ERROR 11 MainLog - Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:12:32 PM
-INFO 11 MainLog - Size:30975
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:12:37 PM
-INFO 11 MainLog - Size:28586
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:12:42 PM
-INFO 11 MainLog - Size:29561
-ERROR 11 MainLog - Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:12:47 PM
-INFO 11 MainLog - Size:27743
-ERROR 11 MainLog - Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:12:52 PM
-INFO 11 MainLog - Size:26275
-ERROR 11 MainLog - Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:12:58 PM
-INFO 11 MainLog - Size:30071
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:13:03 PM
-INFO 11 MainLog - Size:31044
-ERROR 11 MainLog - Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:13:08 PM
-INFO 11 MainLog - Size:27724
-ERROR 11 MainLog - Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:13:13 PM
-INFO 11 MainLog - Size:29825
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:13:18 PM
-INFO 11 MainLog - Size:30069
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:13:23 PM
-INFO 11 MainLog - Size:29177
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:13:28 PM
-INFO 11 MainLog - Size:29412
-ERROR 11 MainLog - Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 3:13:34 PM
-INFO 11 MainLog - Size:27076
-ERROR 11 MainLog - Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:13:39 PM
-INFO 11 MainLog - Size:29900
-ERROR 11 MainLog - Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:13:44 PM
-INFO 11 MainLog - Size:27919
-ERROR 11 MainLog - Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:13:49 PM
-INFO 11 MainLog - Size:28544
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:13:54 PM
-INFO 11 MainLog - Size:29407
-ERROR 11 MainLog - Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:18:15 PM
-INFO 11 MainLog - Size:30580
-ERROR 11 MainLog - Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:18:21 PM
-INFO 11 MainLog - Size:29257
-ERROR 11 MainLog - Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 3:18:26 PM
-INFO 11 MainLog - Size:27045
-ERROR 11 MainLog - Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:18:31 PM
-INFO 11 MainLog - Size:28720
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:18:36 PM
-INFO 11 MainLog - Size:28572
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:18:41 PM
-INFO 11 MainLog - Size:30740
-ERROR 11 MainLog - Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:18:46 PM
-INFO 11 MainLog - Size:28716
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:18:51 PM
-INFO 11 MainLog - Size:28569
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 31 at 8/24/2009 3:18:57 PM
-INFO 11 MainLog - Size:25270
-ERROR 11 MainLog - Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:19:02 PM
-INFO 11 MainLog - Size:28586
-ERROR 11 MainLog - Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 39 at 8/24/2009 3:19:07 PM
-INFO 11 MainLog - Size:31715
-ERROR 11 MainLog - Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-INFO 11 MainLog - MsgDB program updated 31 at 8/24/2009 3:19:12 PM
-INFO 11 MainLog - Size:25471
-ERROR 11 MainLog - Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 40 at 8/24/2009 3:20:05 PM
-INFO 11 MainLog - Size:32375
-ERROR 11 MainLog - Messages:40, ErrMsg:40, Preserved:40, Removed:40, Inserted:40
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:20:39 PM
-INFO 11 MainLog - Size:27607
-ERROR 11 MainLog - Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 44 at 8/24/2009 3:20:54 PM
-INFO 11 MainLog - Size:36271
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:21:46 PM
-INFO 11 MainLog - Size:29996
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 49 at 8/24/2009 3:22:42 PM
-INFO 11 MainLog - Size:41419
-INFO 11 MainLog - Result:Messages:49, ErrMsg:49, Preserved:49, Removed:49, Inserted:49
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:22:47 PM
-INFO 11 MainLog - Size:27752
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:22:52 PM
-INFO 11 MainLog - Size:30355
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:22:57 PM
-INFO 11 MainLog - Size:31045
-INFO 11 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:23:02 PM
-INFO 11 MainLog - Size:27591
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:23:08 PM
-INFO 11 MainLog - Size:28749
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 3:23:13 PM
-INFO 11 MainLog - Size:27110
-INFO 11 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:23:18 PM
-INFO 11 MainLog - Size:29387
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:23:23 PM
-INFO 11 MainLog - Size:29774
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:23:28 PM
-INFO 11 MainLog - Size:31021
-INFO 11 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:23:34 PM
-INFO 11 MainLog - Size:27904
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:23:39 PM
-INFO 11 MainLog - Size:30161
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:23:44 PM
-INFO 11 MainLog - Size:27629
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:23:49 PM
-INFO 11 MainLog - Size:30484
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:23:54 PM
-INFO 11 MainLog - Size:26110
-INFO 11 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:23:59 PM
-INFO 11 MainLog - Size:29539
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 41 at 8/24/2009 3:24:04 PM
-INFO 11 MainLog - Size:33348
-INFO 11 MainLog - Result:Messages:41, ErrMsg:41, Preserved:41, Removed:41, Inserted:41
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:24:10 PM
-INFO 11 MainLog - Size:26115
-INFO 11 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:24:15 PM
-INFO 11 MainLog - Size:28545
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:24:20 PM
-INFO 11 MainLog - Size:26291
-INFO 11 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 3:24:25 PM
-INFO 11 MainLog - Size:27535
-INFO 11 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-DEBUG 16 MainLog - clsMessageHandler(), Broadcast message received
-INFO 16 MainLog - clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: <BroadcastCommand>
-<Managers>
-<Manager>WD16503_StatusMsgDBUpdater</Manager>
-</Managers>
-<Message>readconfig</Message>
-</BroadcastCommand>
-INFO 16 MainLog - Reload config message received
-INFO 11 MainLog - Process interrupted, Restart:True
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:24:36 PM
-INFO 11 MainLog - Size:28747
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 40 at 8/24/2009 3:24:41 PM
-INFO 11 MainLog - Size:32350
-INFO 11 MainLog - Result:Messages:40, ErrMsg:40, Preserved:40, Removed:40, Inserted:40
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:24:46 PM
-INFO 11 MainLog - Size:31982
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:24:52 PM
-INFO 11 MainLog - Size:29566
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:24:57 PM
-INFO 11 MainLog - Size:26020
-INFO 11 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 39 at 8/24/2009 3:25:02 PM
-INFO 11 MainLog - Size:32151
-INFO 11 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:25:07 PM
-INFO 11 MainLog - Size:25935
-INFO 11 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:25:12 PM
-INFO 11 MainLog - Size:30232
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 41 at 8/24/2009 3:25:17 PM
-INFO 11 MainLog - Size:33354
-INFO 11 MainLog - Result:Messages:41, ErrMsg:41, Preserved:41, Removed:41, Inserted:41
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:25:22 PM
-INFO 11 MainLog - Size:27768
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 39 at 8/24/2009 3:25:27 PM
-INFO 11 MainLog - Size:31849
-INFO 11 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:25:33 PM
-INFO 11 MainLog - Size:25998
-INFO 11 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - Started
-INFO 11 MainLog - Read manager settings from Manager Control Database
-INFO 11 MainLog - Manager:WD16503_StatusMsgDBUpdater
-INFO 11 MainLog - Connected to message broker
-INFO 11 MainLog - Inut listener established
-INFO 11 MainLog - Broadcast listener established
-INFO 11 MainLog - Status sender established
-INFO 11 MainLog - Process started
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:29:11 PM
-INFO 11 MainLog - Size:29539
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 31 at 8/24/2009 3:29:16 PM
-INFO 11 MainLog - Size:25319
-INFO 11 MainLog - Result:Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
-INFO 11 MainLog - MsgDB program updated 40 at 8/24/2009 3:29:21 PM
-INFO 11 MainLog - Size:32656
-INFO 11 MainLog - Result:Messages:40, ErrMsg:40, Preserved:40, Removed:40, Inserted:40
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:29:26 PM
-INFO 11 MainLog - Size:29560
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:29:32 PM
-INFO 11 MainLog - Size:28987
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:29:37 PM
-INFO 11 MainLog - Size:29412
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 31 at 8/24/2009 3:29:42 PM
-INFO 11 MainLog - Size:25451
-INFO 11 MainLog - Result:Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:29:47 PM
-INFO 11 MainLog - Size:32012
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:29:52 PM
-INFO 11 MainLog - Size:29405
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 42 at 8/24/2009 3:29:57 PM
-INFO 11 MainLog - Size:33647
-INFO 11 MainLog - Result:Messages:42, ErrMsg:42, Preserved:42, Removed:42, Inserted:42
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:30:02 PM
-INFO 11 MainLog - Size:31272
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:30:08 PM
-INFO 11 MainLog - Size:30108
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:30:13 PM
-INFO 11 MainLog - Size:28422
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:30:18 PM
-INFO 11 MainLog - Size:29405
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 31 at 8/24/2009 3:30:23 PM
-INFO 11 MainLog - Size:25149
-INFO 11 MainLog - Result:Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
-INFO 11 MainLog - MsgDB program updated 39 at 8/24/2009 3:30:28 PM
-INFO 11 MainLog - Size:31683
-INFO 11 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-INFO 11 MainLog - MsgDB program updated 40 at 8/24/2009 3:30:33 PM
-INFO 11 MainLog - Size:32679
-INFO 11 MainLog - Result:Messages:40, ErrMsg:40, Preserved:40, Removed:40, Inserted:40
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 3:30:38 PM
-INFO 11 MainLog - Size:26959
-INFO 11 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:30:44 PM
-INFO 11 MainLog - Size:29238
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:30:49 PM
-INFO 11 MainLog - Size:29737
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 3:30:54 PM
-INFO 11 MainLog - Size:26931
-INFO 11 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:30:59 PM
-INFO 11 MainLog - Size:30071
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:31:04 PM
-INFO 11 MainLog - Size:31624
-INFO 11 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:31:09 PM
-INFO 11 MainLog - Size:28689
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:31:14 PM
-INFO 11 MainLog - Size:27923
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 33 at 8/24/2009 3:31:20 PM
-INFO 11 MainLog - Size:27117
-INFO 11 MainLog - Result:Messages:33, ErrMsg:33, Preserved:33, Removed:33, Inserted:33
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:31:25 PM
-INFO 11 MainLog - Size:30179
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:31:30 PM
-INFO 11 MainLog - Size:27631
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:31:35 PM
-INFO 11 MainLog - Size:30207
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 39 at 8/24/2009 3:31:40 PM
-INFO 11 MainLog - Size:31860
-INFO 11 MainLog - Result:Messages:39, ErrMsg:39, Preserved:39, Removed:39, Inserted:39
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:31:45 PM
-INFO 11 MainLog - Size:31184
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:31:50 PM
-INFO 11 MainLog - Size:29208
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:31:55 PM
-INFO 11 MainLog - Size:26296
-INFO 11 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 32 at 8/24/2009 3:32:01 PM
-INFO 11 MainLog - Size:25924
-INFO 11 MainLog - Result:Messages:32, ErrMsg:32, Preserved:32, Removed:32, Inserted:32
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:32:06 PM
-INFO 11 MainLog - Size:29822
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:32:11 PM
-INFO 11 MainLog - Size:31042
-INFO 11 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 37 at 8/24/2009 3:32:16 PM
-INFO 11 MainLog - Size:30375
-INFO 11 MainLog - Result:Messages:37, ErrMsg:37, Preserved:37, Removed:37, Inserted:37
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:32:21 PM
-INFO 11 MainLog - Size:27896
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:32:26 PM
-INFO 11 MainLog - Size:29412
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 29 at 8/24/2009 3:32:31 PM
-INFO 11 MainLog - Size:23814
-INFO 11 MainLog - Result:Messages:29, ErrMsg:29, Preserved:29, Removed:29, Inserted:29
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:32:37 PM
-INFO 11 MainLog - Size:30417
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:32:42 PM
-INFO 11 MainLog - Size:29542
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:32:47 PM
-INFO 11 MainLog - Size:30158
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:32:52 PM
-INFO 11 MainLog - Size:30734
-INFO 11 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:32:57 PM
-INFO 11 MainLog - Size:28539
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 36 at 8/24/2009 3:33:02 PM
-INFO 11 MainLog - Size:29253
-INFO 11 MainLog - Result:Messages:36, ErrMsg:36, Preserved:36, Removed:36, Inserted:36
-INFO 11 MainLog - MsgDB program updated 31 at 8/24/2009 3:33:07 PM
-INFO 11 MainLog - Size:25320
-INFO 11 MainLog - Result:Messages:31, ErrMsg:31, Preserved:31, Removed:31, Inserted:31
-INFO 11 MainLog - MsgDB program updated 34 at 8/24/2009 3:33:12 PM
-INFO 11 MainLog - Size:27877
-INFO 11 MainLog - Result:Messages:34, ErrMsg:34, Preserved:34, Removed:34, Inserted:34
-INFO 11 MainLog - MsgDB program updated 35 at 8/24/2009 3:33:18 PM
-INFO 11 MainLog - Size:28746
-INFO 11 MainLog - Result:Messages:35, ErrMsg:35, Preserved:35, Removed:35, Inserted:35
-INFO 11 MainLog - MsgDB program updated 38 at 8/24/2009 3:33:23 PM
-INFO 11 MainLog - Size:31040
-INFO 11 MainLog - Result:Messages:38, ErrMsg:38, Preserved:38, Removed:38, Inserted:38
+INFO 11 MainLog - Process interrupted, Restart:False

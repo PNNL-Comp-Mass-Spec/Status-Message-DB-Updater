@@ -24,10 +24,12 @@ namespace StatusMessageDBUpdater {
         #region "Class variables"
         string mgrName = null;
         private DBAccess dba = null;
+        private int dbUpdateInterval;
         private int dbUpdateIntervalMS;
         private bool run = true;
         bool restart = false;
         bool LogStatusToMessageQueue;
+        bool mgrActive = true;
 
         private clsMessageHandler messageHandler = null;
         private MessageAccumulator m_ma = null;
@@ -51,6 +53,8 @@ namespace StatusMessageDBUpdater {
                 return false; //Failures are logged by clsMgrSettings to local emergency log file
             }
 
+            this.mgrActive = (mgrSettings.GetParam("mgractive") != "False");
+
             // processor name
             this.mgrName = mgrSettings.GetParam("MgrName");
             mainLog.Info("Manager:" + this.mgrName);
@@ -60,7 +64,7 @@ namespace StatusMessageDBUpdater {
             this.doc.Load("status_template.xml");
             this.doc.SelectSingleNode("//MgrName").InnerText = this.mgrName;
             this.doc.SelectSingleNode("//LastStartTime").InnerText = System.DateTime.Now.ToString();
-            this.doc.SelectSingleNode("//MgrStatus").InnerText = "Running";
+            this.doc.SelectSingleNode("//MgrStatus").InnerText = "";
 
             //---- initialize the connection parameter fields ----
             string messageBrokerURL = mgrSettings.GetParam("MessageQueueURI");
@@ -85,7 +89,8 @@ namespace StatusMessageDBUpdater {
 
             //---- seconds between database updates ----
             string interval = mgrSettings.GetParam("StatusMsgDBUpdateInterval");
-            this.dbUpdateIntervalMS = 1000 * int.Parse(interval);
+            this.dbUpdateInterval = int.Parse(interval);
+            this.dbUpdateIntervalMS = 1000 * this.dbUpdateInterval;
 
             // create a new database access object
             string dbConnStr = mgrSettings.GetParam("connectionstring");
@@ -104,11 +109,31 @@ namespace StatusMessageDBUpdater {
         /// <returns>TRUE for restart required, FALSE for restart not required</returns>
         public bool DoProcess() {
             mainLog.Info("Process started");
+            this.doc.SelectSingleNode("//MgrStatus").InnerText = "Starting";
+            this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
+
             while (this.run) {
-                // wait a minute
-                Thread.Sleep(this.dbUpdateIntervalMS);
-                if (!run) {
-                    break;
+
+                // sleep for 5 seconds, wake up and count down
+                // and see if we are supposed to stop or proceed
+                int timeRemaining = this.dbUpdateInterval;
+                do {
+                    Thread.Sleep(5000);
+                    timeRemaining -= 5;
+                    if (!run) break;
+                } while (timeRemaining > 0);
+                if (!run) break;
+
+                // are we active?
+                if (this.mgrActive) {
+                    this.doc.SelectSingleNode("//MgrStatus").InnerText = "Running";
+                } else {
+                    mainLog.Info("Manager is inactive");
+                    this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
+                    this.doc.SelectSingleNode("//Status").InnerText = "Inactive";
+                    this.doc.SelectSingleNode("//MgrStatus").InnerText = "Inactive";
+                    this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
+                    continue;
                 }
 
                 // from the message accumulator, get list of processors 
@@ -171,22 +196,6 @@ namespace StatusMessageDBUpdater {
             this.messageHandler.Dispose();
             return this.restart;
         }
-
-        /*
-        m_MgrSettings.GetParam("machname");
-        m_MgrSettings.GetParam("debuglevel");
-        m_MgrSettings.GetParam("mgractive");
-        m_MgrSettings.GetParam("statusfilelocation");
-        m_MgrSettings.GetParam("configfilename");
-        m_MgrSettings.GetParam("localmgrpath");
-        m_MgrSettings.GetParam("remotemgrpath");
-        m_MgrSettings.GetParam("programfoldername");
-        m_MgrSettings.GetParam("modulename");
-        m_MgrSettings.GetParam("showinmgrctrl");
-        m_MgrSettings.GetParam("showinanmonitor");
-        m_MgrSettings.GetParam("logfilename");
-        m_MgrSettings.GetParam("cmdtimeout");
-        */
 
         /// <summary>
         /// Handles broacast messages for control of the manager

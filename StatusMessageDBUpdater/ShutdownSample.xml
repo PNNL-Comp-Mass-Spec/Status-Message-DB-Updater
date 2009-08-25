@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<root>
+	<Managers>
+		<Mgr>	WD16503_StatusMsgDBUpdater</Mgr>
+	</Managers>
+	<Message>readconfig</Message>
+</root>
