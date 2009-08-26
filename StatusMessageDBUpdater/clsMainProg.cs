@@ -61,7 +61,8 @@ namespace StatusMessageDBUpdater {
 
             // status message skeleton
             this.doc = new XmlDocument();
-            this.doc.Load("status_template.xml");
+            FileInfo fi = new FileInfo(Application.ExecutablePath);
+            this.doc.Load(System.IO.Path.Combine( fi.DirectoryName, "status_template.xml"));
             this.doc.SelectSingleNode("//MgrName").InnerText = this.mgrName;
             this.doc.SelectSingleNode("//LastStartTime").InnerText = System.DateTime.Now.ToString();
             this.doc.SelectSingleNode("//MgrStatus").InnerText = "";
@@ -193,6 +194,12 @@ namespace StatusMessageDBUpdater {
                 dba.Disconnect();
             }
             mainLog.Info("Process interrupted, " + "Restart:" + this.restart.ToString());
+            this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
+            this.doc.SelectSingleNode("//Status").InnerText = "Stopped";
+            this.doc.SelectSingleNode("//MgrStatus").InnerText = "Stopped";
+            this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
+
+            
             this.messageHandler.Dispose();
             return this.restart;
         }
