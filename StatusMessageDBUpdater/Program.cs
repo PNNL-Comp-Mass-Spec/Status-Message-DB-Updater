@@ -7,6 +7,7 @@ using System.Xml;
 using log4net;
 using log4net.Config;
 
+[assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
 
 namespace StatusMessageDBUpdater {
     class Program {
@@ -21,7 +22,7 @@ namespace StatusMessageDBUpdater {
 
         static void Main(string[] args) {
             // setup the logger
-            XmlConfigurator.Configure(new System.IO.FileInfo("Logging.config"));
+//            XmlConfigurator.Configure(new System.IO.FileInfo("Logging.config"));
             mainLog.Info("Started");
 
             bool restart = false;
