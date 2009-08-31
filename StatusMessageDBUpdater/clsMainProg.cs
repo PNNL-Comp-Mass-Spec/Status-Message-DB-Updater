@@ -30,6 +30,8 @@ namespace StatusMessageDBUpdater {
         bool restart = false;
         bool LogStatusToMessageQueue;
         bool mgrActive = true;
+		  private DateTime LastConfigCheck = DateTime.Now;
+		  clsMgrSettings mgrSettings = null;
 
         private clsMessageHandler messageHandler = null;
         private MessageAccumulator m_ma = null;
@@ -44,7 +46,7 @@ namespace StatusMessageDBUpdater {
         /// <returns>TRUE for success, FALSE for failure</returns>
         public bool InitMgr() {
             //Get the manager settings
-            clsMgrSettings mgrSettings = null;
+            mgrSettings = null;
             try {
                 mgrSettings = new clsMgrSettings();
                 mainLog.Info("Read manager settings from Manager Control Database");
@@ -192,6 +194,9 @@ namespace StatusMessageDBUpdater {
                     this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
                 }
                 dba.Disconnect();
+
+					 //Test to determine if we need to reload config from db
+					 TestForConfigReload();
             }
             mainLog.Info("Process interrupted, " + "Restart:" + this.restart.ToString());
             this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
@@ -252,6 +257,20 @@ namespace StatusMessageDBUpdater {
                     break;
             }
         }	// End sub
+
+		  private void TestForConfigReload()
+		  {
+			  DateTime testTime = LastConfigCheck.AddMinutes(double.Parse(mgrSettings.GetParam("CheckForUpdateInterval")));	//Interval is in minutes
+			  DateTime currTime = DateTime.Now;
+			  if ( currTime.CompareTo(testTime) > 0)
+			  {
+				  //Time to reload the config
+				  mainLog.Info("Reloading config from MC database");
+				  this.run=false;
+				  this.restart=true;
+				  LastConfigCheck = DateTime.Now;
+			  }
+		  }	// End sub
         #endregion
     } // end class
 } // end namespace

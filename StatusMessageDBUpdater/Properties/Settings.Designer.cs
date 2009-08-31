@@ -59,5 +59,14 @@ namespace StatusMessageDBUpdater.Properties {
                 return ((string)(this["UsingDefaults"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("60")]
+        public string CheckForUpdateInterval {
+            get {
+                return ((string)(this["CheckForUpdateInterval"]));
+            }
+        }
     }
 }

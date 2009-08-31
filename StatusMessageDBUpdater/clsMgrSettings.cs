@@ -120,6 +120,10 @@ namespace StatusMessageDBUpdater
 				TempStr = StatusMessageDBUpdater.Properties.Settings.Default.UsingDefaults;
 				RetDict.Add("UsingDefaults", TempStr);
 
+				//Update check interval
+				TempStr = StatusMessageDBUpdater.Properties.Settings.Default.CheckForUpdateInterval;
+				RetDict.Add("CheckForUpdateInterval", TempStr);
+
 				return RetDict;
 			}	// End sub
 
