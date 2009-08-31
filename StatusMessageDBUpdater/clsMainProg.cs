@@ -174,7 +174,7 @@ namespace StatusMessageDBUpdater {
                         if (err) {
                             mainLog.Error(message);
                             this.doc.SelectSingleNode("//Status").InnerText = "Error";
-                            this.doc.SelectSingleNode("//ErrMsg").InnerText = "message";
+                            this.doc.SelectSingleNode("//ErrMsg").InnerText = message;
                             this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
                         }
                         else {

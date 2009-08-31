@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="MgrActive_Local" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="MgrCnfgDbConnectStr" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Data Source=proteinseqs;Initial Catalog=manager_control_T3;Integrated Security=SSPI</Value>
@@ -12,7 +12,7 @@
       <Value Profile="(Default)">WD16503_StatusMsgDBUpdater</Value>
     </Setting>
     <Setting Name="UsingDefaults" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>
