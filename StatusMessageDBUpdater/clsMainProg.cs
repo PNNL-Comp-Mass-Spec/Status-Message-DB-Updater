@@ -136,7 +136,9 @@ namespace StatusMessageDBUpdater {
                     this.doc.SelectSingleNode("//Status").InnerText = "Inactive";
                     this.doc.SelectSingleNode("//MgrStatus").InnerText = "Inactive";
                     this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
-                    continue;
+						  //Test to determine if we need to reload config from db
+						  TestForConfigReload();
+						  continue;
                 }
 
                 // from the message accumulator, get list of processors 
