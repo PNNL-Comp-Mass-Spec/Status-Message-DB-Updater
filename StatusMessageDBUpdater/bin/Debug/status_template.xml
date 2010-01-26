@@ -5,8 +5,8 @@
     <MgrStatus></MgrStatus>
     <LastUpdate></LastUpdate>
     <LastStartTime></LastStartTime>
-    <CPUUtilization></CPUUtilization>
-    <FreeMemoryMB></FreeMemoryMB>
+    <CPUUtilization>0</CPUUtilization>
+    <FreeMemoryMB>0</FreeMemoryMB>
     <RecentErrorMessages>
       <ErrMsg />
     </RecentErrorMessages>
@@ -14,18 +14,18 @@
   <Task>
     <Tool></Tool>
     <Status></Status>
-    <Duration></Duration>
-    <DurationMinutes></DurationMinutes>
-    <Progress></Progress>
+    <Duration>0</Duration>
+    <DurationMinutes>0</DurationMinutes>
+    <Progress>0</Progress>
     <CurrentOperation />
     <TaskDetails>
       <Status></Status>
-      <Job></Job>
-      <Step></Step>
+      <Job>0</Job>
+      <Step>0</Step>
       <Dataset></Dataset>
       <MostRecentLogMessage />
       <MostRecentJobInfo></MostRecentJobInfo>
-      <SpectrumCount></SpectrumCount>
+      <SpectrumCount>0</SpectrumCount>
     </TaskDetails>
   </Task>
 </Root>

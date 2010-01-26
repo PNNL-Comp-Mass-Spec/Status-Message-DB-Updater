@@ -113,6 +113,7 @@ namespace StatusMessageDBUpdater {
         public bool DoProcess() {
             mainLog.Info("Process started");
             this.doc.SelectSingleNode("//MgrStatus").InnerText = "Starting";
+			   this.doc.SelectSingleNode("//LastUpdate").InnerText = DateTime.Now.ToString();
             this.messageHandler.SendMessage(this.mgrName, this.doc.InnerXml);
 
             while (this.run) {
@@ -130,6 +131,7 @@ namespace StatusMessageDBUpdater {
                 // are we active?
                 if (this.mgrActive) {
                     this.doc.SelectSingleNode("//MgrStatus").InnerText = "Running";
+						  this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
                 } else {
                     mainLog.Info("Manager is inactive");
                     this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
