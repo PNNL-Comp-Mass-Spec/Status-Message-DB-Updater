@@ -30,7 +30,10 @@ namespace StatusMessageDBUpdater {
         }
 
         // post message to database
-        public bool UpdateDatabase(string statusMessages, ref string result) {
+        public bool UpdateDatabase(System.Text.StringBuilder statusMessages, ref string result)
+        {
+            const int DB_TIMEOUT_SECONDS = 90;
+
             SqlCommand sc;
             bool Err = false;
 
@@ -39,10 +42,12 @@ namespace StatusMessageDBUpdater {
                 //
                 sc = new SqlCommand("UpdateManagerAndTaskStatusXML", m_dbCn);
                 sc.CommandType = CommandType.StoredProcedure;
+                sc.CommandTimeout = DB_TIMEOUT_SECONDS;
 
                 // define parameters for command object
                 //
                 SqlParameter myParm;
+
                 //
                 // define parameter for stored procedure's return value
                 //
@@ -56,7 +61,7 @@ namespace StatusMessageDBUpdater {
                 //
                 myParm = sc.Parameters.Add("@parameters", SqlDbType.Text);
                 myParm.Direction = ParameterDirection.Input;
-                myParm.Value = statusMessages;
+                myParm.Value = statusMessages.ToString();
 
                 myParm = sc.Parameters.Add("@result", SqlDbType.VarChar, 4096);
                 myParm.Direction = ParameterDirection.Output;

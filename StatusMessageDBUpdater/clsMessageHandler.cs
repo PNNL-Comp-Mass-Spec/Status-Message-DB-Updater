@@ -177,8 +177,6 @@ namespace StatusMessageDBUpdater {
             if (m_HasConnection) {
                 this.m_Connection.Dispose();
                 this.m_HasConnection = false;
-                string msg = "Message connection closed";
-                ///               clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.INFO, msg);
             }
         }	// End sub
 

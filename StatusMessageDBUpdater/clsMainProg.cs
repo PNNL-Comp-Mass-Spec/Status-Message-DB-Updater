@@ -158,13 +158,14 @@ namespace StatusMessageDBUpdater {
                     dba.Connect();
 
                     // build concatenated XML for all new status messages
-                    string concatMessages = "";
+                    System.Text.StringBuilder concatMessages = new System.Text.StringBuilder(1024);
+
                     foreach (string Processor in Processors) {
                         XmlDocument doc = new XmlDocument();
                         doc.LoadXml(m_ma.statusList[Processor]);
                         XmlNode n = doc.SelectSingleNode("//Root");
                         if (n != null) {
-                            concatMessages += n.OuterXml;
+                            concatMessages.Append(n.OuterXml);
                         }
                     }
                     progMsg = "Size:" + concatMessages.Length.ToString();

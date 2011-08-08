@@ -78,7 +78,7 @@ namespace StatusMessageDBUpdater
 				//Determine if manager is deactivated locally
 				if (!bool.Parse( m_ParamDictionary["MgrActive_Local"]))
 				{
-///					clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogSystem, clsLogTools.LogLevels.WARN, "Manager deactivated locally");
+					// clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogSystem, clsLogTools.LogLevels.WARN, "Manager deactivated locally");
 					m_ErrMsg = "Manager deactivated locally";
 					return false;
 				}
@@ -129,13 +129,14 @@ namespace StatusMessageDBUpdater
 
 			private bool CheckInitialSettings(StringDictionary InpDict)
 			{
-				string MyMsg = null;
+                string MyMsg = string.Empty;
 
 				//Verify manager settings dictionary exists
 				if (InpDict == null)
 				{
 					MyMsg = "clsMgrSettings.CheckInitialSettings(); Manager parameter string dictionary not found";
-///					clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogSystem, clsLogTools.LogLevels.ERROR, MyMsg);
+					// clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogSystem, clsLogTools.LogLevels.ERROR, MyMsg);
+                    Console.WriteLine(MyMsg);
 					return false;
 				}
 
@@ -143,7 +144,8 @@ namespace StatusMessageDBUpdater
 				if (bool.Parse(InpDict["UsingDefaults"]))
 				{
 					MyMsg = "clsMgrSettings.CheckInitialSettings(); Config file problem, default settings being used";
-///					clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogSystem, clsLogTools.LogLevels.ERROR, MyMsg);
+					// clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogSystem, clsLogTools.LogLevels.ERROR, MyMsg);
+                    Console.WriteLine(MyMsg);
 					return false;
 				}
 
@@ -280,12 +282,13 @@ namespace StatusMessageDBUpdater
 			{
 				if (m_MCParamsLoaded)
 				{
-///					clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.ERROR, ErrMsg);
+					// clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogFile, clsLogTools.LogLevels.ERROR, ErrMsg);
 				}
 				else
 				{
-///					clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogSystem, clsLogTools.LogLevels.ERROR, ErrMsg);
+					// clsLogTools.WriteLog(clsLogTools.LoggerTypes.LogSystem, clsLogTools.LogLevels.ERROR, ErrMsg);
 				}
+                Console.WriteLine(ErrMsg);
 			}
 		#endregion
 	}	// End class
