@@ -30,7 +30,7 @@ namespace StatusMessageDBUpdater {
         bool restart = false;
         bool LogStatusToMessageQueue;
         bool mgrActive = true;
-		  private DateTime LastConfigCheck = DateTime.Now;
+		  private DateTime LastConfigCheck = DateTime.UtcNow;
 		  clsMgrSettings mgrSettings = null;
 
         private clsMessageHandler messageHandler = null;
@@ -266,14 +266,14 @@ namespace StatusMessageDBUpdater {
 		  private void TestForConfigReload()
 		  {
 			  DateTime testTime = LastConfigCheck.AddMinutes(double.Parse(mgrSettings.GetParam("CheckForUpdateInterval")));	//Interval is in minutes
-			  DateTime currTime = DateTime.Now;
+			  DateTime currTime = DateTime.UtcNow;
 			  if ( currTime.CompareTo(testTime) > 0)
 			  {
 				  //Time to reload the config
 				  mainLog.Info("Reloading config from MC database");
 				  this.run=false;
 				  this.restart=true;
-				  LastConfigCheck = DateTime.Now;
+				  LastConfigCheck = DateTime.UtcNow;
 			  }
 		  }	// End sub
         #endregion
