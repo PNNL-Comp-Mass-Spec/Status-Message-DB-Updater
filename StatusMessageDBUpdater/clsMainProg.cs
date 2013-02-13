@@ -15,6 +15,10 @@ namespace StatusMessageDBUpdater
 	{
 		private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
 
+		#region "Constants"
+		int TIMER_UPDATE_INTERVAL_MSEC = 1000;
+		#endregion
+
 		#region "Enums"
 		private enum BroadcastCmdType
 		{
@@ -72,7 +76,7 @@ namespace StatusMessageDBUpdater
 			this.mgrName = mgrSettings.GetParam("MgrName");
 			mainLog.Info("Manager:" + this.mgrName);
 
-			m_SendMessageQueueProcessor = new System.Timers.Timer(250);
+			m_SendMessageQueueProcessor = new System.Timers.Timer(TIMER_UPDATE_INTERVAL_MSEC);
 			m_SendMessageQueueProcessor.Elapsed += new System.Timers.ElapsedEventHandler(m_SendMessageQueueProcessor_Elapsed);
 			m_SendMessageQueueProcessor.Start();
 
@@ -187,6 +191,7 @@ namespace StatusMessageDBUpdater
 					timeRemaining -= 5;
 					if (!run) break;
 				} while (timeRemaining > 0);
+
 				if (!run) break;
 
 				// are we active?
@@ -275,11 +280,17 @@ namespace StatusMessageDBUpdater
 				//Test to determine if we need to reload config from db
 				TestForConfigReload();
 			}
+
 			mainLog.Info("Process interrupted, " + "Restart:" + this.restart.ToString());
 			this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
 			this.doc.SelectSingleNode("//Status").InnerText = "Stopped";
 			this.doc.SelectSingleNode("//MgrStatus").InnerText = "Stopped";
 			QueueMessageToSend(this.doc.InnerXml);
+
+			// Sleep for 5 seconds to allow the message to be sent
+			System.DateTime dtContinueTime = System.DateTime.UtcNow.AddMilliseconds(5 * TIMER_UPDATE_INTERVAL_MSEC);
+			while (System.DateTime.UtcNow < dtContinueTime)
+				Thread.Sleep(500);
 
 			this.messageHandler.Dispose();
 			return this.restart;
@@ -362,7 +373,7 @@ namespace StatusMessageDBUpdater
 		void m_SendMessageQueueProcessor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 
-			if (System.Collections.Queue.Synchronized(m_SendMessageQueue).Count > 0)
+			while (System.Collections.Queue.Synchronized(m_SendMessageQueue).Count > 0)
 			{
 				try
 				{
@@ -371,15 +382,22 @@ namespace StatusMessageDBUpdater
 
 					if (!string.IsNullOrEmpty(message))
 					{
-						// Send the message on a separate thread
-						System.Threading.Thread worker = new System.Threading.Thread(() => SendQueuedMessageWork(message));
-
-						worker.Start();
-						// Wait up to 15 seconds
-						if (!worker.Join(15000))
+						if (this.messageHandler == null)
 						{
-							mainLog.Error("Unable to send queued message (timeout after 15 seconds); aborting");
-							worker.Abort();
+							mainLog.Warn("MessageHandler is null; unable to send queued message");
+						}
+						else
+						{
+							// Send the message on a separate thread
+							System.Threading.Thread worker = new System.Threading.Thread(() => SendQueuedMessageWork(message));
+
+							worker.Start();
+							// Wait up to 15 seconds
+							if (!worker.Join(15000))
+							{
+								mainLog.Error("Unable to send queued message (timeout after 15 seconds); aborting");
+								worker.Abort();
+							}
 						}
 					}
 				}
@@ -388,7 +406,7 @@ namespace StatusMessageDBUpdater
 					// Ignore this; likely was handled by a different thread
 				}
 
-			}
+			} // End While
 
 		}
 
