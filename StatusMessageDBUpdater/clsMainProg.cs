@@ -37,6 +37,10 @@ namespace StatusMessageDBUpdater
 		bool restart = false;
 		bool LogStatusToMessageQueue;
 		bool mgrActive = true;
+
+		System.DateTime mStartTime;
+		int mMaxRuntimeHours = 1000;
+
 		private DateTime LastConfigCheck = DateTime.UtcNow;
 		clsMgrSettings mgrSettings = null;
 
@@ -56,7 +60,7 @@ namespace StatusMessageDBUpdater
 		/// Initializes the manager
 		/// </summary>
 		/// <returns>TRUE for success, FALSE for failure</returns>
-		public bool InitMgr()
+		public bool InitMgr(int maxRunTimeHours)
 		{
 			//Get the manager settings
 			mgrSettings = null;
@@ -71,6 +75,12 @@ namespace StatusMessageDBUpdater
 			}
 
 			this.mgrActive = (mgrSettings.GetParam("mgractive") != "False");
+
+			this.mStartTime = System.DateTime.UtcNow;
+			if (maxRunTimeHours < 1)
+				maxRunTimeHours = 1;
+
+			this.mMaxRuntimeHours = maxRunTimeHours;
 
 			// processor name
 			this.mgrName = mgrSettings.GetParam("MgrName");
@@ -191,6 +201,9 @@ namespace StatusMessageDBUpdater
 					timeRemaining -= 5;
 					if (!run) break;
 				} while (timeRemaining > 0);
+
+				if (System.DateTime.UtcNow.Subtract(mStartTime).TotalHours >= mMaxRuntimeHours)
+					break;
 
 				if (!run) break;
 
