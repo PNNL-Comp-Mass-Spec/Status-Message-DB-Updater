@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Xml;
 using log4net;
-using log4net.Config;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
 
@@ -16,19 +10,18 @@ namespace StatusMessageDBUpdater {
         #region "Class variables"
 		const int MAX_RUNTIME_HOURS = 24;
 
-        static clsMainProg m_MainProcess = null;
+        static clsMainProg m_MainProcess;
         static string ErrMsg;
         #endregion
 
         #region "Methods"
 
         static void Main(string[] args) {
-            // setup the logger
-//            XmlConfigurator.Configure(new System.IO.FileInfo("Logging.config"));
+
             mainLog.Info("Started");
 
-            bool restart = false;
-			System.DateTime dtStartTime = System.DateTime.UtcNow;
+            var restart = false;
+			var dtStartTime = DateTime.UtcNow;
 
             do {
                 // Start the main program running
@@ -53,9 +46,9 @@ namespace StatusMessageDBUpdater {
                     System.Diagnostics.Debug.WriteLine(ErrMsg);
                 }
 
-				if (System.DateTime.UtcNow.Subtract(dtStartTime).TotalHours >= MAX_RUNTIME_HOURS)
+				if (DateTime.UtcNow.Subtract(dtStartTime).TotalHours >= MAX_RUNTIME_HOURS)
 				{
-					string message = "Over " + MAX_RUNTIME_HOURS.ToString() + " hours have elapsed; exiting program (helps mitigate a memory leak)";
+					var message = "Over " + MAX_RUNTIME_HOURS.ToString() + " hours have elapsed; exiting program (helps mitigate a memory leak)";
 					System.Diagnostics.Debug.WriteLine(message);
 					Console.WriteLine(message);
 					break;

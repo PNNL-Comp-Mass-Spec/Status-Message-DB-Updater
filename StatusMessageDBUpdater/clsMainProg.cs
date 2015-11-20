@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using System.Collections.Specialized;
 using log4net;
 
 namespace StatusMessageDBUpdater
@@ -16,42 +15,37 @@ namespace StatusMessageDBUpdater
 		private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
 
 		#region "Constants"
-		int TIMER_UPDATE_INTERVAL_MSEC = 1000;
-		#endregion
+	    
+        private const int TIMER_UPDATE_INTERVAL_MSEC = 1000;
 
-		#region "Enums"
-		private enum BroadcastCmdType
-		{
-			Shutdown,
-			ReadConfig,
-			Invalid
-		}
-		#endregion
+		#endregion		
 
 		#region "Class variables"
-		string mgrName = null;
-		private DBAccess dba = null;
-		private int dbUpdateInterval;
-		private int dbUpdateIntervalMS;
-		private bool run = true;
-		bool restart = false;
-		bool LogStatusToMessageQueue;
-		bool mgrActive = true;
+		
+        string mMgrName;
+		private DBAccess mDba;
+		private int mDBUpdateIntervalSeconds;
+	    private bool mKeepRunning = true;
+		bool mRestartAfterShutdown;
+		bool mLogStatusToMessageQueue;
+		bool mMgrActive = true;
 
-		System.DateTime mStartTime;
+		DateTime mStartTime;
 		int mMaxRuntimeHours = 1000;
 
-		private DateTime LastConfigCheck = DateTime.UtcNow;
-		clsMgrSettings mgrSettings = null;
+		private DateTime mLastUpdate = DateTime.UtcNow;
 
-		private clsMessageHandler messageHandler = null;
-		private bool m_MsgQueueInitSuccess = false;
+		clsMgrSettings mMgrSettings;
 
-		System.Collections.Queue m_SendMessageQueue = new System.Collections.Queue();
+		private clsMessageHandler mMessageHandler;
+		private bool m_MsgQueueInitSuccess;
+
+	    readonly System.Collections.Queue m_SendMessageQueue = new System.Collections.Queue();
 		private System.Timers.Timer m_SendMessageQueueProcessor;
 
-		private MessageAccumulator m_ma = null;
-		XmlDocument doc = null;
+		private MessageAccumulator mMsgAccumulator;
+		XmlDocument mXmlStatusDocument;
+
 		#endregion
 
 		#region "Methods"
@@ -63,10 +57,10 @@ namespace StatusMessageDBUpdater
 		public bool InitMgr(int maxRunTimeHours)
 		{
 			//Get the manager settings
-			mgrSettings = null;
+			mMgrSettings = null;
 			try
 			{
-				mgrSettings = new clsMgrSettings();
+				mMgrSettings = new clsMgrSettings(mainLog);
 				mainLog.Info("Read manager settings from Manager Control Database");
 			}
 			catch
@@ -74,46 +68,48 @@ namespace StatusMessageDBUpdater
 				return false; //Failures are logged by clsMgrSettings to local emergency log file
 			}
 
-			this.mgrActive = (mgrSettings.GetParam("mgractive") != "False");
+			mMgrActive = (mMgrSettings.GetParam("mgractive") != "False");
 
-			this.mStartTime = System.DateTime.UtcNow;
+			mStartTime = DateTime.UtcNow;
 			if (maxRunTimeHours < 1)
 				maxRunTimeHours = 1;
 
-			this.mMaxRuntimeHours = maxRunTimeHours;
+			mMaxRuntimeHours = maxRunTimeHours;
 
 			// processor name
-			this.mgrName = mgrSettings.GetParam("MgrName");
-			mainLog.Info("Manager:" + this.mgrName);
+			mMgrName = mMgrSettings.GetParam("MgrName");
+			mainLog.Info("Manager:" + mMgrName);
 
 			m_SendMessageQueueProcessor = new System.Timers.Timer(TIMER_UPDATE_INTERVAL_MSEC);
-			m_SendMessageQueueProcessor.Elapsed += new System.Timers.ElapsedEventHandler(m_SendMessageQueueProcessor_Elapsed);
+			m_SendMessageQueueProcessor.Elapsed += m_SendMessageQueueProcessor_Elapsed;
 			m_SendMessageQueueProcessor.Start();
 
 			// status message skeleton
-			this.doc = new XmlDocument();
-			FileInfo fi = new FileInfo(Application.ExecutablePath);
-			this.doc.Load(System.IO.Path.Combine(fi.DirectoryName, "status_template.xml"));
-			this.doc.SelectSingleNode("//MgrName").InnerText = this.mgrName;
-			this.doc.SelectSingleNode("//LastStartTime").InnerText = System.DateTime.Now.ToString();
-			this.doc.SelectSingleNode("//MgrStatus").InnerText = "";
+			mXmlStatusDocument = new XmlDocument();
+			var fi = new FileInfo(Application.ExecutablePath);
+			mXmlStatusDocument.Load(Path.Combine(fi.DirectoryName, "status_template.xml"));
+			mXmlStatusDocument.SelectSingleNode("//MgrName").InnerText = mMgrName;
+			mXmlStatusDocument.SelectSingleNode("//LastStartTime").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
+			mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "";
 
 			//---- initialize the connection parameter fields ----
-			string messageBrokerURL = mgrSettings.GetParam("MessageQueueURI");
-			string messageTopicName = mgrSettings.GetParam("StatusMsgIncomingTopic");
-			string monitorTopicName = mgrSettings.GetParam("MessageQueueTopicMgrStatus"); // topic to send
-			string brodcastTopicName = mgrSettings.GetParam("BroadcastQueueTopic");
-			this.LogStatusToMessageQueue = (mgrSettings.GetParam("LogStatusToMessageQueue") == "True");
+			var messageBrokerURL = mMgrSettings.GetParam("MessageQueueURI");
+			var messageTopicName = mMgrSettings.GetParam("StatusMsgIncomingTopic");
+			var monitorTopicName = mMgrSettings.GetParam("MessageQueueTopicMgrStatus"); // topic to send
+			var brodcastTopicName = mMgrSettings.GetParam("BroadcastQueueTopic");
+			mLogStatusToMessageQueue = (mMgrSettings.GetParam("LogStatusToMessageQueue") == "True");
 
-			this.messageHandler = new clsMessageHandler();
-			this.messageHandler.MgrName = mgrName;
-			this.messageHandler.BrokerUri = messageBrokerURL;
-			this.messageHandler.InputStatusTopicName = messageTopicName;
-			this.messageHandler.OutputStatusTopicName = monitorTopicName;
-			this.messageHandler.BroadcastTopicName = brodcastTopicName;
+		    mMessageHandler = new clsMessageHandler
+		    {
+		        MgrName = mMgrName,
+		        BrokerUri = messageBrokerURL,
+		        InputStatusTopicName = messageTopicName,
+		        OutputStatusTopicName = monitorTopicName,
+		        BroadcastTopicName = brodcastTopicName
+		    };
 
 
-			// Initialize the message queue
+		    // Initialize the message queue
 			// Start this in a separate thread so that we can abort the initialization if necessary
 			if (!InitializeMessageQueue())
 			{
@@ -121,19 +117,18 @@ namespace StatusMessageDBUpdater
 			}
 
 			// make a new processor message accumulator and start it running
-			this.m_ma = new MessageAccumulator();
+            mMsgAccumulator = new MessageAccumulator();
 
-			this.messageHandler.InputMessageReceived += this.m_ma.subscriber_OnMessageReceived;
-			this.messageHandler.BroadcastReceived += this.OnMsgHandler_BroadcastReceived;
+            mMessageHandler.InputMessageReceived += mMsgAccumulator.subscriber_OnMessageReceived;
+			mMessageHandler.BroadcastReceived += OnMsgHandler_BroadcastReceived;
 
 			//---- seconds between database updates ----
-			string interval = mgrSettings.GetParam("StatusMsgDBUpdateInterval");
-			this.dbUpdateInterval = int.Parse(interval);
-			this.dbUpdateIntervalMS = 1000 * this.dbUpdateInterval;
+			var interval = mMgrSettings.GetParam("StatusMsgDBUpdateInterval", "30");
+			mDBUpdateIntervalSeconds = int.Parse(interval);
 
-			// create a new database access object
-			string dbConnStr = mgrSettings.GetParam("connectionstring");
-			this.dba = new DBAccess(dbConnStr);
+		    // create a new database access object
+			var dbConnStr = mMgrSettings.GetParam("connectionstring");
+			mDba = new DBAccess(dbConnStr);
 
 			//---- Connect message handler events ----
 
@@ -144,7 +139,7 @@ namespace StatusMessageDBUpdater
 		private bool InitializeMessageQueue()
 		{
 
-			System.Threading.Thread worker = new System.Threading.Thread(InitializeMessageQueueWork);
+			var worker = new System.Threading.Thread(InitializeMessageQueueWork);
 			worker.Start();
 
 			// Wait a maximum of 15 seconds
@@ -152,7 +147,7 @@ namespace StatusMessageDBUpdater
 			{
 				worker.Abort();
 				m_MsgQueueInitSuccess = false;
-				string errMessage = "Unable to initialize the message queue (timeout after 15 seconds); " + messageHandler.BrokerUri;
+				var errMessage = "Unable to initialize the message queue (timeout after 15 seconds); " + mMessageHandler.BrokerUri;
 				mainLog.Error(errMessage);
 				Console.WriteLine(errMessage);
 			}
@@ -163,7 +158,7 @@ namespace StatusMessageDBUpdater
 		private void InitializeMessageQueueWork()
 		{
 
-			if (!this.messageHandler.Init())
+			if (!mMessageHandler.Init())
 			{
 				Console.WriteLine("Message handler init error");
 				m_MsgQueueInitSuccess = false;
@@ -184,42 +179,44 @@ namespace StatusMessageDBUpdater
 		public bool DoProcess()
 		{
 			mainLog.Info("Process started");
-			this.doc.SelectSingleNode("//MgrStatus").InnerText = "Starting";
-			this.doc.SelectSingleNode("//LastUpdate").InnerText = DateTime.Now.ToString();
+			mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "Starting";
+			mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = DateTime.Now.ToString(CultureInfo.InvariantCulture);
 
-			QueueMessageToSend(this.doc.InnerXml);
+			QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
-			while (this.run)
+			while (mKeepRunning)
 			{
 
 				// sleep for 5 seconds, wake up and count down
 				// and see if we are supposed to stop or proceed
-				int timeRemaining = this.dbUpdateInterval;
+				var timeRemaining = mDBUpdateIntervalSeconds;
 				do
 				{
 					Thread.Sleep(5000);
 					timeRemaining -= 5;
-					if (!run) break;
+					if (!mKeepRunning) 
+                        break;
 				} while (timeRemaining > 0);
 
 				if (System.DateTime.UtcNow.Subtract(mStartTime).TotalHours >= mMaxRuntimeHours)
 					break;
 
-				if (!run) break;
+				if (!mKeepRunning) 
+                    break;
 
 				// are we active?
-				if (this.mgrActive)
+				if (mMgrActive)
 				{
-					this.doc.SelectSingleNode("//MgrStatus").InnerText = "Running";
-					this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
+					mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "Running";
+					mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
 				}
 				else
 				{
 					mainLog.Info("Manager is inactive");
-					this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
-					this.doc.SelectSingleNode("//Status").InnerText = "Inactive";
-					this.doc.SelectSingleNode("//MgrStatus").InnerText = "Inactive";
-					QueueMessageToSend(this.doc.InnerXml);
+					mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
+					mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Inactive";
+					mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "Inactive";
+					QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
 					//Test to determine if we need to reload config from db
 					TestForConfigReload();
@@ -229,26 +226,25 @@ namespace StatusMessageDBUpdater
 				// from the message accumulator, get list of processors 
 				// that have received messages since the last refresh and
 				// reset the list in the accumulator
-				string[] Processors = m_ma.changedList.Keys.ToArray();
-				m_ma.changedList.Clear();
-				int msgCount = m_ma.msgCount;
-				m_ma.msgCount = 0;
+                var Processors = mMsgAccumulator.changedList.Keys.ToArray();
+                mMsgAccumulator.changedList.Clear();
+                mMsgAccumulator.msgCount = 0;
 
-				string progMsg = "MsgDB program updated " + Processors.Length.ToString() + " at " + DateTime.Now.ToString();
+				var progMsg = "MsgDB program updated " + Processors.Length + " at " + DateTime.Now;
 				mainLog.Info(progMsg);
 
 				try
 				{
-					dba.Connect();
+					mDba.Connect();
 
 					// build concatenated XML for all new status messages
-					System.Text.StringBuilder concatMessages = new System.Text.StringBuilder(1024);
+					var concatMessages = new System.Text.StringBuilder(1024);
 
-					foreach (string Processor in Processors)
+					foreach (var Processor in Processors)
 					{
-						XmlDocument doc = new XmlDocument();
-						doc.LoadXml(m_ma.statusList[Processor]);
-						XmlNode n = doc.SelectSingleNode("//Root");
+						var doc = new XmlDocument();
+                        doc.LoadXml(mMsgAccumulator.statusList[Processor]);
+						var n = doc.SelectSingleNode("//Root");
 						if (n != null)
 						{
 							concatMessages.Append(n.OuterXml);
@@ -258,55 +254,57 @@ namespace StatusMessageDBUpdater
 					mainLog.Info(progMsg);
 
 					// update the database
-					string message = "";
-					bool err = dba.UpdateDatabase(concatMessages, ref message);
+					var message = "";
+					var err = mDba.UpdateDatabase(concatMessages, ref message);
 
 					// send status
-					if (this.LogStatusToMessageQueue)
+					if (mLogStatusToMessageQueue)
 					{
-						this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
+						mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
 						if (err)
 						{
 							mainLog.Error(message);
-							this.doc.SelectSingleNode("//Status").InnerText = "Error";
-							this.doc.SelectSingleNode("//ErrMsg").InnerText = message;
-							QueueMessageToSend(this.doc.InnerXml);
+							mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Error";
+							mXmlStatusDocument.SelectSingleNode("//ErrMsg").InnerText = message;
+							QueueMessageToSend(mXmlStatusDocument.InnerXml);
 						}
 						else
 						{
 							mainLog.Info("Result:" + message);
-							this.doc.SelectSingleNode("//Status").InnerText = "Good";
-							this.doc.SelectSingleNode("//MostRecentLogMessage").InnerText = message;
-							QueueMessageToSend(this.doc.InnerXml);
+							mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Good";
+							mXmlStatusDocument.SelectSingleNode("//MostRecentLogMessage").InnerText = message;
+							QueueMessageToSend(mXmlStatusDocument.InnerXml);
 						}
 					}
 				}
 				catch (Exception e)
 				{
 					mainLog.Error(e.Message);
-					this.doc.SelectSingleNode("//Status").InnerText = "Exception";
-					this.doc.SelectSingleNode("//ErrMsg").InnerText = "message";
-					QueueMessageToSend(this.doc.InnerXml);
+					mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Exception";
+					mXmlStatusDocument.SelectSingleNode("//ErrMsg").InnerText = "message";
+					QueueMessageToSend(mXmlStatusDocument.InnerXml);
 				}
-				dba.Disconnect();
+				mDba.Disconnect();
 
 				//Test to determine if we need to reload config from db
 				TestForConfigReload();
 			}
 
-			mainLog.Info("Process interrupted, " + "Restart:" + this.restart.ToString());
-			this.doc.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString();
-			this.doc.SelectSingleNode("//Status").InnerText = "Stopped";
-			this.doc.SelectSingleNode("//MgrStatus").InnerText = "Stopped";
-			QueueMessageToSend(this.doc.InnerXml);
+            if (!mRestartAfterShutdown)
+			    mainLog.Info("Process interrupted, " + "Restart:" + mRestartAfterShutdown);
+
+			mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
+			mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Stopped";
+			mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "Stopped";
+			QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
 			// Sleep for 5 seconds to allow the message to be sent
-			System.DateTime dtContinueTime = System.DateTime.UtcNow.AddMilliseconds(5 * TIMER_UPDATE_INTERVAL_MSEC);
+			var dtContinueTime = System.DateTime.UtcNow.AddMilliseconds(5 * TIMER_UPDATE_INTERVAL_MSEC);
 			while (System.DateTime.UtcNow < dtContinueTime)
 				Thread.Sleep(500);
 
-			this.messageHandler.Dispose();
-			return this.restart;
+			mMessageHandler.Dispose();
+			return mRestartAfterShutdown;
 		}
 
 		/// <summary>
@@ -319,11 +317,11 @@ namespace StatusMessageDBUpdater
 
 			// parse command XML and get command text and
 			// list of machines that command applies to
-			List<string> MachineList = new List<string>();
+			var MachineList = new List<string>();
 			string MachCmd;
 			try
 			{
-				XmlDocument doc = new XmlDocument();
+				var doc = new XmlDocument();
 				doc.LoadXml(cmdText);
 				foreach (XmlNode xn in doc.SelectNodes("//Managers/*"))
 				{
@@ -338,7 +336,7 @@ namespace StatusMessageDBUpdater
 			}
 
 			// Determine if the message applies to this machine
-			if (!MachineList.Contains(this.mgrName))
+			if (!MachineList.Contains(mMgrName))
 			{
 				// Received command doesn't apply to this manager
 				mainLog.Debug("Received command not applicable to this manager instance");
@@ -350,13 +348,13 @@ namespace StatusMessageDBUpdater
 			{
 				case "shutdown":
 					mainLog.Info("Shutdown message received");
-					this.run = false;
-					this.restart = false;
+					mKeepRunning = false;
+					mRestartAfterShutdown = false;
 					break;
 				case "readconfig":
 					mainLog.Info("Reload config message received");
-					this.run = false;
-					this.restart = true;
+					mKeepRunning = false;
+					mRestartAfterShutdown = true;
 					break;
 				default:
 					mainLog.Warn("Invalid broadcast command received: " + cmdText);
@@ -371,17 +369,27 @@ namespace StatusMessageDBUpdater
 
 		private void TestForConfigReload()
 		{
-			DateTime testTime = LastConfigCheck.AddMinutes(double.Parse(mgrSettings.GetParam("CheckForUpdateInterval")));	//Interval is in minutes
-			DateTime currTime = DateTime.UtcNow;
-			if (currTime.CompareTo(testTime) > 0)
-			{
-				//Time to reload the config
-				mainLog.Info("Reloading config from MC database");
-				this.run = false;
-				this.restart = true;
-				LastConfigCheck = DateTime.UtcNow;
-			}
-		}	// End sub
+            // The update interval comes from file StatusMessageDBUpdater.exe.config
+            // The default is 10 minutes
+		    var updateIntervalText = mMgrSettings.GetParam("CheckForUpdateInterval", "10");
+		    double updateIntervalMinutes;
+            if (!double.TryParse(updateIntervalText, out updateIntervalMinutes))
+                updateIntervalMinutes = 10;
+
+		    var testTime = mLastUpdate.AddMinutes(updateIntervalMinutes);
+			var currTime = DateTime.UtcNow;
+
+		    if (currTime.CompareTo(testTime) <= 0)
+		    {
+		        return;
+		    }
+
+		    // Time to reload the config
+		    mainLog.Info("Reloading config from MC database");
+		    mKeepRunning = false;
+		    mRestartAfterShutdown = true;
+		    mLastUpdate = DateTime.UtcNow;
+		}
 
 		void m_SendMessageQueueProcessor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
@@ -390,29 +398,30 @@ namespace StatusMessageDBUpdater
 			{
 				try
 				{
-					string message;
-					message = (string)System.Collections.Queue.Synchronized(m_SendMessageQueue).Dequeue();
+				    var message = (string)System.Collections.Queue.Synchronized(m_SendMessageQueue).Dequeue();
 
-					if (!string.IsNullOrEmpty(message))
-					{
-						if (this.messageHandler == null)
-						{
-							mainLog.Warn("MessageHandler is null; unable to send queued message");
-						}
-						else
-						{
-							// Send the message on a separate thread
-							System.Threading.Thread worker = new System.Threading.Thread(() => SendQueuedMessageWork(message));
+				    if (string.IsNullOrEmpty(message))
+				    {
+				        continue;
+				    }
 
-							worker.Start();
-							// Wait up to 15 seconds
-							if (!worker.Join(15000))
-							{
-								mainLog.Error("Unable to send queued message (timeout after 15 seconds); aborting");
-								worker.Abort();
-							}
-						}
-					}
+				    if (mMessageHandler == null)
+				    {
+				        mainLog.Warn("MessageHandler is null; unable to send queued message");
+				    }
+				    else
+				    {
+				        // Send the message on a separate thread
+				        var worker = new System.Threading.Thread(() => SendQueuedMessageWork(message));
+
+				        worker.Start();
+				        // Wait up to 15 seconds
+				        if (!worker.Join(15000))
+				        {
+				            mainLog.Error("Unable to send queued message (timeout after 15 seconds); aborting");
+				            worker.Abort();
+				        }
+				    }
 				}
 				catch
 				{
@@ -426,11 +435,10 @@ namespace StatusMessageDBUpdater
 
 		private void SendQueuedMessageWork(string message)
 		{
-			if (this.messageHandler != null)
-				this.messageHandler.SendMessage(this.mgrName, message);
-
-			return;
+			if (mMessageHandler != null)
+				mMessageHandler.SendMessage(mMgrName, message);
 		}
+
 		#endregion
 	} // end class
 } // end namespace
