@@ -440,5 +440,5 @@ namespace StatusMessageDBUpdater
         }
 
         #endregion
-    } // end class
-} // end namespace
+    } 
+}

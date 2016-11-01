@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Apache.NMS;
 using Apache.NMS.ActiveMQ;
 using Apache.NMS.ActiveMQ.Commands;
@@ -100,7 +97,7 @@ namespace StatusMessageDBUpdater
                 mainLog.Error("Exception creating message broker connection to " + m_BrokerUri);
                 mainLog.Error(ex.Message);
             }
-        }	// End sub
+        }
 
         /// <summary>
         /// Create the message broker communication objects
@@ -138,7 +135,7 @@ namespace StatusMessageDBUpdater
                 DestroyConnection();
                 return false;
             }
-        }	// End sub
+        }
 
         /// <summary>
         /// Command listener function. Received commands will cause this to be called
@@ -173,7 +170,7 @@ namespace StatusMessageDBUpdater
             {
                 mainLog.Debug("clsMessageHandler().OnBroadcastReceived: No event handlers assigned");
             }
-        }	// End sub
+        }
 
         /// <summary>
         /// Sends a status message
@@ -198,7 +195,7 @@ namespace StatusMessageDBUpdater
             {
                 throw new ObjectDisposedException(this.GetType().FullName);
             }
-        }	// End sub
+        }
         #endregion
 
         #region "Cleanup"
@@ -212,7 +209,7 @@ namespace StatusMessageDBUpdater
                 this.m_Connection.Dispose();
                 this.m_HasConnection = false;
             }
-        }	// End sub
+        }
 
         /// <summary>
         /// Implements IDisposable interface
@@ -224,8 +221,8 @@ namespace StatusMessageDBUpdater
                 this.DestroyConnection();
                 this.m_IsDisposed = true;
             }
-        }	// End sub
+        }
 
         #endregion
-    }	// End class    }
+    }
 }

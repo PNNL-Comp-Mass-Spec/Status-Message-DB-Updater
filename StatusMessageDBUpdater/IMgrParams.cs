@@ -5,12 +5,7 @@
 // Copyright 2009, Battelle Memorial Institute
 // Created 06/16/2009
 //
-// Last modified 06/16/2009
 //*********************************************************************************************************
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace StatusMessageDBUpdater
 {
@@ -23,5 +18,5 @@ namespace StatusMessageDBUpdater
 		string GetParam(string ItemKey);
 		void SetParam(string ItemKey, string ItemValue);
 
-	}	// End interface
-}	// End namespace
+	}
+}
