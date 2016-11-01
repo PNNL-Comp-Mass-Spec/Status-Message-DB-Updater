@@ -96,6 +96,7 @@ namespace StatusMessageDBUpdater
                 // but we don't have to do anything specific at this point (except eat the exception)
                 mainLog.Error("Exception creating message broker connection to " + m_BrokerUri);
                 mainLog.Error(ex.Message);
+                mainLog.Error(PRISM.clsStackTraceFormatter.GetExceptionStackTrace(ex));
             }
         }
 
