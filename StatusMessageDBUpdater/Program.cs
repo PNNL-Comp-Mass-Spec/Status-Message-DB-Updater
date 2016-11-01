@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using log4net;
 
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
@@ -8,7 +8,7 @@ namespace StatusMessageDBUpdater {
         private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
 
         #region "Class variables"
-		const int MAX_RUNTIME_HOURS = 24;
+        const int MAX_RUNTIME_HOURS = 24;
 
         static clsMainProg m_MainProcess;
         static string ErrMsg;
@@ -21,15 +21,15 @@ namespace StatusMessageDBUpdater {
             mainLog.Info("Started");
 
             var restart = false;
-			var dtStartTime = DateTime.UtcNow;
+            var dtStartTime = DateTime.UtcNow;
 
             do {
                 // Start the main program running
                 try {
                     if (m_MainProcess == null) {
                         m_MainProcess = new clsMainProg();
-						if (!m_MainProcess.InitMgr(MAX_RUNTIME_HOURS))
-						{
+                        if (!m_MainProcess.InitMgr(MAX_RUNTIME_HOURS))
+                        {
                             return;
                         }
                         restart = m_MainProcess.DoProcess();
@@ -46,13 +46,13 @@ namespace StatusMessageDBUpdater {
                     System.Diagnostics.Debug.WriteLine(ErrMsg);
                 }
 
-				if (DateTime.UtcNow.Subtract(dtStartTime).TotalHours >= MAX_RUNTIME_HOURS)
-				{
-					var message = "Over " + MAX_RUNTIME_HOURS.ToString() + " hours have elapsed; exiting program (helps mitigate a memory leak)";
-					System.Diagnostics.Debug.WriteLine(message);
-					Console.WriteLine(message);
-					break;
-				}
+                if (DateTime.UtcNow.Subtract(dtStartTime).TotalHours >= MAX_RUNTIME_HOURS)
+                {
+                    var message = "Over " + MAX_RUNTIME_HOURS.ToString() + " hours have elapsed; exiting program (helps mitigate a memory leak)";
+                    System.Diagnostics.Debug.WriteLine(message);
+                    Console.WriteLine(message);
+                    break;
+                }
 
             } while(restart);
 
