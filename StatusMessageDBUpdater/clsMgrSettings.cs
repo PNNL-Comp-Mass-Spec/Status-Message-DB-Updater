@@ -98,7 +98,7 @@ namespace StatusMessageDBUpdater
             }
 
             //Get remaining settings from database
-            if (!LoadMgrSettingsFromDB(ref m_ParamDictionary))
+            if (!LoadMgrSettingsFromDB())
             {
                 //Error logging handled by LoadMgrSettingsFromDB
                 return false;
@@ -212,21 +212,10 @@ namespace StatusMessageDBUpdater
         public bool LoadMgrSettingsFromDB()
         {
             const bool logConnectionErrors = true;
-            return LoadMgrSettingsFromDB(ref m_ParamDictionary, logConnectionErrors);
+            return LoadMgrSettingsFromDB( logConnectionErrors);
         }
 
         public bool LoadMgrSettingsFromDB(bool logConnectionErrors)
-        {
-            return LoadMgrSettingsFromDB(ref m_ParamDictionary, logConnectionErrors);
-        }
-
-        public bool LoadMgrSettingsFromDB(ref Dictionary<string, string> MgrSettingsDict)
-        {
-            const bool logConnectionErrors = true;
-            return LoadMgrSettingsFromDB(ref m_ParamDictionary, logConnectionErrors);
-        }
-
-        public bool LoadMgrSettingsFromDB(ref Dictionary<string, string> MgrSettingsDict, bool logConnectionErrors)
         {
             //Requests manager parameters from database. Input string specifies view to use. Performs retries if necessary.
 
