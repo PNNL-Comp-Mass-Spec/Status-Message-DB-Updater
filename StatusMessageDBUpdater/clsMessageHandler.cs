@@ -78,9 +78,14 @@ namespace StatusMessageDBUpdater
             if (m_HasConnection) return;
             try
             {
+                // Broker URI should be in the form
+                // tcp://Proto-7.pnl.gov:61616
+                //  or
+                // failover:(tcp://Proto-7.pnl.gov:61616,tcp://proto-4.pnl.gov:61616)
+
                 IConnectionFactory connectionFactory = new ConnectionFactory(this.m_BrokerUri);
                 this.m_Connection = connectionFactory.CreateConnection();
-                this.m_Connection.RequestTimeout = new System.TimeSpan(0, 0, 15);
+                this.m_Connection.RequestTimeout = new System.TimeSpan(0, 0, 20);
                 this.m_Connection.Start();
 
                 this.m_HasConnection = true;
