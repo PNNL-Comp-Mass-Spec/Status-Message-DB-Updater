@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace StatusMessageDBUpdater
         private clsMessageHandler mMessageHandler;
         private bool m_MsgQueueInitSuccess;
 
-        readonly System.Collections.Queue m_SendMessageQueue = new System.Collections.Queue();
+        readonly Queue m_SendMessageQueue = new Queue();
         private System.Timers.Timer m_SendMessageQueueProcessor;
 
         private MessageAccumulator mMsgAccumulator;
@@ -125,7 +126,6 @@ namespace StatusMessageDBUpdater
                 BroadcastTopicName = brodcastTopicName
             };
 
-
             // Initialize the message queue
             // Start this in a separate thread so that we can abort the initialization if necessary
             if (!InitializeMessageQueue())
@@ -156,7 +156,7 @@ namespace StatusMessageDBUpdater
         private bool InitializeMessageQueue()
         {
 
-            var worker = new System.Threading.Thread(InitializeMessageQueueWork);
+            var worker = new Thread(InitializeMessageQueueWork);
             worker.Start();
 
             // Wait a maximum of 15 seconds
@@ -185,7 +185,6 @@ namespace StatusMessageDBUpdater
                 m_MsgQueueInitSuccess = true;
             }
 
-            return;
         }
 
         /// <summary>
@@ -215,7 +214,7 @@ namespace StatusMessageDBUpdater
                         break;
                 } while (timeRemaining > 0);
 
-                if (System.DateTime.UtcNow.Subtract(mStartTime).TotalHours >= mMaxRuntimeHours)
+                if (DateTime.UtcNow.Subtract(mStartTime).TotalHours >= mMaxRuntimeHours)
                     break;
 
                 if (!mKeepRunning) 
@@ -269,8 +268,8 @@ namespace StatusMessageDBUpdater
                     mainLog.Info(progMsg);
 
                     // update the database
-                    var message = "";
-                    var err = mDba.UpdateDatabase(concatMessages, ref message);
+                    string message;
+                    var err = mDba.UpdateDatabase(concatMessages, out message);
 
                     // send status
                     if (mLogStatusToMessageQueue)
@@ -312,8 +311,8 @@ namespace StatusMessageDBUpdater
             QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
             // Sleep for 5 seconds to allow the message to be sent
-            var dtContinueTime = System.DateTime.UtcNow.AddMilliseconds(5 * TIMER_UPDATE_INTERVAL_MSEC);
-            while (System.DateTime.UtcNow < dtContinueTime)
+            var dtContinueTime = DateTime.UtcNow.AddMilliseconds(5 * TIMER_UPDATE_INTERVAL_MSEC);
+            while (DateTime.UtcNow < dtContinueTime)
                 Thread.Sleep(500);
 
             mMessageHandler.Dispose();
@@ -384,7 +383,7 @@ namespace StatusMessageDBUpdater
 
         private void QueueMessageToSend(string message)
         {
-            System.Collections.Queue.Synchronized(m_SendMessageQueue).Enqueue(message);
+            Queue.Synchronized(m_SendMessageQueue).Enqueue(message);
         }
 
         private void TestForConfigReload()
@@ -414,11 +413,11 @@ namespace StatusMessageDBUpdater
         void m_SendMessageQueueProcessor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
 
-            while (System.Collections.Queue.Synchronized(m_SendMessageQueue).Count > 0)
+            while (Queue.Synchronized(m_SendMessageQueue).Count > 0)
             {
                 try
                 {
-                    var message = (string)System.Collections.Queue.Synchronized(m_SendMessageQueue).Dequeue();
+                    var message = (string)Queue.Synchronized(m_SendMessageQueue).Dequeue();
 
                     if (string.IsNullOrEmpty(message))
                     {
@@ -432,7 +431,7 @@ namespace StatusMessageDBUpdater
                     else
                     {
                         // Send the message on a separate thread
-                        var worker = new System.Threading.Thread(() => SendQueuedMessageWork(message));
+                        var worker = new Thread(() => SendQueuedMessageWork(message));
 
                         worker.Start();
                         // Wait up to 15 seconds
@@ -451,7 +450,6 @@ namespace StatusMessageDBUpdater
             } // End While
 
         }
-
 
         private void SendQueuedMessageWork(string message)
         {
