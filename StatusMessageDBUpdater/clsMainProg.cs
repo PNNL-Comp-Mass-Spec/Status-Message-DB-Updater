@@ -179,8 +179,8 @@ namespace StatusMessageDBUpdater
         public bool DoProcess()
         {
             mainLog.Info("Process started");
-            mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "Starting";
-            mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = DateTime.Now.ToString(CultureInfo.InvariantCulture);
+
+            UpdateManagerStatus("Starting");
 
             QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
@@ -207,15 +207,13 @@ namespace StatusMessageDBUpdater
                 // are we active?
                 if (mMgrActive)
                 {
-                    mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "Running";
-                    mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
+                    UpdateManagerStatus("Running");
                 }
                 else
                 {
                     mainLog.Info("Manager is inactive");
-                    mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
-                    mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Inactive";
-                    mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "Inactive";
+                    UpdateManagerStatus("Inactive");
+
                     QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
                     //Test to determine if we need to reload config from db
@@ -260,19 +258,19 @@ namespace StatusMessageDBUpdater
                     // send status
                     if (mLogStatusToMessageQueue)
                     {
-                        mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
+                        UpdateXmlNode(mXmlStatusDocument, "//LastUpdate", DateTime.Now.ToString(CultureInfo.InvariantCulture));
                         if (err)
                         {
                             mainLog.Error(message);
-                            mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Error";
-                            mXmlStatusDocument.SelectSingleNode("//ErrMsg").InnerText = message;
+                            UpdateXmlNode(mXmlStatusDocument, "//Status", "Error");
+                            UpdateXmlNode(mXmlStatusDocument, "//ErrMsg", message);
                             QueueMessageToSend(mXmlStatusDocument.InnerXml);
                         }
                         else
                         {
-                            mainLog.Info("Result:" + message);
-                            mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Good";
-                            mXmlStatusDocument.SelectSingleNode("//MostRecentLogMessage").InnerText = message;
+                            mainLog.Info("Result: " + message);
+                            UpdateXmlNode(mXmlStatusDocument, "//Status", "Good");
+                            UpdateXmlNode(mXmlStatusDocument, "//MostRecentLogMessage", message);                            
                             QueueMessageToSend(mXmlStatusDocument.InnerXml);
                         }
                     }
@@ -280,8 +278,8 @@ namespace StatusMessageDBUpdater
                 catch (Exception e)
                 {
                     mainLog.Error(e.Message);
-                    mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Exception";
-                    mXmlStatusDocument.SelectSingleNode("//ErrMsg").InnerText = "message";
+                    UpdateXmlNode(mXmlStatusDocument, "//Status", "Exception");
+                    UpdateXmlNode(mXmlStatusDocument, "//ErrMsg", e.Message);
                     QueueMessageToSend(mXmlStatusDocument.InnerXml);
                 }
                 mDba.Disconnect();
@@ -293,9 +291,7 @@ namespace StatusMessageDBUpdater
             if (!mRestartAfterShutdown)
                 mainLog.Info("Process interrupted, " + "Restart:" + mRestartAfterShutdown);
 
-            mXmlStatusDocument.SelectSingleNode("//LastUpdate").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
-            mXmlStatusDocument.SelectSingleNode("//Status").InnerText = "Stopped";
-            mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "Stopped";
+            UpdateManagerStatus("Stopped");
             QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
             // Sleep for 5 seconds to allow the message to be sent
@@ -317,17 +313,24 @@ namespace StatusMessageDBUpdater
 
             // parse command XML and get command text and
             // list of machines that command applies to
-            var MachineList = new List<string>();
-            string MachCmd;
+            var machineList = new List<string>();
+            var machineCommand = "<Undefined>";
+
             try
             {
                 var doc = new XmlDocument();
                 doc.LoadXml(cmdText);
-                foreach (XmlNode xn in doc.SelectNodes("//Managers/*"))
+                var managerNodes = doc.SelectNodes("//Managers/*");
+                if (managerNodes != null)
                 {
-                    MachineList.Add(xn.InnerText);
+                    foreach (XmlNode xn in managerNodes)
+                    {
+                        machineList.Add(xn.InnerText);
+                    }
                 }
-                MachCmd = doc.SelectSingleNode("//Message").InnerText;
+                var messageNode = doc.SelectSingleNode("//Message");
+                if (messageNode != null)
+                    machineCommand = messageNode.InnerText;
             }
             catch (Exception ex)
             {
@@ -336,7 +339,7 @@ namespace StatusMessageDBUpdater
             }
 
             // Determine if the message applies to this machine
-            if (!MachineList.Contains(mMgrName))
+            if (!machineList.Contains(mMgrName))
             {
                 // Received command doesn't apply to this manager
                 mainLog.Debug("Received command not applicable to this manager instance");
@@ -344,7 +347,7 @@ namespace StatusMessageDBUpdater
             }
 
             // Get the command and take appropriate action
-            switch (MachCmd.ToLower())
+            switch (machineCommand.ToLower())
             {
                 case "shutdown":
                     mainLog.Info("Shutdown message received");
@@ -439,6 +442,20 @@ namespace StatusMessageDBUpdater
                 mMessageHandler.SendMessage(mMgrName, message);
         }
 
+        private void UpdateManagerStatus(string managerStatus)
+        {
+            UpdateXmlNode(mXmlStatusDocument, "//MgrStatus", managerStatus);
+            UpdateXmlNode(mXmlStatusDocument, "//Status", managerStatus);
+            UpdateXmlNode(mXmlStatusDocument, "//LastUpdate", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+        }
+
+        private void UpdateXmlNode(XmlDocument statusDocument, string nodeXPath, string newValue)
+        {
+            var selectedNode = statusDocument.SelectSingleNode(nodeXPath);
+            if (selectedNode != null)
+                selectedNode.InnerText = newValue;
+        }
+
         #endregion
-    } 
+    }
 }
