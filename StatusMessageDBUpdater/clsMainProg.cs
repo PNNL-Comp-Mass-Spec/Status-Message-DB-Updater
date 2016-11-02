@@ -86,11 +86,28 @@ namespace StatusMessageDBUpdater
 
             // status message skeleton
             mXmlStatusDocument = new XmlDocument();
-            var fi = new FileInfo(Application.ExecutablePath);
-            mXmlStatusDocument.Load(Path.Combine(fi.DirectoryName, "status_template.xml"));
-            mXmlStatusDocument.SelectSingleNode("//MgrName").InnerText = mMgrName;
-            mXmlStatusDocument.SelectSingleNode("//LastStartTime").InnerText = System.DateTime.Now.ToString(CultureInfo.InvariantCulture);
-            mXmlStatusDocument.SelectSingleNode("//MgrStatus").InnerText = "";
+            var exePath = new FileInfo(Application.ExecutablePath);
+            if (exePath.DirectoryName == null)
+            {
+                var errMessage = "Parent directory for the .exe is null: " + exePath.FullName;
+                Console.WriteLine(errMessage);
+                mainLog.Error(errMessage);
+                return false;
+            }
+
+            var templatePath = new FileInfo(Path.Combine(exePath.DirectoryName, "status_template.xml"));
+            if (!templatePath.Exists)
+            {
+                var errMessage = "Status template file not found: " + templatePath.FullName;
+                Console.WriteLine(errMessage);
+                mainLog.Error(errMessage);                
+            }
+
+            mXmlStatusDocument.Load(templatePath.FullName);
+
+            UpdateXmlNode(mXmlStatusDocument, "//MgrName", mMgrName);
+            UpdateXmlNode(mXmlStatusDocument, "//LastStartTime", DateTime.Now.ToString(CultureInfo.InvariantCulture));
+            UpdateXmlNode(mXmlStatusDocument, "//MgrStatus", "");
 
             //---- initialize the connection parameter fields ----
             var messageBrokerURL = mMgrSettings.GetParam("MessageQueueURI");
