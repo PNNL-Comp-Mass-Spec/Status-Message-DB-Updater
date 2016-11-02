@@ -269,13 +269,13 @@ namespace StatusMessageDBUpdater
 
                     // update the database
                     string message;
-                    var err = mDba.UpdateDatabase(concatMessages, out message);
+                    var success = mDba.UpdateDatabase(concatMessages, out message);
 
                     // send status
                     if (mLogStatusToMessageQueue)
                     {
                         UpdateXmlNode(mXmlStatusDocument, "//LastUpdate", DateTime.Now.ToString(CultureInfo.InvariantCulture));
-                        if (err)
+                        if (!success)
                         {
                             mainLog.Error(message);
                             UpdateXmlNode(mXmlStatusDocument, "//Status", "Error");

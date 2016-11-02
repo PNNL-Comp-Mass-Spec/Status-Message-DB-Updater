@@ -29,7 +29,12 @@ namespace StatusMessageDBUpdater {
             return outcome;
         }
 
-        // post message to database
+        /// <summary>
+        /// Post message to database
+        /// </summary>
+        /// <param name="statusMessages"></param>
+        /// <param name="result"></param>
+        /// <returns>True if success, false if an error</returns>
         public bool UpdateDatabase(StringBuilder statusMessages, out string result)
         {
             const int DB_TIMEOUT_SECONDS = 90;
