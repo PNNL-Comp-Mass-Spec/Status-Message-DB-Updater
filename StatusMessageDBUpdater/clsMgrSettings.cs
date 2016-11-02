@@ -458,27 +458,27 @@ namespace StatusMessageDBUpdater
         /// <summary>
         /// Writes specfied value to an application config file.
         /// </summary>
-        /// <param name="Key">Name for parameter (case sensitive)</param>
-        /// <param name="Value">New value for parameter</param>
+        /// <param name="key">Name for parameter (case sensitive)</param>
+        /// <param name="value">New value for parameter</param>
         /// <returns>TRUE for success; FALSE for error (ErrMsg property contains reason)</returns>
         /// <remarks>This bit of lunacy is needed because MS doesn't supply a means to write to an app config file</remarks>
-        public bool WriteConfigSetting(string Key, string Value)
+        public bool WriteConfigSetting(string key, string value)
         {
 
             m_ErrMsg = "";
 
             //Load the config document
-            var MyDoc = LoadConfigDocument();
-            if (MyDoc == null)
+            var doc = LoadConfigDocument();
+            if (doc == null)
             {
                 //Error message has already been produced by LoadConfigDocument
                 return false;
             }
 
             //Retrieve the settings node
-            var MyNode = MyDoc.SelectSingleNode("//applicationSettings");
+            var appSettingsNode = doc.SelectSingleNode("//applicationSettings");
 
-            if (MyNode == null)
+            if (appSettingsNode == null)
             {
                 m_ErrMsg = "clsMgrSettings.WriteConfigSettings; appSettings node not found";
                 return false;
@@ -486,29 +486,28 @@ namespace StatusMessageDBUpdater
 
             try
             {
-                //Select the eleement containing the value for the specified key containing the key
-                var MyElement = (XmlElement)MyNode.SelectSingleNode(string.Format("//setting[@name='{0}']/value", Key));
-                if (MyElement != null)
+                //Select the element containing the value for the specified key containing the key
+                var matchingElement = (XmlElement)appSettingsNode.SelectSingleNode(string.Format("//setting[@name='{0}']/value", key));
+                if (matchingElement != null)
                 {
                     //Set key to specified value
-                    MyElement.InnerText = Value;
+                    matchingElement.InnerText = value;
                 }
                 else
                 {
                     //Key was not found
-                    m_ErrMsg = "clsMgrSettings.WriteConfigSettings; specified key not found: " + Key;
+                    m_ErrMsg = "clsMgrSettings.WriteConfigSettings; specified key not found: " + key;
                     return false;
                 }
-                MyDoc.Save(GetConfigFilePath());
+                doc.Save(GetConfigFilePath());
                 return true;
             }
             catch (Exception ex)
             {
                 m_ErrMsg = "clsMgrSettings.WriteConfigSettings; Exception updating settings file: " + ex.Message;
                 return false;
-
             }
-        } // End sub
+        }
 
         /// <summary>
         /// Loads an app config file for changing parameters
@@ -518,9 +517,9 @@ namespace StatusMessageDBUpdater
         {
             try
             {
-                var MyDoc = new XmlDocument();
-                MyDoc.Load(GetConfigFilePath());
-                return MyDoc;
+                var doc = new XmlDocument();
+                doc.Load(GetConfigFilePath());
+                return doc;
             }
             catch (Exception ex)
             {

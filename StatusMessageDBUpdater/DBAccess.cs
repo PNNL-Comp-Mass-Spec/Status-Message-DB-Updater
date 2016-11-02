@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Data.SqlClient;
 using System.Data;
 
 namespace StatusMessageDBUpdater {
     class DBAccess {
-        string m_cnStr;
+        readonly string m_cnStr;
         SqlConnection m_dbCn;
 
         // ctor
@@ -18,35 +16,33 @@ namespace StatusMessageDBUpdater {
 
         // open connection
         public bool Connect() {
-            bool outcome = false;
+            var outcome = false;
             try {
                 m_dbCn = new SqlConnection(m_cnStr);
                 m_dbCn.Open();
                 outcome = true;
             }
-            catch (Exception) {
+            catch (Exception ex) {
+                // Connection error
+                Console.WriteLine(ex.Message);
             }
             return outcome;
         }
 
         // post message to database
-        public bool UpdateDatabase(System.Text.StringBuilder statusMessages, ref string result)
+        public bool UpdateDatabase(StringBuilder statusMessages, out string result)
         {
             const int DB_TIMEOUT_SECONDS = 90;
-
-            SqlCommand sc;
-            bool Err = false;
 
             try {
                 // create the command object
                 //
-                sc = new SqlCommand("UpdateManagerAndTaskStatusXML", m_dbCn);
-                sc.CommandType = CommandType.StoredProcedure;
-                sc.CommandTimeout = DB_TIMEOUT_SECONDS;
+                var sc = new SqlCommand("UpdateManagerAndTaskStatusXML", m_dbCn)
+                {
+                    CommandType = CommandType.StoredProcedure,
+                    CommandTimeout = DB_TIMEOUT_SECONDS
+                };
 
-                // define parameters for command object
-                //
-                SqlParameter myParm;
 
                 //
                 // define parameter for stored procedure's return value
@@ -54,7 +50,7 @@ namespace StatusMessageDBUpdater {
                 //
                 // define parameter for stored procedure's return value
                 //
-                myParm = sc.Parameters.Add("@Return", SqlDbType.Int);
+                var myParm = sc.Parameters.Add("@Return", SqlDbType.Int);
                 myParm.Direction = ParameterDirection.ReturnValue;
                 //
                 // define parameters for the stored procedure's arguments
@@ -73,8 +69,7 @@ namespace StatusMessageDBUpdater {
 
                 // get return value
                 //
-                int ret = -1;
-                ret = (int)sc.Parameters["@Return"].Value;
+                var ret = (int)sc.Parameters["@Return"].Value;
 
                 // get values for output parameters
                 //
@@ -82,15 +77,15 @@ namespace StatusMessageDBUpdater {
 
                 // if we made it this far, we succeeded
                 //
-                Err = (ret != 0);
+                if (ret == 0)
+                    return true;;
             }
-            catch (Exception e) {
-                Console.WriteLine(e.Message);
-                result = e.Message;
+            catch (Exception ex) {
+                Console.WriteLine(ex.Message);
+                result = ex.Message;
             }
-            finally {
-            }
-            return Err;
+            
+            return false;
         }
 
         public void Disconnect() {
@@ -102,7 +97,7 @@ namespace StatusMessageDBUpdater {
 
         // clean up
         public void Dispose() {
-            this.Disconnect();
+            Disconnect();
         }
     }
 }

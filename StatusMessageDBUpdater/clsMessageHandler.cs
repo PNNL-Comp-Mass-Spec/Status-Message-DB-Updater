@@ -17,11 +17,11 @@ namespace StatusMessageDBUpdater
         private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
 
         #region "Class variables"
-        private string m_BrokerUri = null;
-        private string m_InputStatusTopicName = null;
-        private string m_BroadcastTopicName = null;
-        private string m_OutputStatusTopicName = null;
-        private string m_MgrName = null;
+        private string m_BrokerUri;
+        private string m_InputStatusTopicName;
+        private string m_BroadcastTopicName;
+        private string m_OutputStatusTopicName;
+        private string m_MgrName;
 
         private IConnection m_Connection;
         private ISession m_StatusSession;
@@ -29,8 +29,8 @@ namespace StatusMessageDBUpdater
         private IMessageConsumer m_InputConsumer;
         private IMessageConsumer m_BroadcastConsumer;
 
-        private bool m_IsDisposed = false;
-        private bool m_HasConnection = false;
+        private bool m_IsDisposed;
+        private bool m_HasConnection;
         #endregion
 
         #region "Events"
@@ -112,15 +112,15 @@ namespace StatusMessageDBUpdater
                 if (!m_HasConnection) return false;
 
                 // topic for input status messages
-                ISession inputSession = m_Connection.CreateSession();
+                var inputSession = m_Connection.CreateSession();
                 m_InputConsumer = inputSession.CreateConsumer(new ActiveMQTopic(this.m_InputStatusTopicName));
-                m_InputConsumer.Listener += new MessageListener(OnInputMessageReceived);
+                m_InputConsumer.Listener += OnInputMessageReceived;
                 mainLog.Info("Input listener established for topic '" + m_InputStatusTopicName + "'");
 
                 // topic for commands broadcast to all folder makers
-                ISession broadcastSession = m_Connection.CreateSession();
+                var broadcastSession = m_Connection.CreateSession();
                 m_BroadcastConsumer = broadcastSession.CreateConsumer(new ActiveMQTopic(this.m_BroadcastTopicName));
-                m_BroadcastConsumer.Listener += new MessageListener(OnBroadcastReceived);
+                m_BroadcastConsumer.Listener += OnBroadcastReceived;
                 mainLog.Info("Broadcast listener established for topic '" + m_BroadcastTopicName + "'");
 
                 // topic to send status information over
@@ -145,8 +145,8 @@ namespace StatusMessageDBUpdater
         /// <param name="message">Incoming message</param>
         private void OnInputMessageReceived(IMessage message)
         {
-            ITextMessage textMessage = message as ITextMessage;
-            String processor = message.Properties.GetString("ProcessorName");
+            var textMessage = message as ITextMessage;
+            var processor = message.Properties.GetString("ProcessorName");
             if (this.InputMessageReceived != null)
             {
                 this.InputMessageReceived(processor, textMessage.Text);
@@ -160,7 +160,7 @@ namespace StatusMessageDBUpdater
         /// <param name="message">Incoming message</param>
         private void OnBroadcastReceived(IMessage message)
         {
-            ITextMessage textMessage = message as ITextMessage;
+            var textMessage = message as ITextMessage;
             mainLog.Debug("clsMessageHandler(), Broadcast message received");
             if (this.BroadcastReceived != null)
             {
@@ -181,7 +181,7 @@ namespace StatusMessageDBUpdater
         {
             if (!this.m_IsDisposed)
             {
-                ITextMessage textMessage = this.m_StatusSession.CreateTextMessage(message);
+                var textMessage = this.m_StatusSession.CreateTextMessage(message);
                 textMessage.Properties.SetString("ProcessorName", processor);
                 try
                 {
