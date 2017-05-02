@@ -41,31 +41,31 @@ namespace StatusMessageDBUpdater
         #region "Properties"
         public string MgrName
         {
-            set { m_MgrName = value; }
+            set => m_MgrName = value;
         }
 
         public string BrokerUri
         {
-            get { return m_BrokerUri; }
-            set { m_BrokerUri = value; }
+            get => m_BrokerUri;
+            set => m_BrokerUri = value;
         }
 
         public string InputStatusTopicName
         {
-            get { return m_InputStatusTopicName; }
-            set { m_InputStatusTopicName = value; }
+            get => m_InputStatusTopicName;
+            set => m_InputStatusTopicName = value;
         }
 
         public string BroadcastTopicName
         {
-            get { return m_BroadcastTopicName; }
-            set { m_BroadcastTopicName = value; }
+            get => m_BroadcastTopicName;
+            set => m_BroadcastTopicName = value;
         }
 
         public string OutputStatusTopicName
         {
-            get { return m_OutputStatusTopicName; }
-            set { m_OutputStatusTopicName = value; }
+            get => m_OutputStatusTopicName;
+            set => m_OutputStatusTopicName = value;
         }
         #endregion
 

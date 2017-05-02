@@ -16,13 +16,13 @@ namespace StatusMessageDBUpdater
         private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
 
         #region "Constants"
-        
+
         private const int TIMER_UPDATE_INTERVAL_MSEC = 1000;
 
-        #endregion		
+        #endregion
 
         #region "Class variables"
-        
+
         string mMgrName;
         private DBAccess mDba;
         private int mDBUpdateIntervalSeconds;
@@ -101,7 +101,7 @@ namespace StatusMessageDBUpdater
             {
                 var errMessage = "Status template file not found: " + templatePath.FullName;
                 Console.WriteLine(errMessage);
-                mainLog.Error(errMessage);                
+                mainLog.Error(errMessage);
             }
 
             mXmlStatusDocument.Load(templatePath.FullName);
@@ -210,14 +210,14 @@ namespace StatusMessageDBUpdater
                 {
                     Thread.Sleep(5000);
                     timeRemaining -= 5;
-                    if (!mKeepRunning) 
+                    if (!mKeepRunning)
                         break;
                 } while (timeRemaining > 0);
 
                 if (DateTime.UtcNow.Subtract(mStartTime).TotalHours >= mMaxRuntimeHours)
                     break;
 
-                if (!mKeepRunning) 
+                if (!mKeepRunning)
                     break;
 
                 // are we active?
@@ -237,7 +237,7 @@ namespace StatusMessageDBUpdater
                     continue;
                 }
 
-                // from the message accumulator, get list of processors 
+                // from the message accumulator, get list of processors
                 // that have received messages since the last refresh and
                 // reset the list in the accumulator
                 var Processors = mMsgAccumulator.changedList.Keys.ToArray();
@@ -286,7 +286,7 @@ namespace StatusMessageDBUpdater
                         {
                             mainLog.Info("Result: " + message);
                             UpdateXmlNode(mXmlStatusDocument, "//Status", "Good");
-                            UpdateXmlNode(mXmlStatusDocument, "//MostRecentLogMessage", message);                            
+                            UpdateXmlNode(mXmlStatusDocument, "//MostRecentLogMessage", message);
                             QueueMessageToSend(mXmlStatusDocument.InnerXml);
                         }
                     }
@@ -453,8 +453,7 @@ namespace StatusMessageDBUpdater
 
         private void SendQueuedMessageWork(string message)
         {
-            if (mMessageHandler != null)
-                mMessageHandler.SendMessage(mMgrName, message);
+            mMessageHandler?.SendMessage(mMgrName, message);
         }
 
         private void UpdateManagerStatus(string managerStatus)
@@ -464,7 +463,7 @@ namespace StatusMessageDBUpdater
             UpdateXmlNode(mXmlStatusDocument, "//LastUpdate", DateTime.Now.ToString(CultureInfo.InvariantCulture));
         }
 
-        private void UpdateXmlNode(XmlDocument statusDocument, string nodeXPath, string newValue)
+        private void UpdateXmlNode(XmlNode statusDocument, string nodeXPath, string newValue)
         {
             var selectedNode = statusDocument.SelectSingleNode(nodeXPath);
             if (selectedNode != null)

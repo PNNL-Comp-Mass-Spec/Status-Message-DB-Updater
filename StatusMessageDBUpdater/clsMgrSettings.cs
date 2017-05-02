@@ -38,15 +38,10 @@ namespace StatusMessageDBUpdater
         #endregion
 
         #region "Properties"
-        public string ErrMsg
-        {
-            get { return m_ErrMsg; }
-        }
+        public string ErrMsg => m_ErrMsg;
 
-        public Dictionary<string, string> TaskDictionary
-        {
-            get { return m_ParamDictionary; }
-        }
+        public Dictionary<string, string> TaskDictionary => m_ParamDictionary;
+
         #endregion
 
         #region "Methods"
