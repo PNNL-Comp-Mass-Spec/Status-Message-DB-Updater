@@ -89,7 +89,7 @@ namespace StatusMessageDBUpdater {
                 Console.WriteLine(ex.Message);
                 result = ex.Message;
             }
-            
+
             return false;
         }
 
