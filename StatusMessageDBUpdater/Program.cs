@@ -48,7 +48,7 @@ namespace StatusMessageDBUpdater {
 
                 if (DateTime.UtcNow.Subtract(dtStartTime).TotalHours >= MAX_RUNTIME_HOURS)
                 {
-                    var message = "Over " + MAX_RUNTIME_HOURS.ToString() + " hours have elapsed; exiting program (helps mitigate a memory leak)";
+                    var message = "Over " + MAX_RUNTIME_HOURS + " hours have elapsed; exiting program (helps mitigate a memory leak)";
                     System.Diagnostics.Debug.WriteLine(message);
                     Console.WriteLine(message);
                     break;

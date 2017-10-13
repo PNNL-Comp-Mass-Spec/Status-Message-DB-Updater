@@ -5,9 +5,11 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
 using log4net;
+using log4net.Appender;
 
 namespace StatusMessageDBUpdater
 {
@@ -15,7 +17,19 @@ namespace StatusMessageDBUpdater
     {
         private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
 
+        private static DateTime m_LastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
+
         #region "Constants"
+
+        /// <summary>
+        /// Date format for log file names
+        /// </summary>
+        /// <remarks>Corresponds to MM-dd-yyyy</remarks>
+        private const string LOG_FILE_MATCH_SPEC = "??-??-????";
+
+        private const string LOG_FILE_DATE_REGEX = @"(?<Month>\d+)-(?<Day>\d+)-(?<Year>\d{4,4})";
+
+        private const string LOG_FILE_EXTENSION = ".txt";
 
         private const int TIMER_UPDATE_INTERVAL_MSEC = 1000;
 
@@ -50,6 +64,72 @@ namespace StatusMessageDBUpdater
         #endregion
 
         #region "Methods"
+
+        /// <summary>
+        /// Look for log files over 32 days old that can be moved into a subdirectory
+        /// </summary>
+        private static void ArchiveOldLogs()
+        {
+            foreach (var activeAppender in mainLog.Logger.Repository.GetAppenders())
+            {
+                if (!(activeAppender is FileAppender curAppender))
+                    continue;
+
+                ArchiveOldLogs(curAppender.File);
+                break;
+            }
+
+        }
+
+        /// <summary>
+        /// Look for log files over 32 days old that can be moved into a subdirectory
+        /// </summary>
+        /// <param name="logFilePath"></param>
+        private static void ArchiveOldLogs(string logFilePath)
+        {
+            var targetPath = "??";
+
+            try
+            {
+                var currentLogFile = new FileInfo(logFilePath);
+
+                var matchSpec = "*_" + LOG_FILE_MATCH_SPEC + LOG_FILE_EXTENSION;
+
+                var logDirectory = currentLogFile.Directory;
+                var logFiles = logDirectory.GetFiles(matchSpec);
+
+                var matcher = new Regex(LOG_FILE_DATE_REGEX, RegexOptions.Compiled);
+
+                foreach (var logFile in logFiles)
+                {
+                    var match = matcher.Match(logFile.Name);
+
+                    if (!match.Success)
+                        continue;
+
+                    var logFileYear = int.Parse(match.Groups["Year"].Value);
+                    var logFileMonth = int.Parse(match.Groups["Month"].Value);
+                    var logFileDay = int.Parse(match.Groups["Day"].Value);
+
+                    var logDate = new DateTime(logFileYear, logFileMonth, logFileDay);
+
+                    if (DateTime.Now.Subtract(logDate).TotalDays <= 32)
+                        continue;
+
+                    var targetDirectory = new DirectoryInfo(Path.Combine(logDirectory.FullName, logFileYear.ToString()));
+                    if (!targetDirectory.Exists)
+                        targetDirectory.Create();
+
+                    targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
+
+                    logFile.MoveTo(targetPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                mainLog.Error("Error moving old log file to " + targetPath, ex);
+            }
+        }
 
         /// <summary>
         /// Initializes the manager
@@ -264,12 +344,11 @@ namespace StatusMessageDBUpdater
                             concatMessages.Append(n.OuterXml);
                         }
                     }
-                    progMsg = "Size:" + concatMessages.Length.ToString();
+                    progMsg = "Size:" + concatMessages.Length;
                     mainLog.Info(progMsg);
 
                     // update the database
-                    string message;
-                    var success = mDba.UpdateDatabase(concatMessages, out message);
+                    var success = mDba.UpdateDatabase(concatMessages, out var message);
 
                     // send status
                     if (mLogStatusToMessageQueue)
@@ -302,7 +381,14 @@ namespace StatusMessageDBUpdater
 
                 //Test to determine if we need to reload config from db
                 TestForConfigReload();
-            }
+
+                if (DateTime.UtcNow.Subtract(m_LastCheckOldLogs).TotalHours > 24)
+                {
+                    m_LastCheckOldLogs = DateTime.UtcNow;
+                    ArchiveOldLogs();
+                }
+
+            } // while mKeepRunning
 
             if (!mRestartAfterShutdown)
                 mainLog.Info("Process interrupted, " + "Restart:" + mRestartAfterShutdown);
@@ -391,8 +477,7 @@ namespace StatusMessageDBUpdater
             // The update interval comes from file StatusMessageDBUpdater.exe.config
             // The default is 10 minutes
             var updateIntervalText = mMgrSettings.GetParam("CheckForUpdateInterval", "10");
-            double updateIntervalMinutes;
-            if (!double.TryParse(updateIntervalText, out updateIntervalMinutes))
+            if (!double.TryParse(updateIntervalText, out var updateIntervalMinutes))
                 updateIntervalMinutes = 10;
 
             var testTime = mLastUpdate.AddMinutes(updateIntervalMinutes);
