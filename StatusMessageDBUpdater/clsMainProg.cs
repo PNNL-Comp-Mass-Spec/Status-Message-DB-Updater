@@ -246,9 +246,8 @@ namespace StatusMessageDBUpdater
                 // from the message accumulator, get list of processors
                 // that have received messages since the last refresh and
                 // reset the list in the accumulator
-                var Processors = mMsgAccumulator.changedList.Keys.ToArray();
-                mMsgAccumulator.changedList.Clear();
-                mMsgAccumulator.msgCount = 0;
+                var processors = mMsgAccumulator.ChangedList.ToList();
+                mMsgAccumulator.ChangedList.Clear();
 
                 OnStatusEvent("MsgDB program updated " + processors.Count + " at " + DateTime.Now);
 
@@ -259,14 +258,17 @@ namespace StatusMessageDBUpdater
                     // build concatenated XML for all new status messages
                     var concatMessages = new System.Text.StringBuilder(1024);
 
-                    foreach (var Processor in Processors)
+                    foreach (var processor in processors)
                     {
                         var doc = new XmlDocument();
-                        doc.LoadXml(mMsgAccumulator.statusList[Processor]);
-                        var n = doc.SelectSingleNode("//Root");
-                        if (n != null)
+                        if (!mMsgAccumulator.StatusList.TryGetValue(processor, out var statusXML))
+                            continue;
+
+                        doc.LoadXml(statusXML);
+                        var rootNode = doc.SelectSingleNode("//Root");
+                        if (rootNode != null)
                         {
-                            concatMessages.Append(n.OuterXml);
+                            concatMessages.Append(rootNode.OuterXml);
                         }
                     }
                     OnStatusEvent("Size:" + concatMessages.Length);

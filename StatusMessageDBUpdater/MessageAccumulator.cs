@@ -1,31 +1,44 @@
-﻿// processor message accumulator
-// Remembers most recent message each processor
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace StatusMessageDBUpdater {
-    class MessageAccumulator {
-        // where we accumulate most recent message for each processor
-        public IDictionary<string, string> statusList;
-        public IDictionary<string, int> changedList;
-        public int msgCount = 0;
+namespace StatusMessageDBUpdater
+{
 
-        public MessageAccumulator() {
-            statusList = new Dictionary<string, string>();
-            changedList = new Dictionary<string, int>();
+    /// <summary>
+    /// Processor message accumulator
+    /// Remembers most recent message each processor
+    /// </summary>
+    class MessageAccumulator
+    {
+        /// <summary>
+        /// Tracks most recent message for each processor
+        /// </summary>
+        public readonly Dictionary<string, string> StatusList;
+
+        /// <summary>
+        /// Tracks names of processors with a message in StatusList
+        /// </summary>
+        public readonly SortedSet<string> ChangedList;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public MessageAccumulator()
+        {
+            StatusList = new Dictionary<string, string>();
+            ChangedList = new SortedSet<string>();
         }
 
-        // delegate to be registered with message subscriber 
+        // Delegate to be registered with message subscriber
         // that will be called for each new message that is received
-        public void subscriber_OnMessageReceived(string processor, string message) {
-            // stuff the message into the accumulator
+        public void Subscriber_OnMessageReceived(string processor, string message)
+        {
+            // Stuff the message into the accumulator
             // (will overwrite any previous message)
-            statusList[processor] = message;
-            changedList[processor] = 1;
-            msgCount++;
-            //Console.WriteLine(processor); // temporary debug
+            StatusList[processor] = message;
+
+            if (!ChangedList.Contains(processor))
+                ChangedList.Add(processor);
+
         }
 
     }
