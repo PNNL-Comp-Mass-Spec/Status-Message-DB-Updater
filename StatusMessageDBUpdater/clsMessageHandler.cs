@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Apache.NMS;
 using Apache.NMS.ActiveMQ;
 using Apache.NMS.ActiveMQ.Commands;
@@ -20,7 +21,6 @@ namespace StatusMessageDBUpdater
         private string m_InputStatusTopicName;
         private string m_BroadcastTopicName;
         private string m_OutputStatusTopicName;
-        private string m_MgrName;
 
         private IConnection m_Connection;
         private ISession m_StatusSession;
@@ -30,18 +30,17 @@ namespace StatusMessageDBUpdater
 
         private bool m_IsDisposed;
         private bool m_HasConnection;
+
         #endregion
 
         #region "Events"
+
         public event MessageReceivedDelegate InputMessageReceived;
         public event MessageProcessorDelegate BroadcastReceived;
+
         #endregion
 
         #region "Properties"
-        public string MgrName
-        {
-            set => m_MgrName = value;
-        }
 
         public string BrokerUri
         {
@@ -69,41 +68,71 @@ namespace StatusMessageDBUpdater
         #endregion
 
         #region "Methods"
+
         /// <summary>
-        /// create set of NMS connection objects necessary to talk to the ActiveMQ broker
+        /// Create set of NMS connection objects necessary to talk to the ActiveMQ broker
         /// </summary>
-        protected void CreateConnection()
+        /// <param name="retryCount">Number of times to try the connection</param>
+        /// <param name="timeoutSeconds">Number of seconds to wait for the broker to respond</param>
+        protected void CreateConnection(int retryCount = 2, int timeoutSeconds = 15)
         {
-            if (m_HasConnection) return;
-            try
-            {
-                // Broker URI should be in the form
-                // tcp://Proto-7.pnl.gov:61616
-                //  or
-                // failover:(tcp://Proto-7.pnl.gov:61616,tcp://proto-4.pnl.gov:61616)
+            if (m_HasConnection)
+                return;
 
-                IConnectionFactory connectionFactory = new ConnectionFactory(this.m_BrokerUri);
-                this.m_Connection = connectionFactory.CreateConnection();
-                this.m_Connection.RequestTimeout = new System.TimeSpan(0, 0, 20);
-                this.m_Connection.Start();
+            if (retryCount < 0)
+                retryCount = 0;
 
-                this.m_HasConnection = true;
-                // temp debug
-                // Console.WriteLine("--- New connection made ---" + Environment.NewLine); //+ e.ToString()
-            }
-            catch (Exception ex)
+            var retriesRemaining = retryCount;
+
+            if (timeoutSeconds < 5)
+                timeoutSeconds = 5;
+
+            var errorList = new List<string>();
+
+            while (retriesRemaining >= 0)
             {
-                // we couldn't make a viable set of connection objects 
-                // - this has "long day" written all over it,
-                // but we don't have to do anything specific at this point (except eat the exception)
-                mainLog.Error("Exception creating message broker connection to " + m_BrokerUri);
-                mainLog.Error(ex.Message);
-                mainLog.Error(PRISM.clsStackTraceFormatter.GetExceptionStackTrace(ex));
+                try
+                {
+                    // Broker URI should be in the form
+                    // tcp://Proto-7.pnl.gov:61616
+                    //  or
+                    // failover:(tcp://Proto-7.pnl.gov:61616,tcp://proto-4.pnl.gov:61616)
+
+                    IConnectionFactory connectionFactory = new ConnectionFactory(m_BrokerUri);
+                    m_Connection = connectionFactory.CreateConnection();
+                    m_Connection.RequestTimeout = new TimeSpan(0, 0, timeoutSeconds);
+                    m_Connection.Start();
+
+                    m_HasConnection = true;
                     var username = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
                     OnStatusEvent(string.Format("Connected to broker as user {0}: {1}", username, m_BrokerUri));
 
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    // Connection failed
+                    if (!errorList.Contains(ex.Message))
+                        errorList.Add(ex.Message);
+
+                    // Sleep for 3 seconds
+                    System.Threading.Thread.Sleep(3000);
+                }
+
+                retriesRemaining -= 1;
             }
+
+
+            // If we get here, we never could connect to the message broker
+
+            var msg = "Exception creating broker connection";
+            if (retryCount > 0)
+                msg += " after " + (retryCount + 1) + " attempts";
+
+            msg += ": " + string.Join("; ", errorList);
+
+            OnErrorEvent(msg);
         }
 
         /// <summary>
