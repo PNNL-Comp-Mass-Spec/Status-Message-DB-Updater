@@ -400,10 +400,10 @@ namespace StatusMessageDBUpdater
         private void TestForConfigReload()
         {
             // The update interval comes from file StatusMessageDBUpdater.exe.config
-            // The default is 10 minutes
-            var updateIntervalText = mMgrSettings.GetParam("CheckForUpdateInterval", "10");
+            // The default is 60 minutes
+            var updateIntervalText = mMgrSettings.GetParam("CheckForUpdateInterval", "60");
             if (!double.TryParse(updateIntervalText, out var updateIntervalMinutes))
-                updateIntervalMinutes = 10;
+                updateIntervalMinutes = 60;
 
             var testTime = mLastUpdate.AddMinutes(updateIntervalMinutes);
             var currTime = DateTime.UtcNow;
