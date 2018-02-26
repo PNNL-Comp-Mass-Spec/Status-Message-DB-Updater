@@ -17,14 +17,14 @@ using PRISM;
 
 namespace StatusMessageDBUpdater
 {
-    public class clsMgrSettings : IMgrParams
+    /// <summary>
+    /// Class for loading, storing and accessing manager parameters.
+    ///	Loads initial settings from local config file, then checks to see if remainder of settings should be
+    ///	loaded or manager set to inactive. If manager active, retrieves remainder of settings from manager
+    ///	parameters database.
+    /// </summary>
+    public class clsMgrSettings : clsEventNotifier, IMgrParams
     {
-        //*********************************************************************************************************
-        //	Class for loading, storing and accessing manager parameters.
-        //	Loads initial settings from local config file, then checks to see if remainder of settings should be
-        //		loaded or manager set to inactive. If manager active, retrieves remainder of settings from manager
-        //		parameters database.
-        //**********************************************************************************************************
 
         #region "Class variables"
 
