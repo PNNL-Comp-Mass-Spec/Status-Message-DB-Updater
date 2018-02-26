@@ -79,7 +79,7 @@ namespace StatusMessageDBUpdater
                     throw new ApplicationException("Unable to initialize manager settings class: " + mMgrSettings.ErrMsg);
                 }
 
-                OnStatusEvent("Read manager settings from Manager Control Database");
+                OnStatusEvent("Loaded manager settings from Manager Control Database");
             }
             catch (Exception ex)
             {

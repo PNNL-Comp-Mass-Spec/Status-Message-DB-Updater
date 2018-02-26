@@ -1,6 +1,7 @@
 using PRISM.Logging;
 using System;
 using PRISM;
+using PRISM.FileProcessor;
 
 namespace StatusMessageDBUpdater
 {
@@ -21,6 +22,9 @@ namespace StatusMessageDBUpdater
             try
             {
                 m_Logger = new FileLogger(@"Logs\StatusMsgDBUpdater", BaseLogger.LogLevels.INFO);
+
+                var appVersion = ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
+                m_Logger.Info("=== Started StatusMessageDBUpdater V" + appVersion + " =====");
 
                 var restart = true;
 
