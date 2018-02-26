@@ -3,26 +3,39 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Data;
 
-namespace StatusMessageDBUpdater {
-    class DBAccess {
+namespace StatusMessageDBUpdater
+{
+    class DBAccess
+    {
         readonly string m_cnStr;
+
         SqlConnection m_dbCn;
 
-        // ctor
-        public DBAccess(string connectionString) {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="connectionString"></param>
+        public DBAccess(string connectionString)
+        {
             m_cnStr = connectionString;
             m_dbCn = new SqlConnection(m_cnStr);
         }
 
-        // open connection
-        public bool Connect() {
+        /// <summary>
+        /// Open the database connection
+        /// </summary>
+        /// <returns></returns>
+        public bool Connect()
+        {
             var outcome = false;
-            try {
+            try
+            {
                 m_dbCn = new SqlConnection(m_cnStr);
                 m_dbCn.Open();
                 outcome = true;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 // Connection error
                 Console.WriteLine(ex.Message);
             }
@@ -30,7 +43,7 @@ namespace StatusMessageDBUpdater {
         }
 
         /// <summary>
-        /// Post message to database
+        /// Post message to database using stored procedure UpdateManagerAndTaskStatusXML
         /// </summary>
         /// <param name="statusMessages"></param>
         /// <param name="result"></param>
@@ -39,53 +52,31 @@ namespace StatusMessageDBUpdater {
         {
             const int DB_TIMEOUT_SECONDS = 90;
 
-            try {
-                // create the command object
-                //
-                var sc = new SqlCommand("UpdateManagerAndTaskStatusXML", m_dbCn)
+            try
+            {
+                var cmd = new SqlCommand("UpdateManagerAndTaskStatusXML", m_dbCn)
                 {
                     CommandType = CommandType.StoredProcedure,
                     CommandTimeout = DB_TIMEOUT_SECONDS
                 };
 
+                cmd.Parameters.Add(new SqlParameter("@Return", SqlDbType.Int)).Direction = ParameterDirection.ReturnValue;
+                cmd.Parameters.Add(new SqlParameter("@parameters", SqlDbType.Text)).Value = statusMessages.ToString();
+                cmd.Parameters.Add(new SqlParameter("@result", SqlDbType.VarChar, 4096)).Direction = ParameterDirection.Output;
 
-                //
-                // define parameter for stored procedure's return value
-                //
-                //
-                // define parameter for stored procedure's return value
-                //
-                var myParm = sc.Parameters.Add("@Return", SqlDbType.Int);
-                myParm.Direction = ParameterDirection.ReturnValue;
-                //
-                // define parameters for the stored procedure's arguments
-                //
-                myParm = sc.Parameters.Add("@parameters", SqlDbType.Text);
-                myParm.Direction = ParameterDirection.Input;
-                myParm.Value = statusMessages.ToString();
+                cmd.ExecuteNonQuery();
 
-                myParm = sc.Parameters.Add("@result", SqlDbType.VarChar, 4096);
-                myParm.Direction = ParameterDirection.Output;
+                // Get return value
+                var ret = (int)cmd.Parameters["@Return"].Value;
 
+                // Get values for output parameters
+                result = (string)cmd.Parameters["@result"].Value;
 
-                // execute the stored procedure
-                //
-                sc.ExecuteNonQuery();
-
-                // get return value
-                //
-                var ret = (int)sc.Parameters["@Return"].Value;
-
-                // get values for output parameters
-                //
-                result = (string)sc.Parameters["@result"].Value;
-
-                // if we made it this far, we succeeded
-                //
                 if (ret == 0)
-                    return true;;
+                    return true;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
                 result = ex.Message;
             }
@@ -93,15 +84,20 @@ namespace StatusMessageDBUpdater {
             return false;
         }
 
-        public void Disconnect() {
-            if (m_dbCn != null) {
+        public void Disconnect()
+        {
+            if (m_dbCn != null)
+            {
                 m_dbCn.Close();
                 m_dbCn.Dispose();
             }
         }
 
-        // clean up
-        public void Dispose() {
+        /// <summary>
+        /// Disconnect from the database
+        /// </summary>
+        public void Dispose()
+        {
             Disconnect();
         }
     }

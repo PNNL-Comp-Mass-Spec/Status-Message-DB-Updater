@@ -107,32 +107,33 @@ namespace StatusMessageDBUpdater
         }
 
         /// <summary>
-        /// Create the message broker communication objects
+        /// Create the message broker communication objects and register the listener function
         /// </summary>
         /// <returns>TRUE for success; FALSE otherwise</returns>
         public bool Init()
         {
             try
             {
-                if (!m_HasConnection) CreateConnection();
-                if (!m_HasConnection) return false;
+                if (!m_HasConnection)
+                    CreateConnection();
 
-                // topic for input status messages
+                if (!m_HasConnection)
+                    return false;
+
                 var inputSession = m_Connection.CreateSession();
-                m_InputConsumer = inputSession.CreateConsumer(new ActiveMQTopic(this.m_InputStatusTopicName));
+                m_InputConsumer = inputSession.CreateConsumer(new ActiveMQTopic(m_InputStatusTopicName));
                 m_InputConsumer.Listener += OnInputMessageReceived;
                 OnStatusEvent("Input listener established for topic '" + m_InputStatusTopicName + "'");
 
                 // topic for commands broadcast to all folder makers
                 var broadcastSession = m_Connection.CreateSession();
-                m_BroadcastConsumer = broadcastSession.CreateConsumer(new ActiveMQTopic(this.m_BroadcastTopicName));
+                m_BroadcastConsumer = broadcastSession.CreateConsumer(new ActiveMQTopic(m_BroadcastTopicName));
                 m_BroadcastConsumer.Listener += OnBroadcastReceived;
                 OnStatusEvent("Broadcast listener established for topic '" + m_BroadcastTopicName + "'");
 
                 // topic to send status information over
-                this.m_StatusSession = m_Connection.CreateSession();
-                this.m_StatusSender = m_StatusSession.CreateProducer(new ActiveMQTopic(m_OutputStatusTopicName));
                 m_StatusSession = m_Connection.CreateSession();
+                m_StatusSender = m_StatusSession.CreateProducer(new ActiveMQTopic(m_OutputStatusTopicName));
                 OnStatusEvent("Status sender established for topic '" + m_OutputStatusTopicName + "'");
 
                 return true;
@@ -152,12 +153,11 @@ namespace StatusMessageDBUpdater
         /// <param name="message">Incoming message</param>
         private void OnInputMessageReceived(IMessage message)
         {
-            var textMessage = message as ITextMessage;
+            if (!(message is ITextMessage textMessage))
+                return;
+
             var processor = message.Properties.GetString("ProcessorName");
-            if (this.InputMessageReceived != null)
-            {
-                this.InputMessageReceived(processor, textMessage.Text);
-            }
+            InputMessageReceived?.Invoke(processor, textMessage.Text);
         }
 
         /// <summary>
@@ -167,10 +167,14 @@ namespace StatusMessageDBUpdater
         /// <param name="message">Incoming message</param>
         private void OnBroadcastReceived(IMessage message)
         {
-            var textMessage = message as ITextMessage;
+            if (!(message is ITextMessage textMessage))
+                return;
+
+            OnDebugEvent("clsMessageHandler(), Broadcast message received");
+            if (BroadcastReceived != null)
             {
                 // call the delegate to process the commnd
-                this.BroadcastReceived(textMessage.Text);
+                BroadcastReceived(textMessage.Text);
             }
             else
             {
@@ -181,16 +185,17 @@ namespace StatusMessageDBUpdater
         /// <summary>
         /// Sends a status message
         /// </summary>
+        /// <param name="processor"></param>
         /// <param name="message">Outgoing message string</param>
         public void SendMessage(string processor, string message)
         {
-            if (!this.m_IsDisposed)
+            if (!m_IsDisposed)
             {
-                var textMessage = this.m_StatusSession.CreateTextMessage(message);
+                var textMessage = m_StatusSession.CreateTextMessage(message);
                 textMessage.Properties.SetString("ProcessorName", processor);
                 try
                 {
-                    this.m_StatusSender.Send(textMessage);
+                    m_StatusSender.Send(textMessage);
                 }
                 catch
                 {
@@ -199,12 +204,14 @@ namespace StatusMessageDBUpdater
             }
             else
             {
-                throw new ObjectDisposedException(this.GetType().FullName);
+                throw new ObjectDisposedException(GetType().FullName);
             }
         }
+
         #endregion
 
         #region "Cleanup"
+
         /// <summary>
         /// Cleans up a connection after error or when closing
         /// </summary>
@@ -212,8 +219,8 @@ namespace StatusMessageDBUpdater
         {
             if (m_HasConnection)
             {
-                this.m_Connection.Dispose();
-                this.m_HasConnection = false;
+                m_Connection.Dispose();
+                m_HasConnection = false;
             }
         }
 
@@ -222,11 +229,11 @@ namespace StatusMessageDBUpdater
         /// </summary>
         public void Dispose()
         {
-            if (!this.m_IsDisposed)
-            {
-                this.DestroyConnection();
-                this.m_IsDisposed = true;
-            }
+            if (m_IsDisposed)
+                return;
+
+            DestroyConnection();
+            m_IsDisposed = true;
         }
 
         #endregion

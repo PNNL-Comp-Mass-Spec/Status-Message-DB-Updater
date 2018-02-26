@@ -5,8 +5,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
 using System.Xml;
 using PRISM;
 
@@ -24,14 +22,21 @@ namespace StatusMessageDBUpdater
         #region "Class variables"
 
         string mMgrName;
+
         private DBAccess mDba;
+
         private int mDBUpdateIntervalSeconds;
+
         private bool mKeepRunning = true;
+
         bool mRestartAfterShutdown;
+
         bool mLogStatusToMessageQueue;
+
         bool mMgrActive = true;
 
         DateTime mStartTime;
+
         int mMaxRuntimeHours = 1000;
 
         private DateTime mLastUpdate = DateTime.UtcNow;
@@ -39,12 +44,15 @@ namespace StatusMessageDBUpdater
         clsMgrSettings mMgrSettings;
 
         private clsMessageHandler mMessageHandler;
+
         private bool m_MsgQueueInitSuccess;
 
         readonly Queue m_SendMessageQueue = new Queue();
+
         private System.Timers.Timer m_SendMessageQueueProcessor;
 
         private MessageAccumulator mMsgAccumulator;
+
         XmlDocument mXmlStatusDocument;
 
         #endregion
@@ -79,7 +87,7 @@ namespace StatusMessageDBUpdater
                 return false;
             }
 
-            mMgrActive = (mMgrSettings.GetParam("mgractive") != "False");
+            mMgrActive = (mMgrSettings.GetParam("mgractive").ToLower() != "false");
 
             mStartTime = DateTime.UtcNow;
             if (maxRunTimeHours < 1)
@@ -87,7 +95,7 @@ namespace StatusMessageDBUpdater
 
             mMaxRuntimeHours = maxRunTimeHours;
 
-            // processor name
+            // Manager name
             mMgrName = mMgrSettings.GetParam("MgrName");
             OnStatusEvent("Manager: " + mMgrName);
 
@@ -95,9 +103,9 @@ namespace StatusMessageDBUpdater
             m_SendMessageQueueProcessor.Elapsed += m_SendMessageQueueProcessor_Elapsed;
             m_SendMessageQueueProcessor.Start();
 
-            // status message skeleton
+            // Status message skeleton
             mXmlStatusDocument = new XmlDocument();
-            var exePath = new FileInfo(Application.ExecutablePath);
+            var exePath = new FileInfo(PRISM.FileProcessor.ProcessFilesOrFoldersBase.GetAppPath());
             if (exePath.DirectoryName == null)
             {
                 OnErrorEvent("Parent directory for the .exe is null: " + exePath.FullName);
@@ -117,16 +125,15 @@ namespace StatusMessageDBUpdater
             UpdateXmlNode(mXmlStatusDocument, "//LastStartTime", DateTime.Now.ToString(CultureInfo.InvariantCulture));
             UpdateXmlNode(mXmlStatusDocument, "//MgrStatus", "");
 
-            //---- initialize the connection parameter fields ----
+            // Initialize the connection parameter fields
             var messageBrokerURL = mMgrSettings.GetParam("MessageQueueURI");
             var messageTopicName = mMgrSettings.GetParam("StatusMsgIncomingTopic");
-            var monitorTopicName = mMgrSettings.GetParam("MessageQueueTopicMgrStatus"); // topic to send
+            var monitorTopicName = mMgrSettings.GetParam("MessageQueueTopicMgrStatus"); // Topic to send
             var brodcastTopicName = mMgrSettings.GetParam("BroadcastQueueTopic");
             mLogStatusToMessageQueue = (mMgrSettings.GetParam("LogStatusToMessageQueue") == "True");
 
-            mMessageHandler = new clsMessageHandler
+            mMessageHandler = new clsMessageHandler()
             {
-                MgrName = mMgrName,
                 BrokerUri = messageBrokerURL,
                 InputStatusTopicName = messageTopicName,
                 OutputStatusTopicName = monitorTopicName,
@@ -141,23 +148,20 @@ namespace StatusMessageDBUpdater
                 return false;
             }
 
-            // make a new processor message accumulator and start it running
+            // Make a new processor message accumulator and start it running
             mMsgAccumulator = new MessageAccumulator();
 
-            mMessageHandler.InputMessageReceived += mMsgAccumulator.subscriber_OnMessageReceived;
+            mMessageHandler.InputMessageReceived += mMsgAccumulator.Subscriber_OnMessageReceived;
             mMessageHandler.BroadcastReceived += OnMsgHandler_BroadcastReceived;
 
-            //---- seconds between database updates ----
+            // Seconds between database updates
             var interval = mMgrSettings.GetParam("StatusMsgDBUpdateInterval", "30");
             mDBUpdateIntervalSeconds = int.Parse(interval);
 
-            // create a new database access object
+            // Create a new database access object
             var dbConnStr = mMgrSettings.GetParam("connectionstring");
             mDba = new DBAccess(dbConnStr);
 
-            //---- Connect message handler events ----
-
-            //---- Everything worked ----
             return true;
         }
 
@@ -183,7 +187,6 @@ namespace StatusMessageDBUpdater
 
             if (!mMessageHandler.Init())
             {
-                Console.WriteLine("Message handler init error");
                 m_MsgQueueInitSuccess = false;
             }
             else
@@ -209,7 +212,7 @@ namespace StatusMessageDBUpdater
             while (mKeepRunning)
             {
 
-                // sleep for 5 seconds, wake up and count down
+                // Sleep for 5 seconds, wake up and count down
                 // and see if we are supposed to stop or proceed
                 var timeRemaining = mDBUpdateIntervalSeconds;
                 do
@@ -226,7 +229,7 @@ namespace StatusMessageDBUpdater
                 if (!mKeepRunning)
                     break;
 
-                // are we active?
+                // Are we active?
                 if (mMgrActive)
                 {
                     UpdateManagerStatus("Running");
@@ -238,12 +241,12 @@ namespace StatusMessageDBUpdater
 
                     QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
-                    //Test to determine if we need to reload config from db
+                    // Test to determine if we need to reload config from db
                     TestForConfigReload();
                     continue;
                 }
 
-                // from the message accumulator, get list of processors
+                // From the message accumulator, get list of processors
                 // that have received messages since the last refresh and
                 // reset the list in the accumulator
                 var processors = mMsgAccumulator.ChangedList.ToList();
@@ -255,7 +258,7 @@ namespace StatusMessageDBUpdater
                 {
                     mDba.Connect();
 
-                    // build concatenated XML for all new status messages
+                    // Build concatenated XML for all new status messages
                     var concatMessages = new System.Text.StringBuilder(1024);
 
                     foreach (var processor in processors)
@@ -273,10 +276,10 @@ namespace StatusMessageDBUpdater
                     }
                     OnStatusEvent("Size:" + concatMessages.Length);
 
-                    // update the database
+                    // Update the database by calling stored procedure UpdateManagerAndTaskStatusXML
                     var success = mDba.UpdateDatabase(concatMessages, out var message);
 
-                    // send status
+                    // Send status
                     if (mLogStatusToMessageQueue)
                     {
                         UpdateXmlNode(mXmlStatusDocument, "//LastUpdate", DateTime.Now.ToString(CultureInfo.InvariantCulture));
@@ -307,16 +310,10 @@ namespace StatusMessageDBUpdater
                 }
                 mDba.Disconnect();
 
-                //Test to determine if we need to reload config from db
+                // Test to determine if we need to reload config from db
                 TestForConfigReload();
 
-                if (DateTime.UtcNow.Subtract(m_LastCheckOldLogs).TotalHours > 24)
-                {
-                    m_LastCheckOldLogs = DateTime.UtcNow;
-                    ArchiveOldLogs();
-                }
-
-            } // while mKeepRunning
+            }
 
             if (!mRestartAfterShutdown)
                 OnStatusEvent("Process interrupted, " + "Restart:" + mRestartAfterShutdown);
@@ -325,7 +322,7 @@ namespace StatusMessageDBUpdater
             QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
             // Sleep for 5 seconds to allow the message to be sent
-            var dtContinueTime = DateTime.UtcNow.AddMilliseconds(5 * TIMER_UPDATE_INTERVAL_MSEC);
+            var dtContinueTime = DateTime.UtcNow.AddMilliseconds(5000);
             while (DateTime.UtcNow < dtContinueTime)
                 Thread.Sleep(500);
 
@@ -341,7 +338,7 @@ namespace StatusMessageDBUpdater
         {
             OnStatusEvent("clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: " + cmdText);
 
-            // parse command XML and get command text and
+            // Parse command XML and get command text and
             // list of machines that command applies to
             var machineList = new List<string>();
             var machineCommand = "<Undefined>";
@@ -393,7 +390,7 @@ namespace StatusMessageDBUpdater
                     OnWarningEvent("Invalid broadcast command received: " + cmdText);
                     break;
             }
-        }	// End sub
+        }
 
         private void QueueMessageToSend(string message)
         {
@@ -461,7 +458,7 @@ namespace StatusMessageDBUpdater
                     // Ignore this; likely was handled by a different thread
                 }
 
-            } // End While
+            }
 
         }
 
