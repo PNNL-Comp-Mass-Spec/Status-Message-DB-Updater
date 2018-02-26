@@ -8,28 +8,14 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Xml;
-using log4net;
-using log4net.Appender;
+using PRISM;
 
 namespace StatusMessageDBUpdater
 {
-    class clsMainProg
+    public class clsMainProg : clsEventNotifier
     {
-        private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
-
-        private static DateTime m_LastCheckOldLogs = DateTime.UtcNow.AddDays(-1);
 
         #region "Constants"
-
-        /// <summary>
-        /// Date format for log file names
-        /// </summary>
-        /// <remarks>Corresponds to MM-dd-yyyy</remarks>
-        private const string LOG_FILE_MATCH_SPEC = "??-??-????";
-
-        private const string LOG_FILE_DATE_REGEX = @"(?<Month>\d+)-(?<Day>\d+)-(?<Year>\d{4,4})";
-
-        private const string LOG_FILE_EXTENSION = ".txt";
 
         private const int TIMER_UPDATE_INTERVAL_MSEC = 1000;
 
@@ -66,87 +52,31 @@ namespace StatusMessageDBUpdater
         #region "Methods"
 
         /// <summary>
-        /// Look for log files over 32 days old that can be moved into a subdirectory
-        /// </summary>
-        private static void ArchiveOldLogs()
-        {
-            foreach (var activeAppender in mainLog.Logger.Repository.GetAppenders())
-            {
-                if (!(activeAppender is FileAppender curAppender))
-                    continue;
-
-                ArchiveOldLogs(curAppender.File);
-                break;
-            }
-
-        }
-
-        /// <summary>
-        /// Look for log files over 32 days old that can be moved into a subdirectory
-        /// </summary>
-        /// <param name="logFilePath"></param>
-        private static void ArchiveOldLogs(string logFilePath)
-        {
-            var targetPath = "??";
-
-            try
-            {
-                var currentLogFile = new FileInfo(logFilePath);
-
-                var matchSpec = "*_" + LOG_FILE_MATCH_SPEC + LOG_FILE_EXTENSION;
-
-                var logDirectory = currentLogFile.Directory;
-                var logFiles = logDirectory.GetFiles(matchSpec);
-
-                var matcher = new Regex(LOG_FILE_DATE_REGEX, RegexOptions.Compiled);
-
-                foreach (var logFile in logFiles)
-                {
-                    var match = matcher.Match(logFile.Name);
-
-                    if (!match.Success)
-                        continue;
-
-                    var logFileYear = int.Parse(match.Groups["Year"].Value);
-                    var logFileMonth = int.Parse(match.Groups["Month"].Value);
-                    var logFileDay = int.Parse(match.Groups["Day"].Value);
-
-                    var logDate = new DateTime(logFileYear, logFileMonth, logFileDay);
-
-                    if (DateTime.Now.Subtract(logDate).TotalDays <= 32)
-                        continue;
-
-                    var targetDirectory = new DirectoryInfo(Path.Combine(logDirectory.FullName, logFileYear.ToString()));
-                    if (!targetDirectory.Exists)
-                        targetDirectory.Create();
-
-                    targetPath = Path.Combine(targetDirectory.FullName, logFile.Name);
-
-                    logFile.MoveTo(targetPath);
-                }
-            }
-            catch (Exception ex)
-            {
-                mainLog.Error("Error moving old log file to " + targetPath, ex);
-            }
-        }
-
-        /// <summary>
         /// Initializes the manager
         /// </summary>
         /// <returns>TRUE for success, FALSE for failure</returns>
         public bool InitMgr(int maxRunTimeHours)
         {
-            //Get the manager settings
             mMgrSettings = null;
             try
             {
-                mMgrSettings = new clsMgrSettings(mainLog);
-                mainLog.Info("Read manager settings from Manager Control Database");
+                mMgrSettings = new clsMgrSettings();
+                RegisterEvents(mMgrSettings);
+
+                if (!mMgrSettings.LoadSettings())
+                {
+                    if (string.Equals(mMgrSettings.ErrMsg, clsMgrSettings.DEACTIVATED_LOCALLY))
+                        throw new ApplicationException(clsMgrSettings.DEACTIVATED_LOCALLY);
+
+                    throw new ApplicationException("Unable to initialize manager settings class: " + mMgrSettings.ErrMsg);
+                }
+
+                OnStatusEvent("Read manager settings from Manager Control Database");
             }
-            catch
+            catch (Exception ex)
             {
-                return false; //Failures are logged by clsMgrSettings to local emergency log file
+                OnErrorEvent("Error loading manager settings", ex);
+                return false;
             }
 
             mMgrActive = (mMgrSettings.GetParam("mgractive") != "False");
@@ -159,7 +89,7 @@ namespace StatusMessageDBUpdater
 
             // processor name
             mMgrName = mMgrSettings.GetParam("MgrName");
-            mainLog.Info("Manager:" + mMgrName);
+            OnStatusEvent("Manager: " + mMgrName);
 
             m_SendMessageQueueProcessor = new System.Timers.Timer(TIMER_UPDATE_INTERVAL_MSEC);
             m_SendMessageQueueProcessor.Elapsed += m_SendMessageQueueProcessor_Elapsed;
@@ -170,18 +100,15 @@ namespace StatusMessageDBUpdater
             var exePath = new FileInfo(Application.ExecutablePath);
             if (exePath.DirectoryName == null)
             {
-                var errMessage = "Parent directory for the .exe is null: " + exePath.FullName;
-                Console.WriteLine(errMessage);
-                mainLog.Error(errMessage);
+                OnErrorEvent("Parent directory for the .exe is null: " + exePath.FullName);
                 return false;
             }
 
             var templatePath = new FileInfo(Path.Combine(exePath.DirectoryName, "status_template.xml"));
             if (!templatePath.Exists)
             {
-                var errMessage = "Status template file not found: " + templatePath.FullName;
-                Console.WriteLine(errMessage);
-                mainLog.Error(errMessage);
+                OnErrorEvent("Status template file not found: " + templatePath.FullName);
+                return false;
             }
 
             mXmlStatusDocument.Load(templatePath.FullName);
@@ -205,6 +132,7 @@ namespace StatusMessageDBUpdater
                 OutputStatusTopicName = monitorTopicName,
                 BroadcastTopicName = brodcastTopicName
             };
+            RegisterEvents(mMessageHandler);
 
             // Initialize the message queue
             // Start this in a separate thread so that we can abort the initialization if necessary
@@ -244,9 +172,7 @@ namespace StatusMessageDBUpdater
             {
                 worker.Abort();
                 m_MsgQueueInitSuccess = false;
-                var errMessage = "Unable to initialize the message queue (timeout after 15 seconds); " + mMessageHandler.BrokerUri;
-                mainLog.Error(errMessage);
-                Console.WriteLine(errMessage);
+                OnErrorEvent("Unable to initialize the message queue (timeout after 15 seconds); " + mMessageHandler.BrokerUri);
             }
 
             return m_MsgQueueInitSuccess;
@@ -274,7 +200,7 @@ namespace StatusMessageDBUpdater
         /// <returns>TRUE for restart required, FALSE for restart not required</returns>
         public bool DoProcess()
         {
-            mainLog.Info("Process started");
+            OnStatusEvent("Process started");
 
             UpdateManagerStatus("Starting");
 
@@ -307,7 +233,7 @@ namespace StatusMessageDBUpdater
                 }
                 else
                 {
-                    mainLog.Info("Manager is inactive");
+                    OnStatusEvent("Manager is inactive");
                     UpdateManagerStatus("Inactive");
 
                     QueueMessageToSend(mXmlStatusDocument.InnerXml);
@@ -324,8 +250,7 @@ namespace StatusMessageDBUpdater
                 mMsgAccumulator.changedList.Clear();
                 mMsgAccumulator.msgCount = 0;
 
-                var progMsg = "MsgDB program updated " + Processors.Length + " at " + DateTime.Now;
-                mainLog.Info(progMsg);
+                OnStatusEvent("MsgDB program updated " + processors.Count + " at " + DateTime.Now);
 
                 try
                 {
@@ -344,8 +269,7 @@ namespace StatusMessageDBUpdater
                             concatMessages.Append(n.OuterXml);
                         }
                     }
-                    progMsg = "Size:" + concatMessages.Length;
-                    mainLog.Info(progMsg);
+                    OnStatusEvent("Size:" + concatMessages.Length);
 
                     // update the database
                     var success = mDba.UpdateDatabase(concatMessages, out var message);
@@ -356,14 +280,16 @@ namespace StatusMessageDBUpdater
                         UpdateXmlNode(mXmlStatusDocument, "//LastUpdate", DateTime.Now.ToString(CultureInfo.InvariantCulture));
                         if (!success)
                         {
-                            mainLog.Error(message);
+                            OnErrorEvent(message);
                             UpdateXmlNode(mXmlStatusDocument, "//Status", "Error");
                             UpdateXmlNode(mXmlStatusDocument, "//ErrMsg", message);
                             QueueMessageToSend(mXmlStatusDocument.InnerXml);
                         }
                         else
                         {
-                            mainLog.Info("Result: " + message);
+                            // Example message:
+                            // Messages:66, PreservedA:0, PreservedB:66, InsertedA:0, InsertedB:0, INFO
+                            OnStatusEvent("Result: " + message);
                             UpdateXmlNode(mXmlStatusDocument, "//Status", "Good");
                             UpdateXmlNode(mXmlStatusDocument, "//MostRecentLogMessage", message);
                             QueueMessageToSend(mXmlStatusDocument.InnerXml);
@@ -372,7 +298,7 @@ namespace StatusMessageDBUpdater
                 }
                 catch (Exception e)
                 {
-                    mainLog.Error(e.Message);
+                    OnErrorEvent(e.Message);
                     UpdateXmlNode(mXmlStatusDocument, "//Status", "Exception");
                     UpdateXmlNode(mXmlStatusDocument, "//ErrMsg", e.Message);
                     QueueMessageToSend(mXmlStatusDocument.InnerXml);
@@ -391,7 +317,7 @@ namespace StatusMessageDBUpdater
             } // while mKeepRunning
 
             if (!mRestartAfterShutdown)
-                mainLog.Info("Process interrupted, " + "Restart:" + mRestartAfterShutdown);
+                OnStatusEvent("Process interrupted, " + "Restart:" + mRestartAfterShutdown);
 
             UpdateManagerStatus("Stopped");
             QueueMessageToSend(mXmlStatusDocument.InnerXml);
@@ -411,7 +337,7 @@ namespace StatusMessageDBUpdater
         /// <param name="cmdText">Text of received message</param>
         void OnMsgHandler_BroadcastReceived(string cmdText)
         {
-            mainLog.Info("clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: " + cmdText);
+            OnStatusEvent("clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: " + cmdText);
 
             // parse command XML and get command text and
             // list of machines that command applies to
@@ -436,7 +362,7 @@ namespace StatusMessageDBUpdater
             }
             catch (Exception ex)
             {
-                mainLog.Error("Exception while parsing broadcast string:" + ex.Message);
+                OnErrorEvent("Exception while parsing broadcast string", ex);
                 return;
             }
 
@@ -444,7 +370,7 @@ namespace StatusMessageDBUpdater
             if (!machineList.Contains(mMgrName))
             {
                 // Received command doesn't apply to this manager
-                mainLog.Debug("Received command not applicable to this manager instance");
+                OnDebugEvent("Received command not applicable to this manager instance");
                 return;
             }
 
@@ -452,17 +378,17 @@ namespace StatusMessageDBUpdater
             switch (machineCommand.ToLower())
             {
                 case "shutdown":
-                    mainLog.Info("Shutdown message received");
+                    OnStatusEvent("Shutdown message received");
                     mKeepRunning = false;
                     mRestartAfterShutdown = false;
                     break;
                 case "readconfig":
-                    mainLog.Info("Reload config message received");
+                    OnStatusEvent("Reload config message received");
                     mKeepRunning = false;
                     mRestartAfterShutdown = true;
                     break;
                 default:
-                    mainLog.Warn("Invalid broadcast command received: " + cmdText);
+                    OnWarningEvent("Invalid broadcast command received: " + cmdText);
                     break;
             }
         }	// End sub
@@ -489,7 +415,7 @@ namespace StatusMessageDBUpdater
             }
 
             // Time to reload the config
-            mainLog.Info("Reloading config from MC database");
+            OnStatusEvent("Reloading config from MC database");
             mKeepRunning = false;
             mRestartAfterShutdown = true;
             mLastUpdate = DateTime.UtcNow;
@@ -511,7 +437,7 @@ namespace StatusMessageDBUpdater
 
                     if (mMessageHandler == null)
                     {
-                        mainLog.Warn("MessageHandler is null; unable to send queued message");
+                        OnWarningEvent("MessageHandler is null; unable to send queued message");
                     }
                     else
                     {
@@ -519,10 +445,11 @@ namespace StatusMessageDBUpdater
                         var worker = new Thread(() => SendQueuedMessageWork(message));
 
                         worker.Start();
+
                         // Wait up to 15 seconds
                         if (!worker.Join(15000))
                         {
-                            mainLog.Error("Unable to send queued message (timeout after 15 seconds); aborting");
+                            OnErrorEvent("Unable to send queued message (timeout after 15 seconds); aborting");
                             worker.Abort();
                         }
                     }

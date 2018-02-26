@@ -13,7 +13,7 @@ using System.Data;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
-using log4net;
+using PRISM;
 
 namespace StatusMessageDBUpdater
 {
@@ -33,7 +33,6 @@ namespace StatusMessageDBUpdater
         bool m_MCParamsLoaded;
         string m_ErrMsg = "";
 
-        private readonly ILog m_Logger;
 
         #endregion
 
@@ -45,18 +44,6 @@ namespace StatusMessageDBUpdater
         #endregion
 
         #region "Methods"
-        public clsMgrSettings(ILog logger)
-        {
-            m_Logger = logger;
-
-            if (!LoadSettings())
-            {
-                if (string.Equals(m_ErrMsg, DEACTIVATED_LOCALLY))
-                    throw new ApplicationException(DEACTIVATED_LOCALLY);
-
-                throw new ApplicationException("Unable to initialize manager settings class: " + m_ErrMsg);
-            }
-        }
 
         public bool LoadSettings()
         {
@@ -544,14 +531,7 @@ namespace StatusMessageDBUpdater
 
         private void WriteErrorMsg(string errorMessage, bool allowLogToDB = true)
         {
-            if (m_MCParamsLoaded || !allowLogToDB)
-            {
-                m_Logger.Error(errorMessage);
-            }
-            else
-            {
-                m_Logger.Error(errorMessage);
-            }
+            OnErrorEvent(errorMessage);
         }
         #endregion
     }

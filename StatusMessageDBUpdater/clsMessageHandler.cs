@@ -2,7 +2,7 @@
 using Apache.NMS;
 using Apache.NMS.ActiveMQ;
 using Apache.NMS.ActiveMQ.Commands;
-using log4net;
+using PRISM;
 
 namespace StatusMessageDBUpdater
 {
@@ -12,11 +12,10 @@ namespace StatusMessageDBUpdater
     // received commands are sent to a delegate function with this signature
     public delegate void MessageProcessorDelegate(string cmdText);
 
-    class clsMessageHandler : IDisposable
+    class clsMessageHandler : clsEventNotifier, IDisposable
     {
-        private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
-
         #region "Class variables"
+
         private string m_BrokerUri;
         private string m_InputStatusTopicName;
         private string m_BroadcastTopicName;
@@ -91,8 +90,6 @@ namespace StatusMessageDBUpdater
                 this.m_HasConnection = true;
                 // temp debug
                 // Console.WriteLine("--- New connection made ---" + Environment.NewLine); //+ e.ToString()
-                mainLog.Info("Connected to message broker");
-                mainLog.Info(" ... " + m_BrokerUri);
             }
             catch (Exception ex)
             {
@@ -102,6 +99,10 @@ namespace StatusMessageDBUpdater
                 mainLog.Error("Exception creating message broker connection to " + m_BrokerUri);
                 mainLog.Error(ex.Message);
                 mainLog.Error(PRISM.clsStackTraceFormatter.GetExceptionStackTrace(ex));
+                    var username = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+
+                    OnStatusEvent(string.Format("Connected to broker as user {0}: {1}", username, m_BrokerUri));
+
             }
         }
 
@@ -120,24 +121,25 @@ namespace StatusMessageDBUpdater
                 var inputSession = m_Connection.CreateSession();
                 m_InputConsumer = inputSession.CreateConsumer(new ActiveMQTopic(this.m_InputStatusTopicName));
                 m_InputConsumer.Listener += OnInputMessageReceived;
-                mainLog.Info("Input listener established for topic '" + m_InputStatusTopicName + "'");
+                OnStatusEvent("Input listener established for topic '" + m_InputStatusTopicName + "'");
 
                 // topic for commands broadcast to all folder makers
                 var broadcastSession = m_Connection.CreateSession();
                 m_BroadcastConsumer = broadcastSession.CreateConsumer(new ActiveMQTopic(this.m_BroadcastTopicName));
                 m_BroadcastConsumer.Listener += OnBroadcastReceived;
-                mainLog.Info("Broadcast listener established for topic '" + m_BroadcastTopicName + "'");
+                OnStatusEvent("Broadcast listener established for topic '" + m_BroadcastTopicName + "'");
 
                 // topic to send status information over
                 this.m_StatusSession = m_Connection.CreateSession();
                 this.m_StatusSender = m_StatusSession.CreateProducer(new ActiveMQTopic(m_OutputStatusTopicName));
-                mainLog.Info("Status sender established for topic '" + m_OutputStatusTopicName + "'");
+                m_StatusSession = m_Connection.CreateSession();
+                OnStatusEvent("Status sender established for topic '" + m_OutputStatusTopicName + "'");
 
                 return true;
             }
             catch (Exception ex)
             {
-                mainLog.Error("Exception while initializing message sessions: " + ex.Message);
+                OnErrorEvent("Exception while initializing message sessions", ex);
                 DestroyConnection();
                 return false;
             }
@@ -166,15 +168,13 @@ namespace StatusMessageDBUpdater
         private void OnBroadcastReceived(IMessage message)
         {
             var textMessage = message as ITextMessage;
-            mainLog.Debug("clsMessageHandler(), Broadcast message received");
-            if (this.BroadcastReceived != null)
             {
                 // call the delegate to process the commnd
                 this.BroadcastReceived(textMessage.Text);
             }
             else
             {
-                mainLog.Debug("clsMessageHandler().OnBroadcastReceived: No event handlers assigned");
+                OnDebugEvent("clsMessageHandler().OnBroadcastReceived: No event handlers assigned");
             }
         }
 

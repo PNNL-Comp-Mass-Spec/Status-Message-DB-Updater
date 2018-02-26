@@ -1,63 +1,98 @@
+using PRISM.Logging;
 using System;
-using log4net;
+using PRISM;
 
-[assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
+namespace StatusMessageDBUpdater
+{
 
-namespace StatusMessageDBUpdater {
-    class Program {
-        private static readonly ILog mainLog = LogManager.GetLogger("MainLog");
+    public class Program
+    {
 
-        #region "Class variables"
         const int MAX_RUNTIME_HOURS = 24;
 
-        static clsMainProg m_MainProcess;
-        static string ErrMsg;
-        #endregion
+        static FileLogger m_Logger;
 
-        #region "Methods"
+        /// <summary>
+        /// Entry method
+        /// </summary>
+        /// <param name="args"></param>
+        static void Main(string[] args)
+        {
+            try
+            {
+                m_Logger = new FileLogger(@"Logs\StatusMsgDBUpdater", BaseLogger.LogLevels.INFO);
 
-        static void Main(string[] args) {
+                var restart = true;
 
-            mainLog.Info("Started");
+                do
+                {
+                    // Start the main program running
+                    try
+                    {
+                        var mainProcess = new clsMainProg();
+                        mainProcess.DebugEvent += MainProcess_DebugEvent;
+                        mainProcess.ErrorEvent += MainProcess_ErrorEvent;
+                        mainProcess.WarningEvent += MainProcess_WarningEvent;
+                        mainProcess.StatusEvent += MainProcess_StatusEvent;
 
-            var restart = false;
-            var dtStartTime = DateTime.UtcNow;
-
-            do {
-                // Start the main program running
-                try {
-                    if (m_MainProcess == null) {
-                        m_MainProcess = new clsMainProg();
-                        if (!m_MainProcess.InitMgr(MAX_RUNTIME_HOURS))
+                        if (!mainProcess.InitMgr(MAX_RUNTIME_HOURS))
                         {
+                            clsProgRunner.SleepMilliseconds(1500);
                             return;
                         }
-                        restart = m_MainProcess.DoProcess();
-                        m_MainProcess = null;
+
+                        // Start the main process
+                        // If it receives the ReadConfig command, DoProcess will return true
+                        restart = mainProcess.DoProcess();
                     }
-                }
-                catch (Exception Err) {
-                    // Report any exceptions not handled at a lower level to the system application log
-                    ErrMsg = "Critical exception starting application: " + Err.Message;
-//                    System.Diagnostics.EventLog ev = new System.Diagnostics.EventLog("Application", ".", "DMS_StatusMsgDBUpdater");
-//                    System.Diagnostics.Trace.Listeners.Add(new System.Diagnostics.EventLogTraceListener("DMS_StatusMsgDBUpdater"));
-//                    System.Diagnostics.Trace.WriteLine(ErrMsg);
-//                    ev.Close();
-                    System.Diagnostics.Debug.WriteLine(ErrMsg);
-                }
+                    catch (Exception ex2)
+                    {
+                        ShowErrorMessage("Error running the main process", ex2);
+                        clsProgRunner.SleepMilliseconds(1500);
+                    }
+                } while (restart);
 
-                if (DateTime.UtcNow.Subtract(dtStartTime).TotalHours >= MAX_RUNTIME_HOURS)
-                {
-                    var message = "Over " + MAX_RUNTIME_HOURS + " hours have elapsed; exiting program (helps mitigate a memory leak)";
-                    System.Diagnostics.Debug.WriteLine(message);
-                    Console.WriteLine(message);
-                    break;
-                }
+                FileLogger.FlushPendingMessages();
 
-            } while(restart);
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("Error starting application", ex);
+            }
+
+            clsProgRunner.SleepMilliseconds(1500);
 
         }
 
-        #endregion
+        private static void MainProcess_DebugEvent(string message)
+        {
+            ConsoleMsgUtils.ShowDebug(message);
+            m_Logger?.Debug(message);
+        }
+
+        private static void MainProcess_ErrorEvent(string message, Exception ex)
+        {
+            ConsoleMsgUtils.ShowError(message, ex, false);
+            m_Logger?.Error(message, ex);
+        }
+
+        private static void MainProcess_StatusEvent(string message)
+        {
+            Console.WriteLine(message);
+            m_Logger?.Info(message);
+        }
+
+        private static void MainProcess_WarningEvent(string message)
+        {
+            ConsoleMsgUtils.ShowWarning(message);
+            m_Logger?.Warn(message);
+        }
+
+        private static void ShowErrorMessage(string message, Exception ex = null)
+        {
+            ConsoleMsgUtils.ShowError(message, ex);
+            m_Logger?.Error(message, ex);
+        }
+
     }
 }
