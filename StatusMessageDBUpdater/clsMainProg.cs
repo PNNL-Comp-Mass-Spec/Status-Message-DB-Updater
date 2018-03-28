@@ -252,7 +252,7 @@ namespace StatusMessageDBUpdater
                 var processors = mMsgAccumulator.ChangedList.ToList();
                 mMsgAccumulator.ChangedList.Clear();
 
-                OnStatusEvent("MsgDB program updated " + processors.Count + " at " + DateTime.Now);
+                OnStatusEvent("Updated status for " + processors.Count + " processors");
 
                 try
                 {
@@ -274,7 +274,7 @@ namespace StatusMessageDBUpdater
                             concatMessages.Append(rootNode.OuterXml);
                         }
                     }
-                    OnStatusEvent("Size:" + concatMessages.Length);
+                    OnDebugEvent("Size: " + concatMessages.Length);
 
                     // Update the database by calling stored procedure UpdateManagerAndTaskStatusXML
                     var success = mDba.UpdateDatabase(concatMessages, out var message);
@@ -294,7 +294,7 @@ namespace StatusMessageDBUpdater
                         {
                             // Example message:
                             // Messages:66, PreservedA:0, PreservedB:66, InsertedA:0, InsertedB:0, INFO
-                            OnStatusEvent("Result: " + message);
+                            OnDebugEvent("Result: " + message);
                             UpdateXmlNode(mXmlStatusDocument, "//Status", "Good");
                             UpdateXmlNode(mXmlStatusDocument, "//MostRecentLogMessage", message);
                             QueueMessageToSend(mXmlStatusDocument.InnerXml);
