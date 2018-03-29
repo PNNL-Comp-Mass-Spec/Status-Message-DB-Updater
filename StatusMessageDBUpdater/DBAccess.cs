@@ -7,9 +7,9 @@ namespace StatusMessageDBUpdater
 {
     class DBAccess
     {
-        readonly string m_cnStr;
+        readonly string mConnectionString;
 
-        SqlConnection m_dbCn;
+        SqlConnection mDBConnection;
 
         /// <summary>
         /// Constructor
@@ -17,8 +17,8 @@ namespace StatusMessageDBUpdater
         /// <param name="connectionString"></param>
         public DBAccess(string connectionString)
         {
-            m_cnStr = connectionString;
-            m_dbCn = new SqlConnection(m_cnStr);
+            mConnectionString = connectionString;
+            mDBConnection = new SqlConnection(mConnectionString);
         }
 
         /// <summary>
@@ -30,8 +30,8 @@ namespace StatusMessageDBUpdater
             var outcome = false;
             try
             {
-                m_dbCn = new SqlConnection(m_cnStr);
-                m_dbCn.Open();
+                mDBConnection = new SqlConnection(mConnectionString);
+                mDBConnection.Open();
                 outcome = true;
             }
             catch (Exception ex)
@@ -54,7 +54,7 @@ namespace StatusMessageDBUpdater
 
             try
             {
-                var cmd = new SqlCommand("UpdateManagerAndTaskStatusXML", m_dbCn)
+                var cmd = new SqlCommand("UpdateManagerAndTaskStatusXML", mDBConnection)
                 {
                     CommandType = CommandType.StoredProcedure,
                     CommandTimeout = DB_TIMEOUT_SECONDS
@@ -86,10 +86,10 @@ namespace StatusMessageDBUpdater
 
         public void Disconnect()
         {
-            if (m_dbCn != null)
+            if (mDBConnection != null)
             {
-                m_dbCn.Close();
-                m_dbCn.Dispose();
+                mDBConnection.Close();
+                mDBConnection.Dispose();
             }
         }
 

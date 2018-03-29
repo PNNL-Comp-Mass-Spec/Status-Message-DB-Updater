@@ -30,16 +30,13 @@ namespace StatusMessageDBUpdater
 
         public const string DEACTIVATED_LOCALLY = "Manager deactivated locally";
 
-        Dictionary<string, string> m_ParamDictionary;
-
-        private string m_ErrMsg = "";
-
         #endregion
 
         #region "Properties"
-        public string ErrMsg => m_ErrMsg;
 
-        public Dictionary<string, string> TaskDictionary => m_ParamDictionary;
+        public string ErrMsg { get; private set; } = "";
+
+        public Dictionary<string, string> TaskDictionary { get; private set; }
 
         #endregion
 
@@ -47,25 +44,25 @@ namespace StatusMessageDBUpdater
 
         public bool LoadSettings()
         {
-            m_ErrMsg = "";
+            ErrMsg = "";
 
             // If the param dictionary exists, it needs to be cleared out
-            if (m_ParamDictionary != null)
+            if (TaskDictionary != null)
             {
-                m_ParamDictionary.Clear();
-                m_ParamDictionary = null;
+                TaskDictionary.Clear();
+                TaskDictionary = null;
             }
 
             // Get settings from config file
-            m_ParamDictionary = LoadMgrSettingsFromFile();
+            TaskDictionary = LoadMgrSettingsFromFile();
 
             // Get directory for main executable
             var appPath = Application.ExecutablePath;
             var fi = new FileInfo(appPath);
-            m_ParamDictionary.Add("ApplicationPath", fi.DirectoryName);
+            TaskDictionary.Add("ApplicationPath", fi.DirectoryName);
 
             // Test the settings retrieved from the config file
-            if (!CheckInitialSettings(m_ParamDictionary))
+            if (!CheckInitialSettings(TaskDictionary))
             {
                 // Error logging handled by CheckInitialSettings
                 return false;
@@ -75,7 +72,7 @@ namespace StatusMessageDBUpdater
             if (!bool.Parse(GetParam("MgrActive_Local", "false")))
             {
                 Console.WriteLine(DEACTIVATED_LOCALLY);
-                m_ErrMsg = DEACTIVATED_LOCALLY;
+                ErrMsg = DEACTIVATED_LOCALLY;
                 return false;
             }
 
@@ -92,62 +89,60 @@ namespace StatusMessageDBUpdater
 
         private Dictionary<string, string> LoadMgrSettingsFromFile()
         {
-            // Load initial settings into string dictionary for return
-            var RetDict = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
+            // Load initial settings into dictionary for return
+            var paramDict = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
-            // 				My.Settings.Reload()
             // Manager config db connection string
-            var TempStr = Properties.Settings.Default.MgrCnfgDbConnectStr;
-            RetDict.Add("MgrCnfgDbConnectStr", TempStr);
+            var dbConnString = Properties.Settings.Default.MgrCnfgDbConnectStr;
+            paramDict.Add("MgrCnfgDbConnectStr", dbConnString);
 
             // Manager active flag
-            TempStr = Properties.Settings.Default.MgrActive_Local;
-            RetDict.Add("MgrActive_Local", TempStr);
+            var mgrActiveLocal = Properties.Settings.Default.MgrActive_Local;
+            paramDict.Add("MgrActive_Local", mgrActiveLocal);
 
             // Manager name
             // If the MgrName setting in the .exe.config file contains the text $ComputerName$
             // then that text is replaced with this computer's domain name
             // This is a case-sensitive comparison
             //
-            TempStr = Properties.Settings.Default.MgrName;
-            TempStr = TempStr.Replace("$ComputerName$", Environment.MachineName);
-            RetDict.Add("MgrName", TempStr);
+            var mgrName = Properties.Settings.Default.MgrName;
+            paramDict.Add("MgrName", mgrName.Replace("$ComputerName$", Environment.MachineName));
 
             // Default settings in use flag
-            TempStr = Properties.Settings.Default.UsingDefaults;
-            RetDict.Add("UsingDefaults", TempStr);
+            var usingDefaults = Properties.Settings.Default.UsingDefaults;
+            paramDict.Add("UsingDefaults", usingDefaults);
 
             // Update check interval
-            TempStr = Properties.Settings.Default.CheckForUpdateInterval;
-            RetDict.Add("CheckForUpdateInterval", TempStr);
+            var updateCheckInterval = Properties.Settings.Default.CheckForUpdateInterval;
+            paramDict.Add("CheckForUpdateInterval", updateCheckInterval);
 
-            return RetDict;
+            return paramDict;
         }
 
-        private bool CheckInitialSettings(IReadOnlyDictionary<string, string> InpDict)
+        private bool CheckInitialSettings(IReadOnlyDictionary<string, string> paramDict)
         {
             // Verify manager settings dictionary exists
-            if (InpDict == null)
+            if (paramDict == null)
             {
-                m_ErrMsg = "clsMgrSettings.CheckInitialSettings(); Manager parameter string dictionary not found";
-                ConsoleMsgUtils.ShowError(m_ErrMsg);
+                ErrMsg = "clsMgrSettings.CheckInitialSettings(); Manager parameter dictionary not found";
+                ConsoleMsgUtils.ShowError(ErrMsg);
                 return false;
             }
 
             // Verify intact config file was found
-            if (!InpDict.TryGetValue("UsingDefaults", out var strValue))
+            if (!paramDict.TryGetValue("UsingDefaults", out var usingDefaults))
             {
-                m_ErrMsg = "clsMgrSettings.CheckInitialSettings(); 'UsingDefaults' entry not found in Config file";
-                ConsoleMsgUtils.ShowWarning(m_ErrMsg);
+                ErrMsg = "clsMgrSettings.CheckInitialSettings(); 'UsingDefaults' entry not found in Config file";
+                ConsoleMsgUtils.ShowWarning(ErrMsg);
             }
             else
             {
-                if (bool.TryParse(strValue, out var blnValue))
+                if (bool.TryParse(usingDefaults, out var value))
                 {
-                    if (blnValue)
+                    if (value)
                     {
-                        m_ErrMsg = "clsMgrSettings.CheckInitialSettings(); Config file problem, contains UsingDefaults=True";
-                        ConsoleMsgUtils.ShowWarning(m_ErrMsg);
+                        ErrMsg = "clsMgrSettings.CheckInitialSettings(); Config file problem, contains UsingDefaults=True";
+                        ConsoleMsgUtils.ShowWarning(ErrMsg);
                         return false;
                     }
                 }
@@ -160,14 +155,14 @@ namespace StatusMessageDBUpdater
         private string GetGroupNameFromSettings(DataTable dtSettings)
         {
 
-            foreach (DataRow oRow in dtSettings.Rows)
+            foreach (DataRow dataRow in dtSettings.Rows)
             {
                 // Add the column heading and value to the dictionary
-                var paramKey = DbCStr(oRow[dtSettings.Columns["ParameterName"]]);
+                var paramKey = DbCStr(dataRow[dtSettings.Columns["ParameterName"]]);
 
                 if (string.Equals(paramKey, "MgrSettingGroupName", StringComparison.CurrentCultureIgnoreCase))
                 {
-                    var groupName = DbCStr(oRow[dtSettings.Columns["ParameterValue"]]);
+                    var groupName = DbCStr(dataRow[dtSettings.Columns["ParameterValue"]]);
                     if (!string.IsNullOrWhiteSpace(groupName))
                     {
                         return groupName;
@@ -196,8 +191,8 @@ namespace StatusMessageDBUpdater
 
             if (string.IsNullOrEmpty(managerName))
             {
-                m_ErrMsg = "MgrName parameter not found in m_ParamDictionary; it should be defined in the CaptureTaskManager.exe.config file";
-                WriteErrorMsg(m_ErrMsg);
+                ErrMsg = "MgrName parameter not found in mParamDictionary; it should be defined in the CaptureTaskManager.exe.config file";
+                WriteErrorMsg(ErrMsg);
                 return false;
             }
 
@@ -239,13 +234,13 @@ namespace StatusMessageDBUpdater
         {
 
             short retryCount = 3;
-            var DBConnectionString = GetParam("MgrCnfgDbConnectStr", "");
+            var dbConnectionString = GetParam("MgrCnfgDbConnectStr", "");
             dtSettings = null;
 
-            if (string.IsNullOrEmpty(DBConnectionString))
+            if (string.IsNullOrEmpty(dbConnectionString))
             {
-                m_ErrMsg = "MgrCnfgDbConnectStr parameter not found in m_ParamDictionary; it should be defined in the CaptureTaskManager.exe.config file";
-                WriteErrorMsg(m_ErrMsg);
+                ErrMsg = "MgrCnfgDbConnectStr parameter not found in mParamDictionary; it should be defined in the CaptureTaskManager.exe.config file";
+                WriteErrorMsg(ErrMsg);
                 return false;
             }
 
@@ -256,7 +251,7 @@ namespace StatusMessageDBUpdater
             {
                 try
                 {
-                    using (var cn = new SqlConnection(DBConnectionString))
+                    using (var cn = new SqlConnection(dbConnectionString))
                     {
                         var cmd = new SqlCommand
                         {
@@ -294,9 +289,9 @@ namespace StatusMessageDBUpdater
             if (retryCount < 1)
             {
 
-                m_ErrMsg = "clsMgrSettings.LoadMgrSettingsFromDB; Excessive failures attempting to retrieve manager settings from database";
+                ErrMsg = "clsMgrSettings.LoadMgrSettingsFromDB; Excessive failures attempting to retrieve manager settings from database";
                 if (logConnectionErrors)
-                    WriteErrorMsg(m_ErrMsg);
+                    WriteErrorMsg(ErrMsg);
 
                 return false;
             }
@@ -305,9 +300,9 @@ namespace StatusMessageDBUpdater
             if (dtSettings == null)
             {
                 // Data table not initialized
-                m_ErrMsg = "clsMgrSettings.LoadMgrSettingsFromDB; dtSettings datatable is null; using " + DBConnectionString;
+                ErrMsg = "clsMgrSettings.LoadMgrSettingsFromDB; dtSettings datatable is null; using " + dbConnectionString;
                 if (logConnectionErrors)
-                    WriteErrorMsg(m_ErrMsg);
+                    WriteErrorMsg(ErrMsg);
                 return false;
             }
 
@@ -315,8 +310,8 @@ namespace StatusMessageDBUpdater
             if (dtSettings.Rows.Count < 1 && returnErrorIfNoParameters)
             {
                 // Wrong number of rows returned
-                m_ErrMsg = "clsMgrSettings.LoadMgrSettingsFromDB; Manager " + managerName + " not defined in the manager control database; using " + DBConnectionString;
-                WriteErrorMsg(m_ErrMsg);
+                ErrMsg = "clsMgrSettings.LoadMgrSettingsFromDB; Manager " + managerName + " not defined in the manager control database; using " + dbConnectionString;
+                WriteErrorMsg(ErrMsg);
                 dtSettings.Dispose();
                 return false;
             }
@@ -329,7 +324,7 @@ namespace StatusMessageDBUpdater
         {
             bool success;
 
-            // Fill a string dictionary with the manager parameters that have been found
+            // Fill a dictionary with the manager parameters that have been found
             try
             {
                 foreach (DataRow oRow in dtSettings.Rows)
@@ -338,24 +333,24 @@ namespace StatusMessageDBUpdater
                     var paramKey = DbCStr(oRow[dtSettings.Columns["ParameterName"]]);
                     var paramVal = DbCStr(oRow[dtSettings.Columns["ParameterValue"]]);
 
-                    if (m_ParamDictionary.ContainsKey(paramKey))
+                    if (TaskDictionary.ContainsKey(paramKey))
                     {
                         if (!skipExistingParameters)
                         {
-                            m_ParamDictionary[paramKey] = paramVal;
+                            TaskDictionary[paramKey] = paramVal;
                         }
                     }
                     else
                     {
-                        m_ParamDictionary.Add(paramKey, paramVal);
+                        TaskDictionary.Add(paramKey, paramVal);
                     }
                 }
                 success = true;
             }
             catch (Exception ex)
             {
-                m_ErrMsg = "clsMgrSettings.LoadMgrSettingsFromDB; Exception filling string dictionary from table for manager '" + managerName + "': " + ex.Message;
-                WriteErrorMsg(m_ErrMsg);
+                ErrMsg = "clsMgrSettings.LoadMgrSettingsFromDB; Exception filling dictionary from table for manager '" + managerName + "': " + ex.Message;
+                WriteErrorMsg(ErrMsg);
                 success = false;
             }
             finally
@@ -398,7 +393,7 @@ namespace StatusMessageDBUpdater
         /// <returns>Parameter value if found, otherwise empty string</returns>
         public string GetParam(string itemKey, string valueIfMissing)
         {
-            if (m_ParamDictionary.TryGetValue(itemKey, out var itemValue))
+            if (TaskDictionary.TryGetValue(itemKey, out var itemValue))
             {
                 return itemValue ?? string.Empty;
             }
@@ -408,13 +403,13 @@ namespace StatusMessageDBUpdater
 
         public void SetParam(string itemKey, string itemValue)
         {
-            if (m_ParamDictionary.ContainsKey(itemKey))
+            if (TaskDictionary.ContainsKey(itemKey))
             {
-                m_ParamDictionary[itemKey] = itemValue;
+                TaskDictionary[itemKey] = itemValue;
             }
             else
             {
-                m_ParamDictionary.Add(itemKey, itemValue);
+                TaskDictionary.Add(itemKey, itemValue);
             }
         }
 
@@ -428,7 +423,7 @@ namespace StatusMessageDBUpdater
         public bool WriteConfigSetting(string key, string value)
         {
 
-            m_ErrMsg = "";
+            ErrMsg = "";
 
             // Load the config document
             var doc = LoadConfigDocument();
@@ -443,7 +438,7 @@ namespace StatusMessageDBUpdater
 
             if (appSettingsNode == null)
             {
-                m_ErrMsg = "clsMgrSettings.WriteConfigSettings; appSettings node not found";
+                ErrMsg = "clsMgrSettings.WriteConfigSettings; appSettings node not found";
                 return false;
             }
 
@@ -459,7 +454,7 @@ namespace StatusMessageDBUpdater
                 else
                 {
                     // Key was not found
-                    m_ErrMsg = "clsMgrSettings.WriteConfigSettings; specified key not found: " + key;
+                    ErrMsg = "clsMgrSettings.WriteConfigSettings; specified key not found: " + key;
                     return false;
                 }
                 doc.Save(GetConfigFilePath());
@@ -467,7 +462,7 @@ namespace StatusMessageDBUpdater
             }
             catch (Exception ex)
             {
-                m_ErrMsg = "clsMgrSettings.WriteConfigSettings; Exception updating settings file: " + ex.Message;
+                ErrMsg = "clsMgrSettings.WriteConfigSettings; Exception updating settings file: " + ex.Message;
                 return false;
             }
         }
@@ -486,7 +481,7 @@ namespace StatusMessageDBUpdater
             }
             catch (Exception ex)
             {
-                m_ErrMsg = "clsMgrSettings.LoadConfigDocument; Exception loading settings file: " + ex.Message;
+                ErrMsg = "clsMgrSettings.LoadConfigDocument; Exception loading settings file: " + ex.Message;
                 return null;
             }
         }
@@ -500,20 +495,21 @@ namespace StatusMessageDBUpdater
             return Application.ExecutablePath + ".config";
         }
 
-        private string DbCStr(object InpObj)
+        private string DbCStr(object dataValue)
         {
-            if (InpObj == null)
+            if (dataValue == null)
             {
                 return "";
             }
 
-            return InpObj.ToString();
+            return dataValue.ToString();
         }
 
         private void WriteErrorMsg(string errorMessage)
         {
             OnErrorEvent(errorMessage);
         }
+
         #endregion
     }
 }

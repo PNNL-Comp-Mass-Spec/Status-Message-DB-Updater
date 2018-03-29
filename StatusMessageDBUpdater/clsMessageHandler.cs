@@ -17,19 +17,14 @@ namespace StatusMessageDBUpdater
     {
         #region "Class variables"
 
-        private string m_BrokerUri;
-        private string m_InputStatusTopicName;
-        private string m_BroadcastTopicName;
-        private string m_OutputStatusTopicName;
+        private IConnection mConnection;
+        private ISession mStatusSession;
+        private IMessageProducer mStatusSender;
+        private IMessageConsumer mInputConsumer;
+        private IMessageConsumer mBroadcastConsumer;
 
-        private IConnection m_Connection;
-        private ISession m_StatusSession;
-        private IMessageProducer m_StatusSender;
-        private IMessageConsumer m_InputConsumer;
-        private IMessageConsumer m_BroadcastConsumer;
-
-        private bool m_IsDisposed;
-        private bool m_HasConnection;
+        private bool mIsDisposed;
+        private bool mHasConnection;
 
         #endregion
 
@@ -42,29 +37,14 @@ namespace StatusMessageDBUpdater
 
         #region "Properties"
 
-        public string BrokerUri
-        {
-            get => m_BrokerUri;
-            set => m_BrokerUri = value;
-        }
+        public string BrokerUri { get; set; }
 
-        public string InputStatusTopicName
-        {
-            get => m_InputStatusTopicName;
-            set => m_InputStatusTopicName = value;
-        }
+        public string InputStatusTopicName { get; set; }
 
-        public string BroadcastTopicName
-        {
-            get => m_BroadcastTopicName;
-            set => m_BroadcastTopicName = value;
-        }
+        public string BroadcastTopicName { get; set; }
 
-        public string OutputStatusTopicName
-        {
-            get => m_OutputStatusTopicName;
-            set => m_OutputStatusTopicName = value;
-        }
+        public string OutputStatusTopicName { get; set; }
+
         #endregion
 
         #region "Methods"
@@ -76,7 +56,7 @@ namespace StatusMessageDBUpdater
         /// <param name="timeoutSeconds">Number of seconds to wait for the broker to respond</param>
         protected void CreateConnection(int retryCount = 2, int timeoutSeconds = 15)
         {
-            if (m_HasConnection)
+            if (mHasConnection)
                 return;
 
             if (retryCount < 0)
@@ -98,15 +78,15 @@ namespace StatusMessageDBUpdater
                     //  or
                     // failover:(tcp://Proto-7.pnl.gov:61616,tcp://proto-4.pnl.gov:61616)
 
-                    IConnectionFactory connectionFactory = new ConnectionFactory(m_BrokerUri);
-                    m_Connection = connectionFactory.CreateConnection();
-                    m_Connection.RequestTimeout = new TimeSpan(0, 0, timeoutSeconds);
-                    m_Connection.Start();
+                    IConnectionFactory connectionFactory = new ConnectionFactory(BrokerUri);
+                    mConnection = connectionFactory.CreateConnection();
+                    mConnection.RequestTimeout = new TimeSpan(0, 0, timeoutSeconds);
+                    mConnection.Start();
 
-                    m_HasConnection = true;
+                    mHasConnection = true;
                     var username = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
-                    OnStatusEvent(string.Format("Connected to broker as user {0}: {1}", username, m_BrokerUri));
+                    OnStatusEvent(string.Format("Connected to broker as user {0}: {1}", username, BrokerUri));
 
                     return;
                 }
@@ -143,27 +123,27 @@ namespace StatusMessageDBUpdater
         {
             try
             {
-                if (!m_HasConnection)
+                if (!mHasConnection)
                     CreateConnection();
 
-                if (!m_HasConnection)
+                if (!mHasConnection)
                     return false;
 
-                var inputSession = m_Connection.CreateSession();
-                m_InputConsumer = inputSession.CreateConsumer(new ActiveMQTopic(m_InputStatusTopicName));
-                m_InputConsumer.Listener += OnInputMessageReceived;
-                OnStatusEvent("Input listener established for topic '" + m_InputStatusTopicName + "'");
+                var inputSession = mConnection.CreateSession();
+                mInputConsumer = inputSession.CreateConsumer(new ActiveMQTopic(InputStatusTopicName));
+                mInputConsumer.Listener += OnInputMessageReceived;
+                OnStatusEvent("Input listener established for topic '" + InputStatusTopicName + "'");
 
                 // topic for commands broadcast to all folder makers
-                var broadcastSession = m_Connection.CreateSession();
-                m_BroadcastConsumer = broadcastSession.CreateConsumer(new ActiveMQTopic(m_BroadcastTopicName));
-                m_BroadcastConsumer.Listener += OnBroadcastReceived;
-                OnStatusEvent("Broadcast listener established for topic '" + m_BroadcastTopicName + "'");
+                var broadcastSession = mConnection.CreateSession();
+                mBroadcastConsumer = broadcastSession.CreateConsumer(new ActiveMQTopic(BroadcastTopicName));
+                mBroadcastConsumer.Listener += OnBroadcastReceived;
+                OnStatusEvent("Broadcast listener established for topic '" + BroadcastTopicName + "'");
 
                 // topic to send status information over
-                m_StatusSession = m_Connection.CreateSession();
-                m_StatusSender = m_StatusSession.CreateProducer(new ActiveMQTopic(m_OutputStatusTopicName));
-                OnStatusEvent("Status sender established for topic '" + m_OutputStatusTopicName + "'");
+                mStatusSession = mConnection.CreateSession();
+                mStatusSender = mStatusSession.CreateProducer(new ActiveMQTopic(OutputStatusTopicName));
+                OnStatusEvent("Status sender established for topic '" + OutputStatusTopicName + "'");
 
                 return true;
             }
@@ -218,13 +198,13 @@ namespace StatusMessageDBUpdater
         /// <param name="message">Outgoing message string</param>
         public void SendMessage(string processor, string message)
         {
-            if (!m_IsDisposed)
+            if (!mIsDisposed)
             {
-                var textMessage = m_StatusSession.CreateTextMessage(message);
+                var textMessage = mStatusSession.CreateTextMessage(message);
                 textMessage.Properties.SetString("ProcessorName", processor);
                 try
                 {
-                    m_StatusSender.Send(textMessage);
+                    mStatusSender.Send(textMessage);
                 }
                 catch
                 {
@@ -246,10 +226,10 @@ namespace StatusMessageDBUpdater
         /// </summary>
         protected void DestroyConnection()
         {
-            if (m_HasConnection)
+            if (mHasConnection)
             {
-                m_Connection.Dispose();
-                m_HasConnection = false;
+                mConnection.Dispose();
+                mHasConnection = false;
             }
         }
 
@@ -258,11 +238,11 @@ namespace StatusMessageDBUpdater
         /// </summary>
         public void Dispose()
         {
-            if (m_IsDisposed)
+            if (mIsDisposed)
                 return;
 
             DestroyConnection();
-            m_IsDisposed = true;
+            mIsDisposed = true;
         }
 
         #endregion

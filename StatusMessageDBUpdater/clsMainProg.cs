@@ -45,11 +45,11 @@ namespace StatusMessageDBUpdater
 
         private clsMessageHandler mMessageHandler;
 
-        private bool m_MsgQueueInitSuccess;
+        private bool mMsgQueueInitSuccess;
 
-        readonly Queue m_SendMessageQueue = new Queue();
+        readonly Queue mSendMessageQueue = new Queue();
 
-        private System.Timers.Timer m_SendMessageQueueProcessor;
+        private System.Timers.Timer mSendMessageQueueProcessor;
 
         private MessageAccumulator mMsgAccumulator;
 
@@ -62,7 +62,7 @@ namespace StatusMessageDBUpdater
         /// <summary>
         /// Initializes the manager
         /// </summary>
-        /// <returns>TRUE for success, FALSE for failure</returns>
+        /// <returns>True for success, false if an error</returns>
         public bool InitMgr(int maxRunTimeHours)
         {
             mMgrSettings = null;
@@ -99,9 +99,9 @@ namespace StatusMessageDBUpdater
             mMgrName = mMgrSettings.GetParam("MgrName");
             OnStatusEvent("Manager: " + mMgrName);
 
-            m_SendMessageQueueProcessor = new System.Timers.Timer(TIMER_UPDATE_INTERVAL_MSEC);
-            m_SendMessageQueueProcessor.Elapsed += m_SendMessageQueueProcessor_Elapsed;
-            m_SendMessageQueueProcessor.Start();
+            mSendMessageQueueProcessor = new System.Timers.Timer(TIMER_UPDATE_INTERVAL_MSEC);
+            mSendMessageQueueProcessor.Elapsed += SendMessageQueueProcessor_Elapsed;
+            mSendMessageQueueProcessor.Start();
 
             // Status message skeleton
             mXmlStatusDocument = new XmlDocument();
@@ -175,11 +175,11 @@ namespace StatusMessageDBUpdater
             if (!worker.Join(15000))
             {
                 worker.Abort();
-                m_MsgQueueInitSuccess = false;
+                mMsgQueueInitSuccess = false;
                 OnErrorEvent("Unable to initialize the message queue (timeout after 15 seconds); " + mMessageHandler.BrokerUri);
             }
 
-            return m_MsgQueueInitSuccess;
+            return mMsgQueueInitSuccess;
         }
 
         private void InitializeMessageQueueWork()
@@ -187,11 +187,11 @@ namespace StatusMessageDBUpdater
 
             if (!mMessageHandler.Init())
             {
-                m_MsgQueueInitSuccess = false;
+                mMsgQueueInitSuccess = false;
             }
             else
             {
-                m_MsgQueueInitSuccess = true;
+                mMsgQueueInitSuccess = true;
             }
 
         }
@@ -394,7 +394,7 @@ namespace StatusMessageDBUpdater
 
         private void QueueMessageToSend(string message)
         {
-            Queue.Synchronized(m_SendMessageQueue).Enqueue(message);
+            Queue.Synchronized(mSendMessageQueue).Enqueue(message);
         }
 
         private void TestForConfigReload()
@@ -420,14 +420,14 @@ namespace StatusMessageDBUpdater
             mLastUpdate = DateTime.UtcNow;
         }
 
-        void m_SendMessageQueueProcessor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        void SendMessageQueueProcessor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
 
-            while (Queue.Synchronized(m_SendMessageQueue).Count > 0)
+            while (Queue.Synchronized(mSendMessageQueue).Count > 0)
             {
                 try
                 {
-                    var message = (string)Queue.Synchronized(m_SendMessageQueue).Dequeue();
+                    var message = (string)Queue.Synchronized(mSendMessageQueue).Dequeue();
 
                     if (string.IsNullOrEmpty(message))
                     {

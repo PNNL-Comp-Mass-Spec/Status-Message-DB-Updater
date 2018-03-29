@@ -11,7 +11,7 @@ namespace StatusMessageDBUpdater
 
         const int MAX_RUNTIME_HOURS = 24;
 
-        static FileLogger m_Logger;
+        static FileLogger mLogger;
 
         /// <summary>
         /// Entry method
@@ -21,10 +21,10 @@ namespace StatusMessageDBUpdater
         {
             try
             {
-                m_Logger = new FileLogger(@"Logs\StatusMsgDBUpdater", BaseLogger.LogLevels.INFO);
+                mLogger = new FileLogger(@"Logs\StatusMsgDBUpdater", BaseLogger.LogLevels.INFO);
 
                 var appVersion = ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
-                m_Logger.Info("=== Started StatusMessageDBUpdater V" + appVersion + " =====");
+                mLogger.Info("=== Started StatusMessageDBUpdater V" + appVersion + " =====");
 
                 var restart = true;
 
@@ -71,31 +71,31 @@ namespace StatusMessageDBUpdater
         private static void MainProcess_DebugEvent(string message)
         {
             ConsoleMsgUtils.ShowDebug(message);
-            m_Logger?.Debug(message);
+            mLogger?.Debug(message);
         }
 
         private static void MainProcess_ErrorEvent(string message, Exception ex)
         {
             ConsoleMsgUtils.ShowError(message, ex, false);
-            m_Logger?.Error(message, ex);
+            mLogger?.Error(message, ex);
         }
 
         private static void MainProcess_StatusEvent(string message)
         {
             Console.WriteLine(message);
-            m_Logger?.Info(message);
+            mLogger?.Info(message);
         }
 
         private static void MainProcess_WarningEvent(string message)
         {
             ConsoleMsgUtils.ShowWarning(message);
-            m_Logger?.Warn(message);
+            mLogger?.Warn(message);
         }
 
         private static void ShowErrorMessage(string message, Exception ex = null)
         {
             ConsoleMsgUtils.ShowError(message, ex);
-            m_Logger?.Error(message, ex);
+            mLogger?.Error(message, ex);
         }
 
     }
