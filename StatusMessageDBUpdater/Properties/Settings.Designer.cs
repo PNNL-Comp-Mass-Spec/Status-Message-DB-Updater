@@ -12,7 +12,7 @@ namespace StatusMessageDBUpdater.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.1.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "15.6.0.0")]
     internal sealed partial class Settings : global::System.Configuration.ApplicationSettingsBase {
         
         private static Settings defaultInstance = ((Settings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new Settings())));
@@ -34,20 +34,10 @@ namespace StatusMessageDBUpdater.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=proteinseqs;Initial Catalog=manager_control_T3;Integrated Security=SS" +
-            "PI")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=proteinseqs;Initial Catalog=manager_control;Integrated Security=SSPI")]
         public string MgrCnfgDbConnectStr {
             get {
                 return ((string)(this["MgrCnfgDbConnectStr"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("WD16503_StatusMsgDBUpdater")]
-        public string MgrName {
-            get {
-                return ((string)(this["MgrName"]));
             }
         }
         
@@ -66,6 +56,15 @@ namespace StatusMessageDBUpdater.Properties {
         public string CheckForUpdateInterval {
             get {
                 return ((string)(this["CheckForUpdateInterval"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("$ComputerName$_StatusMsgDBUpdater")]
+        public string MgrName {
+            get {
+                return ((string)(this["MgrName"]));
             }
         }
     }
