@@ -5,7 +5,9 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.IO;
+using System.Text;
 using System.Xml;
+using System.Xml.Linq;
 using PRISM;
 
 namespace StatusMessageDBUpdater
@@ -16,6 +18,8 @@ namespace StatusMessageDBUpdater
         #region "Constants"
 
         private const int TIMER_UPDATE_INTERVAL_MSEC = 1000;
+
+        private const int RECENT_STATUS_FILES_TO_KEEP = 30;
 
         #endregion
 
@@ -259,7 +263,7 @@ namespace StatusMessageDBUpdater
                     mDba.Connect();
 
                     // Build concatenated XML for all new status messages
-                    var concatMessages = new System.Text.StringBuilder(1024);
+                    var concatMessages = new StringBuilder(1024);
 
                     foreach (var processor in processors)
                     {
@@ -278,6 +282,9 @@ namespace StatusMessageDBUpdater
 
                     // Update the database by calling stored procedure UpdateManagerAndTaskStatusXML
                     var success = mDba.UpdateDatabase(concatMessages, out var message);
+
+                    // Save the XML to disk, keeping the 30 most recent status files
+                    WriteStatusXmlToDisk(concatMessages);
 
                     // Send status
                     if (mLogStatusToMessageQueue)
@@ -479,6 +486,53 @@ namespace StatusMessageDBUpdater
             var selectedNode = statusDocument.SelectSingleNode(nodeXPath);
             if (selectedNode != null)
                 selectedNode.InnerText = newValue;
+        }
+
+        /// <summary>
+        /// Write the status message XML to a text file
+        /// Deletes old text files so that only 30 files are present in the RecentStatusMsgs directory
+        /// </summary>
+        /// <param name="statusMessages"></param>
+        private void WriteStatusXmlToDisk(StringBuilder statusMessages)
+        {
+            const string STATUS_MSG_FILE_PREFIX = "StatusMsgs_";
+
+            try
+            {
+                var appDirPath = PRISM.FileProcessor.ProcessFilesOrFoldersBase.GetAppFolderPath();
+                var recentStatusMsgDir = new DirectoryInfo(Path.Combine(appDirPath, "RecentStatusMsgs"));
+
+                if (!recentStatusMsgDir.Exists)
+                    recentStatusMsgDir.Create();
+
+                // Example filename: StatusMsgs_2018-04-19_12.34.26.xml
+                var statusMsgFileName = string.Format("{0}{1:yyyy-MM-dd_hh.mm.ss}.xml", STATUS_MSG_FILE_PREFIX, DateTime.Now);
+                var statusMsgFilePath = Path.Combine(recentStatusMsgDir.FullName, statusMsgFileName);
+
+                var doc = XDocument.Parse("<StatusMessages>" + statusMessages + "</StatusMessages>");
+                using (var writer = new StreamWriter(new FileStream(statusMsgFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)))
+                {
+                    writer.WriteLine(doc.ToString());
+                }
+
+                // Look for old files to delete
+                var statusMsgFiles = recentStatusMsgDir.GetFileSystemInfos(STATUS_MSG_FILE_PREFIX + "*.xml").ToList();
+                var numToDelete = statusMsgFiles.Count - RECENT_STATUS_FILES_TO_KEEP;
+
+                if (numToDelete < 1)
+                    return;
+
+                foreach (var fileToDelete in (from item in statusMsgFiles orderby item.LastWriteTimeUtc select item).Take(numToDelete))
+                {
+                    fileToDelete.Delete();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                OnErrorEvent("Error writing status XML to disk", ex);
+            }
+
         }
 
         #endregion
