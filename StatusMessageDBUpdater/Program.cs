@@ -41,7 +41,7 @@ namespace StatusMessageDBUpdater
 
                         if (!mainProcess.InitMgr(MAX_RUNTIME_HOURS))
                         {
-                            clsProgRunner.SleepMilliseconds(1500);
+                            ProgRunner.SleepMilliseconds(1500);
                             return;
                         }
 
@@ -52,7 +52,7 @@ namespace StatusMessageDBUpdater
                     catch (Exception ex2)
                     {
                         ShowErrorMessage("Error running the main process", ex2);
-                        clsProgRunner.SleepMilliseconds(1500);
+                        ProgRunner.SleepMilliseconds(1500);
                     }
                 } while (restart);
 
@@ -64,7 +64,7 @@ namespace StatusMessageDBUpdater
                 ShowErrorMessage("Error starting application", ex);
             }
 
-            clsProgRunner.SleepMilliseconds(1500);
+            ProgRunner.SleepMilliseconds(1500);
 
         }
 

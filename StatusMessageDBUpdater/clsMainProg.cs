@@ -12,7 +12,7 @@ using PRISM;
 
 namespace StatusMessageDBUpdater
 {
-    public class clsMainProg : clsEventNotifier
+    public class clsMainProg : EventNotifier
     {
 
         #region "Constants"

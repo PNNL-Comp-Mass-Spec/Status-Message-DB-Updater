@@ -23,7 +23,7 @@ namespace StatusMessageDBUpdater
     ///	loaded or manager set to inactive. If manager active, retrieves remainder of settings from manager
     ///	parameters database.
     /// </summary>
-    public class clsMgrSettings : clsEventNotifier, IMgrParams
+    public class clsMgrSettings : EventNotifier, IMgrParams
     {
 
         #region "Class variables"
