@@ -215,11 +215,10 @@ namespace StatusMessageDBUpdater
                 {
                     ErrMsg = string.Format("MgrSettings.CheckInitialSettings; Config file problem, {0} contains UsingDefaults=True",
                                            GetConfigFileName());
-                    OnErrorEvent(ErrMsg);
+                    ReportError(ErrMsg);
                     return false;
                 }
             }
-
 
             // Determine if manager is deactivated locally
             if (!paramDictionary.TryGetValue(MGR_PARAM_MGR_ACTIVE_LOCAL, out var activeLocalText))
@@ -232,7 +231,7 @@ namespace StatusMessageDBUpdater
             if (!bool.TryParse(activeLocalText, out var activeLocal) || !activeLocal)
             {
                 ErrMsg = DEACTIVATED_LOCALLY;
-                OnErrorEvent(DEACTIVATED_LOCALLY);
+                ReportError(DEACTIVATED_LOCALLY, false);
                 return false;
             }
 
@@ -334,7 +333,8 @@ namespace StatusMessageDBUpdater
                 RegisterEvents(dbTools);
             }
 
-            var success = dbTools.GetQueryResults(sqlQuery, out var queryResults, "LoadMgrSettingsFromDBWork");
+            short retryCount = 3;
+            var success = dbTools.GetQueryResults(sqlQuery, out var queryResults, "LoadMgrSettingsFromDBWork", retryCount);
 
             if (!success)
             {
