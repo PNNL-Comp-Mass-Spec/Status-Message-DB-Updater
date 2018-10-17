@@ -23,7 +23,7 @@ namespace StatusMessageDBUpdater
             {
                 mLogger = new FileLogger(@"Logs\StatusMsgDBUpdater", BaseLogger.LogLevels.INFO);
 
-                var appVersion = ProcessFilesOrFoldersBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
+                var appVersion = ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
                 mLogger.Info("=== Started StatusMessageDBUpdater V" + appVersion + " =====");
 
                 var restart = true;
