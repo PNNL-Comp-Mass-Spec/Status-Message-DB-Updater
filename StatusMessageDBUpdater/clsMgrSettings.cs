@@ -1,11 +1,10 @@
-﻿
-//*********************************************************************************************************
+﻿//*********************************************************************************************************
 // Written by Dave Clark for the US Department of Energy
 // Pacific Northwest National Laboratory, Richland, WA
 // Copyright 2009, Battelle Memorial Institute
 // Created 06/16/2009
-//
 //*********************************************************************************************************
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,10 +14,12 @@ namespace StatusMessageDBUpdater
 {
     /// <summary>
     /// Class for loading, storing and accessing manager parameters.
-    ///	Loads initial settings from local config file, then checks to see if remainder of settings should be
-    ///	loaded or manager set to inactive. If manager active, retrieves remainder of settings from manager
-    ///	parameters database.
     /// </summary>
+    /// <remarks>
+    /// Loads initial settings from local config file, then checks to see if remainder of settings should be
+    /// loaded or manager set to inactive. If manager active, retrieves remainder of settings from manager
+    /// parameters database.
+    /// </remarks>
     public class MgrSettings : EventNotifier
     {
         #region "Constants"
@@ -56,7 +57,7 @@ namespace StatusMessageDBUpdater
         /// <summary>
         /// Error message
         /// </summary>
-        public string ErrMsg { get; private set; } = "";
+        public string ErrMsg { get; protected set; } = "";
 
         /// <summary>
         /// Manager name
@@ -102,8 +103,17 @@ namespace StatusMessageDBUpdater
         /// <returns>String containing full name and path</returns>
         private string GetConfigFileName()
         {
+            return Path.GetFileName(GetConfigFilePath());
+        }
+
+        /// <summary>
+        /// Specifies the full name and path for the application config file
+        /// </summary>
+        /// <returns>String containing full name and path</returns>
+        protected string GetConfigFilePath()
+        {
             var configFilePath = PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath() + ".config";
-            return Path.GetFileName(configFilePath);
+            return configFilePath;
         }
 
         /// <summary>
@@ -152,7 +162,7 @@ namespace StatusMessageDBUpdater
                 return false;
             }
 
-            // Set flag indicating params have been loaded from the database
+            // Set flag indicating params have been loaded from the manager control database
             ParamsLoadedFromDB = true;
 
             // No problems found
@@ -251,7 +261,7 @@ namespace StatusMessageDBUpdater
         /// </summary>
         /// <returns>True if success, otherwise false</returns>
         /// <remarks>Performs retries if necessary.</remarks>
-        private bool LoadMgrSettingsFromDB(bool logConnectionErrors = true)
+        protected bool LoadMgrSettingsFromDB(bool logConnectionErrors = true)
         {
 
             var managerName = GetParam(MGR_PARAM_MGR_NAME, string.Empty);
@@ -510,7 +520,7 @@ namespace StatusMessageDBUpdater
         /// </summary>
         /// <param name="errorMessage"></param>
         /// <param name="criticalError"></param>
-        private void ReportError(string errorMessage, bool criticalError = true)
+        protected void ReportError(string errorMessage, bool criticalError = true)
         {
             if (!ParamsLoadedFromDB && criticalError)
             {
@@ -520,6 +530,16 @@ namespace StatusMessageDBUpdater
             {
                 OnErrorEvent(errorMessage);
             }
+        }
+
+        /// <summary>
+        /// Raises an error event that includes an exception
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        /// <param name="ex"></param>
+        protected void ReportError(string errorMessage, Exception ex)
+        {
+            OnErrorEvent(errorMessage, ex);
         }
 
         #endregion
