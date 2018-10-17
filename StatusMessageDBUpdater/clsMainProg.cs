@@ -101,7 +101,7 @@ namespace StatusMessageDBUpdater
                 return false;
             }
 
-            mMgrActive = (mMgrSettings.GetParam("mgractive").ToLower() != "false");
+            mMgrActive = mMgrSettings.GetParam("MgrActive", false);
 
             mStartTime = DateTime.UtcNow;
             if (maxRunTimeHours < 1)
@@ -144,7 +144,7 @@ namespace StatusMessageDBUpdater
             var messageTopicName = mMgrSettings.GetParam("StatusMsgIncomingTopic");
             var monitorTopicName = mMgrSettings.GetParam("MessageQueueTopicMgrStatus"); // Topic to send
             var brodcastTopicName = mMgrSettings.GetParam("BroadcastQueueTopic");
-            mLogStatusToMessageQueue = (mMgrSettings.GetParam("LogStatusToMessageQueue") == "True");
+            mLogStatusToMessageQueue = mMgrSettings.GetParam("LogStatusToMessageQueue", true);
 
             mMessageHandler = new MessageHandler
             {
@@ -169,8 +169,7 @@ namespace StatusMessageDBUpdater
             mMessageHandler.BroadcastReceived += OnMsgHandler_BroadcastReceived;
 
             // Seconds between database updates
-            var interval = mMgrSettings.GetParam("StatusMsgDBUpdateInterval", "30");
-            mDBUpdateIntervalSeconds = int.Parse(interval);
+            mDBUpdateIntervalSeconds = mMgrSettings.GetParam("StatusMsgDBUpdateInterval", 30);
 
             // Create a new database access object
             var dbConnStr = mMgrSettings.GetParam("connectionstring");
@@ -418,12 +417,7 @@ namespace StatusMessageDBUpdater
         {
             // The update interval comes from file StatusMessageDBUpdater.exe.config
             // The default is 60 minutes
-            var updateIntervalText = mMgrSettings.GetParam("CheckForUpdateInterval", "60");
-            if (!double.TryParse(updateIntervalText, out var updateIntervalMinutes))
-                updateIntervalMinutes = 60;
-
-            var testTime = mLastUpdate.AddMinutes(updateIntervalMinutes);
-            var currTime = DateTime.UtcNow;
+            var updateIntervalMinutes = mMgrSettings.GetParam(MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, 60);
 
             if (currTime.CompareTo(testTime) <= 0)
             {
