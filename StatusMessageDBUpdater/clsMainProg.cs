@@ -112,7 +112,7 @@ namespace StatusMessageDBUpdater
             mMaxRuntimeHours = maxRunTimeHours;
 
             // Manager name
-            mMgrName = mMgrSettings.GetParam("MgrName");
+            mMgrName = mMgrSettings.ManagerName;
             OnStatusEvent("Manager: " + mMgrName);
 
             mSendMessageQueueProcessor = new System.Timers.Timer(TIMER_UPDATE_INTERVAL_MSEC);
