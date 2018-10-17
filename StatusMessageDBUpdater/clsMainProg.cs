@@ -12,7 +12,7 @@ using PRISM;
 
 namespace StatusMessageDBUpdater
 {
-    public class clsMainProg : EventNotifier
+    public class MainProgram : EventNotifier
     {
 
         #region "Constants"
@@ -45,9 +45,9 @@ namespace StatusMessageDBUpdater
 
         private DateTime mLastUpdate = DateTime.UtcNow;
 
-        clsMgrSettings mMgrSettings;
+        MgrSettings mMgrSettings;
 
-        private clsMessageHandler mMessageHandler;
+        private MessageHandler mMessageHandler;
 
         private bool mMsgQueueInitSuccess;
 
@@ -72,7 +72,7 @@ namespace StatusMessageDBUpdater
             mMgrSettings = null;
             try
             {
-                mMgrSettings = new clsMgrSettings();
+                mMgrSettings = new MgrSettings();
                 RegisterEvents(mMgrSettings);
 
                 if (!mMgrSettings.LoadSettings())
@@ -136,7 +136,7 @@ namespace StatusMessageDBUpdater
             var brodcastTopicName = mMgrSettings.GetParam("BroadcastQueueTopic");
             mLogStatusToMessageQueue = (mMgrSettings.GetParam("LogStatusToMessageQueue") == "True");
 
-            mMessageHandler = new clsMessageHandler()
+            mMessageHandler = new MessageHandler
             {
                 BrokerUri = messageBrokerURL,
                 InputStatusTopicName = messageTopicName,
@@ -343,7 +343,7 @@ namespace StatusMessageDBUpdater
         /// <param name="cmdText">Text of received message</param>
         void OnMsgHandler_BroadcastReceived(string cmdText)
         {
-            OnStatusEvent("clsMainProgram.OnMsgHandler_BroadcastReceived: Broadcast message received: " + cmdText);
+            OnStatusEvent("Program.OnMsgHandler_BroadcastReceived: Broadcast message received: " + cmdText);
 
             // Parse command XML and get command text and
             // list of machines that command applies to

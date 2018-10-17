@@ -13,7 +13,7 @@ namespace StatusMessageDBUpdater
     // received commands are sent to a delegate function with this signature
     public delegate void MessageProcessorDelegate(string cmdText);
 
-    class clsMessageHandler : EventNotifier, IDisposable
+    class MessageHandler : EventNotifier, IDisposable
     {
         #region "Class variables"
 
@@ -179,15 +179,15 @@ namespace StatusMessageDBUpdater
             if (!(message is ITextMessage textMessage))
                 return;
 
-            OnDebugEvent("clsMessageHandler(), Broadcast message received");
+            OnDebugEvent("MessageHandler(), Broadcast message received");
             if (BroadcastReceived != null)
             {
-                // call the delegate to process the commnd
+                // call the delegate to process the command
                 BroadcastReceived(textMessage.Text);
             }
             else
             {
-                OnDebugEvent("clsMessageHandler().OnBroadcastReceived: No event handlers assigned");
+                OnDebugEvent("MessageHandler().OnBroadcastReceived: No event handlers assigned");
             }
         }
 

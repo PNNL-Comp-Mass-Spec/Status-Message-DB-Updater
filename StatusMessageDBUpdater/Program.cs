@@ -33,7 +33,7 @@ namespace StatusMessageDBUpdater
                     // Start the main program running
                     try
                     {
-                        var mainProcess = new clsMainProg();
+                        var mainProcess = new MainProgram();
                         mainProcess.DebugEvent += MainProcess_DebugEvent;
                         mainProcess.ErrorEvent += MainProcess_ErrorEvent;
                         mainProcess.WarningEvent += MainProcess_WarningEvent;
