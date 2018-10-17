@@ -109,7 +109,7 @@ namespace StatusMessageDBUpdater
 
             // Status message skeleton
             mXmlStatusDocument = new XmlDocument();
-            var exePath = new FileInfo(PRISM.FileProcessor.ProcessFilesOrFoldersBase.GetAppPath());
+            var exePath = new FileInfo(PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath());
             if (exePath.DirectoryName == null)
             {
                 OnErrorEvent("Parent directory for the .exe is null: " + exePath.FullName);
@@ -499,7 +499,7 @@ namespace StatusMessageDBUpdater
 
             try
             {
-                var appDirPath = PRISM.FileProcessor.ProcessFilesOrFoldersBase.GetAppFolderPath();
+                var appDirPath = PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppDirectoryPath();
                 var recentStatusMsgDir = new DirectoryInfo(Path.Combine(appDirPath, "RecentStatusMsgs"));
 
                 if (!recentStatusMsgDir.Exists)
