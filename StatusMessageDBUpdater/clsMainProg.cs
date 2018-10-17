@@ -73,7 +73,7 @@ namespace StatusMessageDBUpdater
         {
             try
             {
-                var defaultSettings = new Dictionary<string, string>
+                var localSettings = new Dictionary<string, string>
                 {
                     {MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, Properties.Settings.Default.MgrCnfgDbConnectStr},
                     {MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, Properties.Settings.Default.MgrActive_Local},
@@ -85,7 +85,7 @@ namespace StatusMessageDBUpdater
                 mMgrSettings = new MgrSettings();
                 RegisterEvents(mMgrSettings);
 
-                if (!mMgrSettings.LoadSettings(defaultSettings))
+                if (!mMgrSettings.LoadSettings(localSettings))
                 {
                     if (string.Equals(mMgrSettings.ErrMsg, MgrSettings.DEACTIVATED_LOCALLY))
                         throw new ApplicationException(MgrSettings.DEACTIVATED_LOCALLY);

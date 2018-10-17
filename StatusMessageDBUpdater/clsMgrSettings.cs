@@ -98,21 +98,21 @@ namespace StatusMessageDBUpdater
         }
 
         /// <summary>
-        /// Initialize manager settings using the defaults, then load additional settings from the database
+        /// Initialize manager settings using the local settings, then load additional settings from the database
         /// </summary>
-        /// <param name="defaultSettings">Manager settings from the AppName.exe.config file or from Properties.Settings.Default</param>
+        /// <param name="localSettings">Manager settings from the AppName.exe.config file or from Properties.Settings.Default</param>
         /// <returns></returns>
-        public bool LoadSettings(Dictionary<string, string> defaultSettings)
+        public bool LoadSettings(Dictionary<string, string> localSettings)
         {
             ErrMsg = string.Empty;
 
             MgrParams.Clear();
 
-            // Copy the settings from defaultSettings to configFileSettings
+            // Copy the settings from localSettings to configFileSettings
             // Assures that the MgrName setting is defined and auto-updates it if it contains $ComputerName$
-            var configFileSettings = InitializeMgrSettings(defaultSettings);
+            var mgrSettingsFromFile = InitializeMgrSettings(localSettings);
 
-            foreach (var item in configFileSettings)
+            foreach (var item in mgrSettingsFromFile)
             {
                 MgrParams.Add(item.Key, item.Value);
             }
@@ -150,11 +150,11 @@ namespace StatusMessageDBUpdater
             return true;
         }
 
-        private Dictionary<string, string> InitializeMgrSettings(Dictionary<string, string> defaultSettings)
+        private Dictionary<string, string> InitializeMgrSettings(Dictionary<string, string> localSettings)
         {
             var mgrSettingsFromFile = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var item in defaultSettings)
+            foreach (var item in localSettings)
             {
                 mgrSettingsFromFile.Add(item.Key, item.Value);
             }
