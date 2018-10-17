@@ -17,6 +17,8 @@ namespace StatusMessageDBUpdater
 
         #region "Constants"
 
+        private const string MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL = "CheckForUpdateInterval";
+
         private const int TIMER_UPDATE_INTERVAL_MSEC = 1000;
 
         private const int RECENT_STATUS_FILES_TO_KEEP = 30;
@@ -69,16 +71,24 @@ namespace StatusMessageDBUpdater
         /// <returns>True for success, false if an error</returns>
         public bool InitMgr(int maxRunTimeHours)
         {
-            mMgrSettings = null;
             try
             {
+                var defaultSettings = new Dictionary<string, string>
+                {
+                    {MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, Properties.Settings.Default.MgrCnfgDbConnectStr},
+                    {MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, Properties.Settings.Default.MgrActive_Local},
+                    {MgrSettings.MGR_PARAM_MGR_NAME, Properties.Settings.Default.MgrName},
+                    {MgrSettings.MGR_PARAM_USING_DEFAULTS, Properties.Settings.Default.UsingDefaults},
+                    {MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, Properties.Settings.Default.CheckForUpdateInterval}
+                };
+
                 mMgrSettings = new MgrSettings();
                 RegisterEvents(mMgrSettings);
 
-                if (!mMgrSettings.LoadSettings())
+                if (!mMgrSettings.LoadSettings(defaultSettings))
                 {
-                    if (string.Equals(mMgrSettings.ErrMsg, clsMgrSettings.DEACTIVATED_LOCALLY))
-                        throw new ApplicationException(clsMgrSettings.DEACTIVATED_LOCALLY);
+                    if (string.Equals(mMgrSettings.ErrMsg, MgrSettings.DEACTIVATED_LOCALLY))
+                        throw new ApplicationException(MgrSettings.DEACTIVATED_LOCALLY);
 
                     throw new ApplicationException("Unable to initialize manager settings class: " + mMgrSettings.ErrMsg);
                 }
