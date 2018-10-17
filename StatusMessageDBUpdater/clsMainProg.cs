@@ -143,7 +143,7 @@ namespace StatusMessageDBUpdater
             var messageBrokerURL = mMgrSettings.GetParam("MessageQueueURI");
             var messageTopicName = mMgrSettings.GetParam("StatusMsgIncomingTopic");
             var monitorTopicName = mMgrSettings.GetParam("MessageQueueTopicMgrStatus"); // Topic to send
-            var brodcastTopicName = mMgrSettings.GetParam("BroadcastQueueTopic");
+            var broadcastTopicName = mMgrSettings.GetParam("BroadcastQueueTopic");
             mLogStatusToMessageQueue = mMgrSettings.GetParam("LogStatusToMessageQueue", true);
 
             mMessageHandler = new MessageHandler
@@ -151,7 +151,7 @@ namespace StatusMessageDBUpdater
                 BrokerUri = messageBrokerURL,
                 InputStatusTopicName = messageTopicName,
                 OutputStatusTopicName = monitorTopicName,
-                BroadcastTopicName = brodcastTopicName
+                BroadcastTopicName = broadcastTopicName
             };
             RegisterEvents(mMessageHandler);
 
@@ -172,7 +172,7 @@ namespace StatusMessageDBUpdater
             mDBUpdateIntervalSeconds = mMgrSettings.GetParam("StatusMsgDBUpdateInterval", 30);
 
             // Create a new database access object
-            var dbConnStr = mMgrSettings.GetParam("connectionstring");
+            var dbConnStr = mMgrSettings.GetParam("ConnectionString");
             mDba = new DBAccess(dbConnStr);
 
             return true;
@@ -347,7 +347,7 @@ namespace StatusMessageDBUpdater
         }
 
         /// <summary>
-        /// Handles broacast messages for control of the manager
+        /// Handles broadcast messages for control of the manager
         /// </summary>
         /// <param name="cmdText">Text of received message</param>
         void OnMsgHandler_BroadcastReceived(string cmdText)
@@ -390,22 +390,23 @@ namespace StatusMessageDBUpdater
             }
 
             // Get the command and take appropriate action
-            switch (machineCommand.ToLower())
+            if (machineCommand.Equals("Shutdown", StringComparison.OrdinalIgnoreCase))
             {
-                case "shutdown":
-                    OnStatusEvent("Shutdown message received");
-                    mKeepRunning = false;
-                    mRestartAfterShutdown = false;
-                    break;
-                case "readconfig":
-                    OnStatusEvent("Reload config message received");
-                    mKeepRunning = false;
-                    mRestartAfterShutdown = true;
-                    break;
-                default:
-                    OnWarningEvent("Invalid broadcast command received: " + cmdText);
-                    break;
+                OnStatusEvent("Shutdown message received");
+                mKeepRunning = false;
+                mRestartAfterShutdown = false;
             }
+            else if (machineCommand.Equals("ReadConfig", StringComparison.OrdinalIgnoreCase))
+            {
+                OnStatusEvent("Reload config message received");
+                mKeepRunning = false;
+                mRestartAfterShutdown = true;
+            }
+            else
+            {
+                OnWarningEvent("Invalid broadcast command received: " + cmdText);
+            }
+
         }
 
         private void QueueMessageToSend(string message)
