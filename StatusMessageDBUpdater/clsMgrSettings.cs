@@ -311,12 +311,14 @@ namespace StatusMessageDBUpdater
         /// <param name="mgrSettingsFromDB">Output: manager settings</param>
         /// <param name="logConnectionErrors">When true, log connection errors</param>
         /// <param name="returnErrorIfNoParameters">When true, return an error if no parameters defined</param>
-        /// <returns></returns>
+        /// <param name="retryCount">Number of times to retry (in case of a problem)</param>
+        /// <returns>True if successful, otherwise false</returns>
         private bool LoadMgrSettingsFromDBWork(
             string managerName,
             out Dictionary<string, string> mgrSettingsFromDB,
             bool logConnectionErrors,
-            bool returnErrorIfNoParameters)
+            bool returnErrorIfNoParameters,
+            short retryCount = 3)
         {
 
             mgrSettingsFromDB = new Dictionary<string, string>();
@@ -332,7 +334,7 @@ namespace StatusMessageDBUpdater
 
             var sqlQuery = "SELECT ParameterName, ParameterValue FROM V_MgrParams WHERE ManagerName = '" + managerName + "'";
 
-            // Query the database (retrying up to 3 times)
+            // Query the database
             var dbTools = new DBTools(dbConnectionString);
 
             if (logConnectionErrors)
@@ -340,7 +342,6 @@ namespace StatusMessageDBUpdater
                 RegisterEvents(dbTools);
             }
 
-            short retryCount = 3;
             var success = dbTools.GetQueryResults(sqlQuery, out var queryResults, "LoadMgrSettingsFromDBWork", retryCount);
 
             if (!success)
