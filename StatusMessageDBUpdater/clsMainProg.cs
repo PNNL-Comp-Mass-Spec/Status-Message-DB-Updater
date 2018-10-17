@@ -86,7 +86,8 @@ namespace StatusMessageDBUpdater
                 RegisterEvents(mMgrSettings);
                 mMgrSettings.CriticalErrorEvent += OnErrorEvent;
 
-                if (!mMgrSettings.LoadSettings(localSettings))
+                var success = mMgrSettings.LoadSettings(localSettings, true);
+                if (!success)
                 {
                     if (string.Equals(mMgrSettings.ErrMsg, MgrSettings.DEACTIVATED_LOCALLY))
                         throw new ApplicationException(MgrSettings.DEACTIVATED_LOCALLY);

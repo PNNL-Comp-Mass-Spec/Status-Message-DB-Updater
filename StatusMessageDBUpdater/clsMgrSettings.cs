@@ -120,8 +120,10 @@ namespace StatusMessageDBUpdater
         /// Initialize manager settings using the local settings, then load additional settings from the database
         /// </summary>
         /// <param name="localSettings">Manager settings from the AppName.exe.config file or from Properties.Settings.Default</param>
-        /// <returns></returns>
-        public bool LoadSettings(Dictionary<string, string> localSettings)
+        /// <param name="loadSettingsFromDB">When true, also load settings from the database</param>
+        /// <returns>True if successful; False on error</returns>
+        /// <remarks></remarks>
+        public bool LoadSettings(Dictionary<string, string> localSettings, bool loadSettingsFromDB)
         {
             ErrMsg = string.Empty;
 
@@ -153,6 +155,11 @@ namespace StatusMessageDBUpdater
             {
                 // MgrActive_Local parameter not defined defined in the AppName.exe.config file
                 HandleParameterNotDefined(MGR_PARAM_MGR_ACTIVE_LOCAL);
+            }
+
+            if (!loadSettingsFromDB)
+            {
+                return true;
             }
 
             // Get remaining settings from database
