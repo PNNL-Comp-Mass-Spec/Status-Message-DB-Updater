@@ -171,6 +171,9 @@ namespace StatusMessageDBUpdater
             // Seconds between database updates
             mDBUpdateIntervalSeconds = mMgrSettings.GetParam("StatusMsgDBUpdateInterval", 30);
 
+            if (mDBUpdateIntervalSeconds < 15)
+                mDBUpdateIntervalSeconds = 15;
+
             // Create a new database access object
             var dbConnStr = mMgrSettings.GetParam("ConnectionString");
             mDba = new DBAccess(dbConnStr);
@@ -419,8 +422,10 @@ namespace StatusMessageDBUpdater
             // The update interval comes from file StatusMessageDBUpdater.exe.config
             // The default is 60 minutes
             var updateIntervalMinutes = mMgrSettings.GetParam(MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, 60);
+            if (updateIntervalMinutes < 5)
+                updateIntervalMinutes = 5;
 
-            if (currTime.CompareTo(testTime) <= 0)
+            if (DateTime.UtcNow.Subtract(mLastUpdate).TotalMinutes < updateIntervalMinutes)
             {
                 return;
             }
