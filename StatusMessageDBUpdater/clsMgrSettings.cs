@@ -75,6 +75,15 @@ namespace StatusMessageDBUpdater
 
         #endregion
 
+        #region "Events"
+
+        /// <summary>
+        /// Important error event (only raised if ParamsLoadedFromDB is false)
+        /// </summary>
+        public ErrorEventEventHandler CriticalErrorEvent;
+
+        #endregion
+
         #region "Methods"
 
         /// <summary>
@@ -194,9 +203,9 @@ namespace StatusMessageDBUpdater
             {
                 if (bool.TryParse(usingDefaultsText, out var usingDefaults) && usingDefaults)
                 {
-            		ErrMsg = string.Format("MgrSettings.CheckInitialSettings; Config file problem, {0} contains UsingDefaults=True",
-            		                       GetConfigFileName());
-                	OnWarningEvent(ErrMsg);
+                    ErrMsg = string.Format("MgrSettings.CheckInitialSettings; Config file problem, {0} contains UsingDefaults=True",
+                                           GetConfigFileName());
+                    OnErrorEvent(ErrMsg);
                     return false;
                 }
             }
@@ -212,8 +221,8 @@ namespace StatusMessageDBUpdater
 
             if (!bool.TryParse(activeLocalText, out var activeLocal) || !activeLocal)
             {
-                OnWarningEvent(DEACTIVATED_LOCALLY);
                 ErrMsg = DEACTIVATED_LOCALLY;
+                OnErrorEvent(DEACTIVATED_LOCALLY);
                 return false;
             }
 
@@ -234,7 +243,7 @@ namespace StatusMessageDBUpdater
             ErrMsg = string.Format("Parameter '{0}' is not defined defined in file {1}",
                                    parameterName,
                                    GetConfigFileName());
-            OnErrorEvent(ErrMsg);
+            ReportError(ErrMsg);
         }
 
         /// <summary>
@@ -323,10 +332,12 @@ namespace StatusMessageDBUpdater
 
             if (!success)
             {
+                // Log the message to the DB if the monthly Windows updates are not pending
+                var criticalError = !WindowsUpdateStatus.ServerUpdatesArePending();
 
                 ErrMsg = "MgrSettings.LoadMgrSettingsFromDB; Excessive failures attempting to retrieve manager settings from database for manager " + managerName;
                 if (logConnectionErrors)
-                    OnErrorEvent(ErrMsg);
+                    ReportError(ErrMsg, criticalError);
 
                 return false;
             }
@@ -337,7 +348,7 @@ namespace StatusMessageDBUpdater
                 // Wrong number of rows returned
                 ErrMsg = string.Format("MgrSettings.LoadMgrSettingsFromDB; Manager '{0}' is not defined in the manager control database; using {1}",
                                        managerName, dbConnectionString);
-                OnErrorEvent(ErrMsg);
+                ReportError(ErrMsg);
                 return false;
             }
 
@@ -347,7 +358,6 @@ namespace StatusMessageDBUpdater
             }
 
             return true;
-
         }
 
         /// <summary>
@@ -383,7 +393,7 @@ namespace StatusMessageDBUpdater
             {
                 ErrMsg = string.Format("MgrSettings.StoreParameters; Exception storing settings for manager '{0}': {1}",
                                        managerOrGroupName, ex.Message);
-                OnErrorEvent(ErrMsg);
+                ReportError(ErrMsg);
                 success = false;
             }
 
@@ -479,6 +489,40 @@ namespace StatusMessageDBUpdater
             else
             {
                 MgrParams.Add(itemKey, itemValue);
+            }
+        }
+
+        #endregion
+
+        #region "Event Handlers"
+
+        /// <summary>
+        /// Report an important error
+        /// </summary>
+        /// <param name="message"></param>
+        private void OnCriticalErrorEvent(string message)
+        {
+            if (CriticalErrorEvent == null && WriteToConsoleIfNoListener)
+                ConsoleMsgUtils.ShowError(message, false, false, EmptyLinesBeforeErrorMessages);
+
+            CriticalErrorEvent?.Invoke(message, null);
+        }
+
+        /// <summary>
+        /// Raises a CriticalErrorEvent if criticalError is true and ParamsLoadedFromDB is false
+        /// Otherwise, raises a normal error event
+        /// </summary>
+        /// <param name="errorMessage"></param>
+        /// <param name="criticalError"></param>
+        private void ReportError(string errorMessage, bool criticalError = true)
+        {
+            if (!ParamsLoadedFromDB && criticalError)
+            {
+                OnCriticalErrorEvent(errorMessage);
+            }
+            else
+            {
+                OnErrorEvent(errorMessage);
             }
         }
 

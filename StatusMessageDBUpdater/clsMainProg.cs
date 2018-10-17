@@ -84,6 +84,7 @@ namespace StatusMessageDBUpdater
 
                 mMgrSettings = new MgrSettings();
                 RegisterEvents(mMgrSettings);
+                mMgrSettings.CriticalErrorEvent += OnErrorEvent;
 
                 if (!mMgrSettings.LoadSettings(localSettings))
                 {
