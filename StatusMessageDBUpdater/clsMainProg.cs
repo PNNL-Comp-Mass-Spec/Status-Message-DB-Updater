@@ -9,6 +9,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Linq;
 using PRISM;
+using PRISM.AppSettings;
 
 namespace StatusMessageDBUpdater
 {
