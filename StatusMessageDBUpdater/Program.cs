@@ -76,7 +76,7 @@ namespace StatusMessageDBUpdater
 
         private static void MainProcess_ErrorEvent(string message, Exception ex)
         {
-            ConsoleMsgUtils.ShowError(message, ex, false);
+            ConsoleMsgUtils.ShowErrorCustom(message, ex, false);
             mLogger?.Error(message, ex);
         }
 
