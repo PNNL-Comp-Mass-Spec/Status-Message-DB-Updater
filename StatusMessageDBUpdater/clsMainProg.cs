@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using PRISM;
 using PRISM.AppSettings;
+using PRISMDatabaseUtils.AppSettings;
 
 namespace StatusMessageDBUpdater
 {
@@ -74,7 +75,7 @@ namespace StatusMessageDBUpdater
         {
             try
             {
-                var localSettings = new Dictionary<string, string>
+                var defaultSettings = new Dictionary<string, string>
                 {
                     {MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, Properties.Settings.Default.MgrCnfgDbConnectStr},
                     {MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, Properties.Settings.Default.MgrActive_Local},
@@ -83,9 +84,29 @@ namespace StatusMessageDBUpdater
                     {MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, Properties.Settings.Default.CheckForUpdateInterval}
                 };
 
-                mMgrSettings = new MgrSettings();
+                mMgrSettings = new MgrSettingsDB();
                 RegisterEvents(mMgrSettings);
                 mMgrSettings.CriticalErrorEvent += OnErrorEvent;
+
+                var mgrExePath = PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath();
+                var localSettings = mMgrSettings.LoadMgrSettingsFromFile(mgrExePath + ".config");
+
+                if (localSettings == null)
+                {
+                    localSettings = defaultSettings;
+                }
+                else
+                {
+                    // Make sure the default settings exist and have valid values
+                    foreach (var setting in defaultSettings)
+                    {
+                        if (!localSettings.TryGetValue(setting.Key, out var existingValue) ||
+                            string.IsNullOrWhiteSpace(existingValue))
+                        {
+                            localSettings[setting.Key] = setting.Value;
+                        }
+                    }
+                }
 
                 var success = mMgrSettings.LoadSettings(localSettings, true);
                 if (!success)
@@ -230,7 +251,6 @@ namespace StatusMessageDBUpdater
 
             while (mKeepRunning)
             {
-
                 // Sleep for 5 seconds, wake up and count down
                 // and see if we are supposed to stop or proceed
                 var timeRemaining = mDBUpdateIntervalSeconds;
@@ -275,8 +295,6 @@ namespace StatusMessageDBUpdater
 
                 try
                 {
-                    mDba.Connect();
-
                     // Build concatenated XML for all new status messages
                     var concatMessages = new StringBuilder(1024);
 
@@ -330,7 +348,6 @@ namespace StatusMessageDBUpdater
                     UpdateXmlNode(mXmlStatusDocument, "//ErrMsg", e.Message);
                     QueueMessageToSend(mXmlStatusDocument.InnerXml);
                 }
-                mDba.Disconnect();
 
                 // Test to determine if we need to reload config from db
                 TestForConfigReload();
