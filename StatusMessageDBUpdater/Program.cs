@@ -5,12 +5,8 @@ using PRISM.FileProcessor;
 
 namespace StatusMessageDBUpdater
 {
-
     public class Program
     {
-
-        const int MAX_RUNTIME_HOURS = 24;
-
         static FileLogger mLogger;
 
         /// <summary>
@@ -27,8 +23,10 @@ namespace StatusMessageDBUpdater
                 mLogger.Info("=== Started StatusMessageDBUpdater V" + appVersion + " =====");
 
                 var restart = true;
+                var runFailureCount = 0;
+                var startTime = DateTime.UtcNow;
 
-                do
+                while (restart)
                 {
                     // Start the main program running
                     try
@@ -39,7 +37,7 @@ namespace StatusMessageDBUpdater
                         mainProcess.WarningEvent += MainProcess_WarningEvent;
                         mainProcess.StatusEvent += MainProcess_StatusEvent;
 
-                        if (!mainProcess.InitMgr(MAX_RUNTIME_HOURS))
+                        if (!mainProcess.InitMgr(startTime))
                         {
                             ProgRunner.SleepMilliseconds(1500);
                             return;
@@ -48,16 +46,22 @@ namespace StatusMessageDBUpdater
                         // Start the main process
                         // If it receives the ReadConfig command, DoProcess will return true
                         restart = mainProcess.DoProcess();
+                        runFailureCount = 0;
                     }
                     catch (Exception ex2)
                     {
                         ShowErrorMessage("Error running the main process", ex2);
-                        ProgRunner.SleepMilliseconds(1500);
+                        runFailureCount++;
+                        var sleepSeconds = 1.5 * runFailureCount;
+                        if (sleepSeconds > 30)
+                        {
+                            sleepSeconds = 30;
+                        }
+                        ProgRunner.SleepMilliseconds((int)(sleepSeconds * 1000));
                     }
-                } while (restart);
+                }
 
                 FileLogger.FlushPendingMessages();
-
             }
             catch (Exception ex)
             {
@@ -65,7 +69,6 @@ namespace StatusMessageDBUpdater
             }
 
             ProgRunner.SleepMilliseconds(1500);
-
         }
 
         private static void MainProcess_DebugEvent(string message)
@@ -97,6 +100,5 @@ namespace StatusMessageDBUpdater
             ConsoleMsgUtils.ShowError(message, ex);
             mLogger?.Error(message, ex);
         }
-
     }
 }

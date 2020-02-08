@@ -20,6 +20,7 @@ namespace StatusMessageDBUpdater
         #region "Constants"
 
         private const string MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL = "CheckForUpdateInterval";
+        private const string MGR_PARAM_MAX_RUN_TIME_HOURS = "MaxRunTimeHours";
 
         private const int TIMER_UPDATE_INTERVAL_MSEC = 1000;
 
@@ -71,7 +72,7 @@ namespace StatusMessageDBUpdater
         /// Initializes the manager
         /// </summary>
         /// <returns>True for success, false if an error</returns>
-        public bool InitMgr(int maxRunTimeHours)
+        public bool InitMgr(DateTime programStartTime)
         {
             try
             {
@@ -81,7 +82,8 @@ namespace StatusMessageDBUpdater
                     {MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, Properties.Settings.Default.MgrActive_Local},
                     {MgrSettings.MGR_PARAM_MGR_NAME, Properties.Settings.Default.MgrName},
                     {MgrSettings.MGR_PARAM_USING_DEFAULTS, Properties.Settings.Default.UsingDefaults},
-                    {MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, Properties.Settings.Default.CheckForUpdateInterval}
+                    {MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, Properties.Settings.Default.CheckForUpdateInterval},
+                    {MGR_PARAM_MAX_RUN_TIME_HOURS, Properties.Settings.Default.MaxRunTimeHours}
                 };
 
                 mMgrSettings = new MgrSettingsDB();
@@ -108,6 +110,13 @@ namespace StatusMessageDBUpdater
                     }
                 }
 
+                mMaxRuntimeHours = mMgrSettings.GetParam(MGR_PARAM_MAX_RUN_TIME_HOURS, -1);
+                if (mMaxRuntimeHours < 6)
+                {
+                    mMgrSettings.SetParam(MGR_PARAM_MAX_RUN_TIME_HOURS, "6");
+                    mMaxRuntimeHours = 6;
+                }
+
                 var success = mMgrSettings.LoadSettings(localSettings, true);
                 if (!success)
                 {
@@ -127,11 +136,7 @@ namespace StatusMessageDBUpdater
 
             mMgrActive = mMgrSettings.GetParam("MgrActive", false);
 
-            mStartTime = DateTime.UtcNow;
-            if (maxRunTimeHours < 1)
-                maxRunTimeHours = 1;
-
-            mMaxRuntimeHours = maxRunTimeHours;
+            mStartTime = programStartTime;
 
             // Manager name
             mMgrName = mMgrSettings.ManagerName;
@@ -263,7 +268,11 @@ namespace StatusMessageDBUpdater
                 } while (timeRemaining > 0);
 
                 if (DateTime.UtcNow.Subtract(mStartTime).TotalHours >= mMaxRuntimeHours)
+                {
+                    OnStatusEvent($"Shutting down manager because it has now been running for more than {mMaxRuntimeHours} hours");
+                    mRestartAfterShutdown = false;
                     break;
+                }
 
                 if (!mKeepRunning)
                     break;
@@ -351,7 +360,6 @@ namespace StatusMessageDBUpdater
 
                 // Test to determine if we need to reload config from db
                 TestForConfigReload();
-
             }
 
             if (!mRestartAfterShutdown)

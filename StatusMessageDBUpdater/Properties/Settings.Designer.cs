@@ -67,5 +67,14 @@ namespace StatusMessageDBUpdater.Properties {
                 return ((string)(this["MgrName"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("72")]
+        public string MaxRunTimeHours {
+            get {
+                return ((string)(this["MaxRunTimeHours"]));
+            }
+        }
     }
 }
