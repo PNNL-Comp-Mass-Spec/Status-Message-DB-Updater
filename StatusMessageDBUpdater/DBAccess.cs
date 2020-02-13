@@ -34,17 +34,17 @@ namespace StatusMessageDBUpdater
             {
                 var cmd = mDBTools.CreateCommand("UpdateManagerAndTaskStatusXML", CommandType.StoredProcedure);
 
-                mDBTools.AddParameter(cmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
+                var returnParam = mDBTools.AddParameter(cmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
                 mDBTools.AddParameter(cmd, "@parameters", SqlType.Text, value: statusMessages.ToString());
-                mDBTools.AddParameter(cmd, "@result", SqlType.VarChar, 4096, direction: ParameterDirection.Output);
+                var resultParam = mDBTools.AddParameter(cmd, "@result", SqlType.VarChar, 4096, direction: ParameterDirection.Output);
 
                 mDBTools.ExecuteSP(cmd);
 
                 // Get return value
-                var ret = (int)cmd.Parameters["@Return"].Value;
+                var ret = (int)returnParam.Value;
 
                 // Get values for output parameters
-                result = (string)cmd.Parameters["@result"].Value;
+                result = (string)resultParam.Value;
 
                 if (ret == 0)
                     return true;
