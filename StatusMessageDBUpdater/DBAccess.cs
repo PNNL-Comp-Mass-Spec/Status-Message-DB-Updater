@@ -7,9 +7,7 @@ namespace StatusMessageDBUpdater
 {
     class DBAccess
     {
-        readonly string mConnectionString;
-
-        private IDBTools mDBTools;
+        private readonly IDBTools mDBTools;
 
         /// <summary>
         /// Constructor
@@ -18,8 +16,7 @@ namespace StatusMessageDBUpdater
         public DBAccess(string connectionString)
         {
             const int DB_TIMEOUT_SECONDS = 90;
-            mConnectionString = connectionString;
-            mDBTools = DbToolsFactory.GetDBTools(mConnectionString, DB_TIMEOUT_SECONDS);
+            mDBTools = DbToolsFactory.GetDBTools(connectionString, DB_TIMEOUT_SECONDS);
         }
 
         /// <summary>
