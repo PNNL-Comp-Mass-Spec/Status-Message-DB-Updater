@@ -31,9 +31,9 @@ namespace StatusMessageDBUpdater
             {
                 var cmd = mDBTools.CreateCommand("UpdateManagerAndTaskStatusXML", CommandType.StoredProcedure);
 
-                var returnParam = mDBTools.AddParameter(cmd, "@Return", SqlType.Int, direction: ParameterDirection.ReturnValue);
-                mDBTools.AddParameter(cmd, "@parameters", SqlType.Text, value: statusMessages.ToString());
-                var resultParam = mDBTools.AddParameter(cmd, "@result", SqlType.VarChar, 4096, direction: ParameterDirection.Output);
+                var returnParam = mDBTools.AddParameter(cmd, "@Return", SqlType.Int, ParameterDirection.ReturnValue);
+                mDBTools.AddParameter(cmd, "@parameters", SqlType.Text).Value = statusMessages.ToString();
+                var resultParam = mDBTools.AddParameter(cmd, "@result", SqlType.VarChar, 4096, ParameterDirection.Output);
 
                 mDBTools.ExecuteSP(cmd);
 
