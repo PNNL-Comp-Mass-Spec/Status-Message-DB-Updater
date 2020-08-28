@@ -5,7 +5,7 @@ using PRISM.FileProcessor;
 
 namespace StatusMessageDBUpdater
 {
-    public class Program
+    public static class Program
     {
         static FileLogger mLogger;
 
