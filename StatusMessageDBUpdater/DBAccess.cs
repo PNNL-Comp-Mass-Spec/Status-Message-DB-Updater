@@ -35,16 +35,15 @@ namespace StatusMessageDBUpdater
                 mDBTools.AddParameter(cmd, "@parameters", SqlType.Text).Value = statusMessages.ToString();
                 var resultParam = mDBTools.AddParameter(cmd, "@result", SqlType.VarChar, 4096, ParameterDirection.Output);
 
-                mDBTools.ExecuteSP(cmd);
-
-                // Get return value
-                var ret = (int)returnParam.Value;
+                var returnCode = mDBTools.ExecuteSP(cmd);
 
                 // Get values for output parameters
                 result = (string)resultParam.Value;
 
-                if (ret == 0)
+                if (returnCode == 0)
+                {
                     return true;
+                }
             }
             catch (Exception ex)
             {
