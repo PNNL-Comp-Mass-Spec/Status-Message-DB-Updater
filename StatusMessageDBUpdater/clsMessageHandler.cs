@@ -201,6 +201,8 @@ namespace StatusMessageDBUpdater
             if (!mIsDisposed)
             {
                 var textMessage = mStatusSession.CreateTextMessage(message);
+                textMessage.NMSTimeToLive = TimeSpan.FromMinutes(60);
+                textMessage.NMSDeliveryMode = MsgDeliveryMode.NonPersistent;
                 textMessage.Properties.SetString("ProcessorName", processor);
                 try
                 {
