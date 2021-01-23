@@ -25,6 +25,7 @@ namespace StatusMessageDBUpdater
 
         private bool mIsDisposed;
         private bool mHasConnection;
+        private bool mConnectionHasException = false;
 
         #endregion
 
@@ -88,6 +89,9 @@ namespace StatusMessageDBUpdater
 
                     OnStatusEvent(string.Format("Connected to broker as user {0}: {1}", username, BrokerUri));
 
+                    mConnectionHasException = false;
+                    mConnection.ExceptionListener += ConnectionExceptionListener;
+
                     return;
                 }
                 catch (Exception ex)
@@ -113,6 +117,22 @@ namespace StatusMessageDBUpdater
             msg += ": " + string.Join("; ", errorList);
 
             OnErrorEvent(msg);
+        }
+
+        private void ConnectionExceptionListener(Exception exception)
+        {
+            // NOTE: If the connection was resumable, we could use ConnectionInterruptedListener, but a straight tcp connection is not resumable
+            OnStatusEvent("ActiveMQ connection exception received: " + exception.Message);
+            mConnectionHasException = true;
+        }
+
+        /// <summary>
+        /// If the connection has fired an exception, it's probably now broken, and therefore invalid until we re-connect.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsConnectionBroken()
+        {
+            return mConnectionHasException;
         }
 
         /// <summary>

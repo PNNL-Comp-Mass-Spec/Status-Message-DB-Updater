@@ -358,6 +358,14 @@ namespace StatusMessageDBUpdater
                     QueueMessageToSend(mXmlStatusDocument.InnerXml);
                 }
 
+                if (mMessageHandler.IsConnectionBroken())
+                {
+                    // If the connection had an exception, then we need to exit this loop to trigger a re-connection to ActiveMQ
+                    mKeepRunning = false;
+                    mRestartAfterShutdown = true;
+                    OnStatusEvent("Stopping because of a connection exception, probably due to a broken ActiveMQ connection");
+                }
+
                 // Test to determine if we need to reload config from db
                 TestForConfigReload();
             }
