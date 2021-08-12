@@ -10,6 +10,7 @@ using System.Xml;
 using System.Xml.Linq;
 using PRISM;
 using PRISM.AppSettings;
+using PRISMDatabaseUtils;
 using PRISMDatabaseUtils.AppSettings;
 
 namespace StatusMessageDBUpdater
@@ -194,7 +195,10 @@ namespace StatusMessageDBUpdater
 
             // Create a new database access object
             var dbConnStr = mMgrSettings.GetParam("ConnectionString");
-            mDba = new DBAccess(dbConnStr);
+
+            var connectionStringToUse = DbToolsFactory.AddApplicationNameToConnectionString(dbConnStr, mMgrName);
+
+            mDba = new DBAccess(connectionStringToUse);
 
             return true;
         }
