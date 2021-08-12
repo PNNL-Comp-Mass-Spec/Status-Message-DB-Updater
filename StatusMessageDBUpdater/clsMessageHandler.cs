@@ -32,7 +32,7 @@ namespace StatusMessageDBUpdater
 
         private bool mIsDisposed;
         private bool mHasConnection;
-        private bool mConnectionHasException = false;
+        private bool mConnectionHasException;
 
         public event MessageReceivedDelegate InputMessageReceived;
         public event MessageProcessorDelegate BroadcastReceived;
@@ -99,7 +99,7 @@ namespace StatusMessageDBUpdater
                     System.Threading.Thread.Sleep(3000);
                 }
 
-                retriesRemaining -= 1;
+                retriesRemaining--;
             }
 
             // If we get here, we never could connect to the message broker
