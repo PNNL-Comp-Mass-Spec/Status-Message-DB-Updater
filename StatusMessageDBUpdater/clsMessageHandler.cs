@@ -15,8 +15,6 @@ namespace StatusMessageDBUpdater
 
     class MessageHandler : EventNotifier, IDisposable
     {
-        #region "Class variables"
-
         private IConnection mConnection;
         private ISession mStatusSession;
         private IMessageProducer mStatusSender;
@@ -27,16 +25,8 @@ namespace StatusMessageDBUpdater
         private bool mHasConnection;
         private bool mConnectionHasException = false;
 
-        #endregion
-
-        #region "Events"
-
         public event MessageReceivedDelegate InputMessageReceived;
         public event MessageProcessorDelegate BroadcastReceived;
-
-        #endregion
-
-        #region "Properties"
 
         public string BrokerUri { get; set; }
 
@@ -45,10 +35,6 @@ namespace StatusMessageDBUpdater
         public string BroadcastTopicName { get; set; }
 
         public string OutputStatusTopicName { get; set; }
-
-        #endregion
-
-        #region "Methods"
 
         /// <summary>
         /// Create set of NMS connection objects necessary to talk to the ActiveMQ broker
@@ -239,10 +225,6 @@ namespace StatusMessageDBUpdater
             }
         }
 
-        #endregion
-
-        #region "Cleanup"
-
         /// <summary>
         /// Cleans up a connection after error or when closing
         /// </summary>
@@ -266,7 +248,5 @@ namespace StatusMessageDBUpdater
             DestroyConnection();
             mIsDisposed = true;
         }
-
-        #endregion
     }
 }

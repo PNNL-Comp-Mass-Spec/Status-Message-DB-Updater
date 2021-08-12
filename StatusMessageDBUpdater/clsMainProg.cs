@@ -16,9 +16,6 @@ namespace StatusMessageDBUpdater
 {
     public class MainProgram : EventNotifier
     {
-
-        #region "Constants"
-
         private const string MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL = "CheckForUpdateInterval";
         private const string MGR_PARAM_MAX_RUN_TIME_HOURS = "MaxRunTimeHours";
 
@@ -26,11 +23,7 @@ namespace StatusMessageDBUpdater
 
         private const int RECENT_STATUS_FILES_TO_KEEP = 30;
 
-        #endregion
-
-        #region "Class variables"
-
-        string mMgrName;
+        private string mMgrName;
 
         private DBAccess mDba;
 
@@ -63,10 +56,6 @@ namespace StatusMessageDBUpdater
         private MessageAccumulator mMsgAccumulator;
 
         XmlDocument mXmlStatusDocument;
-
-        #endregion
-
-        #region "Methods"
 
         /// <summary>
         /// Initializes the manager
@@ -580,7 +569,5 @@ namespace StatusMessageDBUpdater
             }
 
         }
-
-        #endregion
     }
 }
