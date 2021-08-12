@@ -7,7 +7,7 @@ namespace StatusMessageDBUpdater
     /// Processor message accumulator
     /// Remembers most recent message each processor
     /// </summary>
-    class MessageAccumulator
+    internal class MessageAccumulator
     {
         /// <summary>
         /// Tracks most recent message for each processor

@@ -13,7 +13,7 @@ namespace StatusMessageDBUpdater
     // received commands are sent to a delegate function with this signature
     public delegate void MessageProcessorDelegate(string cmdText);
 
-    class MessageHandler : EventNotifier, IDisposable
+    internal class MessageHandler : EventNotifier, IDisposable
     {
         private IConnection mConnection;
         private ISession mStatusSession;

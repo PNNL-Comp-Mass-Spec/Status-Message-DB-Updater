@@ -7,13 +7,13 @@ namespace StatusMessageDBUpdater
 {
     public static class Program
     {
-        static FileLogger mLogger;
+        private static FileLogger mLogger;
 
         /// <summary>
         /// Entry method
         /// </summary>
         /// <param name="args"></param>
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             try
             {

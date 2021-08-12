@@ -5,7 +5,7 @@ using PRISMDatabaseUtils;
 
 namespace StatusMessageDBUpdater
 {
-    class DBAccess
+    internal class DBAccess
     {
         private readonly IDBTools mDBTools;
 

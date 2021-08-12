@@ -31,31 +31,31 @@ namespace StatusMessageDBUpdater
 
         private bool mKeepRunning = true;
 
-        bool mRestartAfterShutdown;
+        private bool mRestartAfterShutdown;
 
-        bool mLogStatusToMessageQueue;
+        private bool mLogStatusToMessageQueue;
 
-        bool mMgrActive = true;
+        private bool mMgrActive = true;
 
-        DateTime mStartTime;
+        private DateTime mStartTime;
 
-        int mMaxRuntimeHours = 1000;
+        private int mMaxRuntimeHours = 1000;
 
         private DateTime mLastUpdate = DateTime.UtcNow;
 
-        MgrSettings mMgrSettings;
+        private MgrSettings mMgrSettings;
 
         private MessageHandler mMessageHandler;
 
         private bool mMsgQueueInitSuccess;
 
-        readonly Queue mSendMessageQueue = new Queue();
+        private readonly Queue mSendMessageQueue = new Queue();
 
         private System.Timers.Timer mSendMessageQueueProcessor;
 
         private MessageAccumulator mMsgAccumulator;
 
-        XmlDocument mXmlStatusDocument;
+        private XmlDocument mXmlStatusDocument;
 
         /// <summary>
         /// Initializes the manager
@@ -378,7 +378,7 @@ namespace StatusMessageDBUpdater
         /// Handles broadcast messages for control of the manager
         /// </summary>
         /// <param name="cmdText">Text of received message</param>
-        void OnMsgHandler_BroadcastReceived(string cmdText)
+        private void OnMsgHandler_BroadcastReceived(string cmdText)
         {
             OnStatusEvent("Program.OnMsgHandler_BroadcastReceived: Broadcast message received: " + cmdText);
 
@@ -462,7 +462,7 @@ namespace StatusMessageDBUpdater
             mLastUpdate = DateTime.UtcNow;
         }
 
-        void SendMessageQueueProcessor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        private void SendMessageQueueProcessor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
 
             while (Queue.Synchronized(mSendMessageQueue).Count > 0)
