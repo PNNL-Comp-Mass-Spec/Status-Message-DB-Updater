@@ -1,7 +1,7 @@
-using PRISM.Logging;
 using System;
 using PRISM;
 using PRISM.FileProcessor;
+using PRISM.Logging;
 
 namespace StatusMessageDBUpdater
 {

@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Text;
 using System.Data;
+using System.Text;
 using PRISMDatabaseUtils;
 
 namespace StatusMessageDBUpdater
