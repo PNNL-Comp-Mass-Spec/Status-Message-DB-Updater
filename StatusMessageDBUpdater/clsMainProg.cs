@@ -50,7 +50,7 @@ namespace StatusMessageDBUpdater
 
         private bool mMsgQueueInitSuccess;
 
-        private readonly Queue mSendMessageQueue = new Queue();
+        private readonly Queue mSendMessageQueue = new();
 
         private System.Timers.Timer mSendMessageQueueProcessor;
 
