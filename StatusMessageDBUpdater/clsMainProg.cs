@@ -356,7 +356,7 @@ namespace StatusMessageDBUpdater
             }
 
             if (!mRestartAfterShutdown)
-                OnStatusEvent("Process interrupted, " + "Restart:" + mRestartAfterShutdown);
+                OnStatusEvent("Process interrupted, RestartAfterShutdown=false");
 
             UpdateManagerStatus("Stopped");
             QueueMessageToSend(mXmlStatusDocument.InnerXml);
