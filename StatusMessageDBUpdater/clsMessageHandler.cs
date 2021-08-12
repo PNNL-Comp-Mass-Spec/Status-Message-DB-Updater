@@ -8,6 +8,7 @@ using PRISM;
 namespace StatusMessageDBUpdater
 {
     // received input messages are sent to a delegate function with this signature
+    // Ignore Spelling: failover, tcp
     public delegate void MessageReceivedDelegate(string processor, string message);
 
     // received commands are sent to a delegate function with this signature
@@ -106,7 +107,7 @@ namespace StatusMessageDBUpdater
 
         private void ConnectionExceptionListener(Exception exception)
         {
-            // NOTE: If the connection was resumable, we could use ConnectionInterruptedListener, but a straight tcp connection is not resumable
+            // NOTE: If the connection was resumable, we could use ConnectionInterruptedListener, but a straight TCP connection is not resumable
             OnStatusEvent("ActiveMQ connection exception received: " + exception.Message);
             mConnectionHasException = true;
         }
