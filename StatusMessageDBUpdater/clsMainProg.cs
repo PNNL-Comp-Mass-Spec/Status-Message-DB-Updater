@@ -209,26 +209,21 @@ namespace StatusMessageDBUpdater
             worker.Start();
 
             // Wait a maximum of 15 seconds
-            if (!worker.Join(15000))
+            if (worker.Join(15000))
             {
-                worker.Abort();
-                mMsgQueueInitSuccess = false;
-                OnErrorEvent("Unable to initialize the message queue (timeout after 15 seconds); " + mMessageHandler.BrokerUri);
+                return mMsgQueueInitSuccess;
             }
+
+            worker.Abort();
+            mMsgQueueInitSuccess = false;
+            OnErrorEvent("Unable to initialize the message queue (timeout after 15 seconds); " + mMessageHandler.BrokerUri);
 
             return mMsgQueueInitSuccess;
         }
 
         private void InitializeMessageQueueWork()
         {
-            if (!mMessageHandler.Init())
-            {
-                mMsgQueueInitSuccess = false;
-            }
-            else
-            {
-                mMsgQueueInitSuccess = true;
-            }
+            mMsgQueueInitSuccess = mMessageHandler.Init();
         }
 
         /// <summary>
@@ -369,7 +364,9 @@ namespace StatusMessageDBUpdater
             // Sleep for 5 seconds to allow the message to be sent
             var dtContinueTime = DateTime.UtcNow.AddMilliseconds(5000);
             while (DateTime.UtcNow < dtContinueTime)
+            {
                 Thread.Sleep(500);
+            }
 
             mMessageHandler.Dispose();
             return mRestartAfterShutdown;
