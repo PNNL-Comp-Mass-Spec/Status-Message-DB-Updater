@@ -12,8 +12,7 @@ namespace StatusMessageDBUpdater
         /// <summary>
         /// Entry method
         /// </summary>
-        /// <param name="args"></param>
-        private static void Main(string[] args)
+        private static void Main()
         {
             try
             {
