@@ -2,7 +2,6 @@
 
 namespace StatusMessageDBUpdater
 {
-
     /// <summary>
     /// Processor message accumulator
     /// Remembers most recent message each processor
@@ -38,8 +37,6 @@ namespace StatusMessageDBUpdater
 
             if (!ChangedList.Contains(processor))
                 ChangedList.Add(processor);
-
         }
-
     }
 }

@@ -93,7 +93,6 @@ namespace StatusMessageDBUpdater
                 retriesRemaining -= 1;
             }
 
-
             // If we get here, we never could connect to the message broker
 
             var msg = "Exception creating broker connection";

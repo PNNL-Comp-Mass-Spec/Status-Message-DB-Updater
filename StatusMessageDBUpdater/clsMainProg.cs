@@ -205,7 +205,6 @@ namespace StatusMessageDBUpdater
 
         private bool InitializeMessageQueue()
         {
-
             var worker = new Thread(InitializeMessageQueueWork);
             worker.Start();
 
@@ -222,7 +221,6 @@ namespace StatusMessageDBUpdater
 
         private void InitializeMessageQueueWork()
         {
-
             if (!mMessageHandler.Init())
             {
                 mMsgQueueInitSuccess = false;
@@ -231,7 +229,6 @@ namespace StatusMessageDBUpdater
             {
                 mMsgQueueInitSuccess = true;
             }
-
         }
 
         /// <summary>
@@ -438,7 +435,6 @@ namespace StatusMessageDBUpdater
             {
                 OnWarningEvent("Invalid broadcast command received: " + cmdText);
             }
-
         }
 
         private void QueueMessageToSend(string message)
@@ -468,7 +464,6 @@ namespace StatusMessageDBUpdater
 
         private void SendMessageQueueProcessor_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-
             while (Queue.Synchronized(mSendMessageQueue).Count > 0)
             {
                 try
@@ -503,9 +498,7 @@ namespace StatusMessageDBUpdater
                 {
                     // Ignore this; likely was handled by a different thread
                 }
-
             }
-
         }
 
         private void SendQueuedMessageWork(string message)
@@ -565,13 +558,11 @@ namespace StatusMessageDBUpdater
                 {
                     fileToDelete.Delete();
                 }
-
             }
             catch (Exception ex)
             {
                 OnErrorEvent("Error writing status XML to disk", ex);
             }
-
         }
     }
 }
