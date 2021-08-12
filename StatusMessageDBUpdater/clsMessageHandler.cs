@@ -7,11 +7,19 @@ using PRISM;
 
 namespace StatusMessageDBUpdater
 {
-    // received input messages are sent to a delegate function with this signature
     // Ignore Spelling: failover, tcp
+
+    /// <summary>
+    /// Received input messages are sent to a delegate function with this signature
+    /// </summary>
+    /// <param name="processor"></param>
+    /// <param name="message"></param>
     public delegate void MessageReceivedDelegate(string processor, string message);
 
-    // received commands are sent to a delegate function with this signature
+    /// <summary>
+    /// Received commands are sent to a delegate function with this signature
+    /// </summary>
+    /// <param name="cmdText"></param>
     public delegate void MessageProcessorDelegate(string cmdText);
 
     internal class MessageHandler : EventNotifier, IDisposable
