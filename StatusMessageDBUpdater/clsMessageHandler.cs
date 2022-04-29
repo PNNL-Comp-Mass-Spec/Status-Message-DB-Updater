@@ -104,13 +104,9 @@ namespace StatusMessageDBUpdater
 
             // If we get here, we never could connect to the message broker
 
-            var msg = "Exception creating broker connection";
-            if (retryCount > 0)
-                msg += " after " + (retryCount + 1) + " attempts";
+            var retryDescription = retryCount > 0 ? " after " + (retryCount + 1) + " attempts" : string.Empty;
 
-            msg += ": " + string.Join("; ", errorList);
-
-            OnErrorEvent(msg);
+            OnErrorEvent("Exception creating broker connection{0}: {1}", retryDescription, string.Join("; ", errorList));
         }
 
         private void ConnectionExceptionListener(Exception exception)
