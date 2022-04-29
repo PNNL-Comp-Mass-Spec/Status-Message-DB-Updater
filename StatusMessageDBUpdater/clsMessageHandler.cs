@@ -82,7 +82,7 @@ namespace StatusMessageDBUpdater
                     mHasConnection = true;
                     var username = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
-                    OnStatusEvent(string.Format("Connected to broker as user {0}: {1}", username, BrokerUri));
+                    OnStatusEvent("Connected to broker as user {0}: {1}", username, BrokerUri);
 
                     mConnectionHasException = false;
                     mConnection.ExceptionListener += ConnectionExceptionListener;
