@@ -39,6 +39,7 @@ namespace StatusMessageDBUpdater
 
                 // Get values for output parameters
                 result = mDBTools.GetString(resultParam.Value);
+
                 if (returnCode == 0)
                 {
                     return true;

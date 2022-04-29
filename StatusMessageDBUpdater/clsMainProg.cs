@@ -68,12 +68,12 @@ namespace StatusMessageDBUpdater
             {
                 var defaultSettings = new Dictionary<string, string>
                 {
-                    {MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, Properties.Settings.Default.MgrCnfgDbConnectStr},
-                    {MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, Properties.Settings.Default.MgrActive_Local},
-                    {MgrSettings.MGR_PARAM_MGR_NAME, Properties.Settings.Default.MgrName},
-                    {MgrSettings.MGR_PARAM_USING_DEFAULTS, Properties.Settings.Default.UsingDefaults},
-                    {MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, Properties.Settings.Default.CheckForUpdateInterval},
-                    {MGR_PARAM_MAX_RUN_TIME_HOURS, Properties.Settings.Default.MaxRunTimeHours}
+                    { MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, Properties.Settings.Default.MgrCnfgDbConnectStr },
+                    { MgrSettings.MGR_PARAM_MGR_ACTIVE_LOCAL, Properties.Settings.Default.MgrActive_Local },
+                    { MgrSettings.MGR_PARAM_MGR_NAME, Properties.Settings.Default.MgrName },
+                    { MgrSettings.MGR_PARAM_USING_DEFAULTS, Properties.Settings.Default.UsingDefaults },
+                    { MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, Properties.Settings.Default.CheckForUpdateInterval },
+                    { MGR_PARAM_MAX_RUN_TIME_HOURS, Properties.Settings.Default.MaxRunTimeHours }
                 };
 
                 mMgrSettings = new MgrSettingsDB();
@@ -101,6 +101,7 @@ namespace StatusMessageDBUpdater
                 }
 
                 mMaxRuntimeHours = mMgrSettings.GetParam(MGR_PARAM_MAX_RUN_TIME_HOURS, -1);
+
                 if (mMaxRuntimeHours < 6)
                 {
                     mMgrSettings.SetParam(MGR_PARAM_MAX_RUN_TIME_HOURS, "6");
@@ -138,7 +139,9 @@ namespace StatusMessageDBUpdater
 
             // Status message skeleton
             mXmlStatusDocument = new XmlDocument();
+
             var exePath = new FileInfo(PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath());
+
             if (exePath.DirectoryName == null)
             {
                 OnErrorEvent("Parent directory for the .exe is null: " + exePath.FullName);
@@ -146,6 +149,7 @@ namespace StatusMessageDBUpdater
             }
 
             var templatePath = new FileInfo(Path.Combine(exePath.DirectoryName, "status_template.xml"));
+
             if (!templatePath.Exists)
             {
                 OnErrorEvent("Status template file not found: " + templatePath.FullName);
@@ -163,6 +167,7 @@ namespace StatusMessageDBUpdater
             var messageTopicName = mMgrSettings.GetParam("StatusMsgIncomingTopic");
             var monitorTopicName = mMgrSettings.GetParam("MessageQueueTopicMgrStatus"); // Topic to send
             var broadcastTopicName = mMgrSettings.GetParam("BroadcastQueueTopic");
+
             mLogStatusToMessageQueue = mMgrSettings.GetParam("LogStatusToMessageQueue", true);
 
             mMessageHandler = new MessageHandler
@@ -216,6 +221,7 @@ namespace StatusMessageDBUpdater
 
             worker.Abort();
             mMsgQueueInitSuccess = false;
+
             OnErrorEvent("Unable to initialize the message queue (timeout after 15 seconds); " + mMessageHandler.BrokerUri);
 
             return mMsgQueueInitSuccess;
@@ -244,6 +250,7 @@ namespace StatusMessageDBUpdater
                 // Sleep for 5 seconds, wake up and count down
                 // and see if we are supposed to stop or proceed
                 var timeRemaining = mDBUpdateIntervalSeconds;
+
                 do
                 {
                     Thread.Sleep(5000);
@@ -283,6 +290,7 @@ namespace StatusMessageDBUpdater
                 // that have received messages since the last refresh and
                 // reset the list in the accumulator
                 var processors = mMsgAccumulator.ChangedList.ToList();
+
                 mMsgAccumulator.ChangedList.Clear();
 
                 OnStatusEvent("Updated status for " + processors.Count + " processors");
@@ -380,9 +388,9 @@ namespace StatusMessageDBUpdater
         {
             OnStatusEvent("Program.OnMsgHandler_BroadcastReceived: Broadcast message received: " + cmdText);
 
-            // Parse command XML and get command text and
-            // list of machines that command applies to
+            // Parse command XML and get command text and list of machines that command applies to
             var machineList = new List<string>();
+
             var machineCommand = "<Undefined>";
 
             try
@@ -390,6 +398,7 @@ namespace StatusMessageDBUpdater
                 var doc = new XmlDocument();
                 doc.LoadXml(cmdText);
                 var managerNodes = doc.SelectNodes("//Managers/*");
+
                 if (managerNodes != null)
                 {
                     foreach (XmlNode xn in managerNodes)
@@ -397,7 +406,9 @@ namespace StatusMessageDBUpdater
                         machineList.Add(xn.InnerText);
                     }
                 }
+
                 var messageNode = doc.SelectSingleNode("//Message");
+
                 if (messageNode != null)
                     machineCommand = messageNode.InnerText;
             }
@@ -444,6 +455,7 @@ namespace StatusMessageDBUpdater
             // The update interval comes from file StatusMessageDBUpdater.exe.config
             // The default is 60 minutes
             var updateIntervalMinutes = mMgrSettings.GetParam(MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, 60);
+
             if (updateIntervalMinutes < 5)
                 updateIntervalMinutes = 5;
 
@@ -454,6 +466,7 @@ namespace StatusMessageDBUpdater
 
             // Time to reload the config
             OnStatusEvent("Reloading config from MC database");
+
             mKeepRunning = false;
             mRestartAfterShutdown = true;
             mLastUpdate = DateTime.UtcNow;
@@ -539,6 +552,7 @@ namespace StatusMessageDBUpdater
                 var statusMsgFilePath = Path.Combine(recentStatusMsgDir.FullName, statusMsgFileName);
 
                 var doc = XDocument.Parse("<StatusMessages>" + statusMessages + "</StatusMessages>");
+
                 using (var writer = new StreamWriter(new FileStream(statusMsgFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite)))
                 {
                     writer.WriteLine(doc.ToString());
