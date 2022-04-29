@@ -497,11 +497,11 @@ namespace StatusMessageDBUpdater
                         worker.Start();
 
                         // Wait up to 15 seconds
-                        if (!worker.Join(15000))
-                        {
-                            OnErrorEvent("Unable to send queued message (timeout after 15 seconds); aborting");
-                            worker.Abort();
-                        }
+                        if (worker.Join(15000))
+                            continue;
+
+                        OnErrorEvent("Unable to send queued message (timeout after 15 seconds); aborting");
+                        worker.Abort();
                     }
                 }
                 catch
