@@ -176,7 +176,7 @@ namespace StatusMessageDBUpdater
         /// <param name="message">Incoming message</param>
         private void OnInputMessageReceived(IMessage message)
         {
-            if (!(message is ITextMessage textMessage))
+            if (message is not ITextMessage textMessage)
                 return;
 
             var processor = message.Properties.GetString("ProcessorName");
@@ -190,7 +190,7 @@ namespace StatusMessageDBUpdater
         /// <param name="message">Incoming message</param>
         private void OnBroadcastReceived(IMessage message)
         {
-            if (!(message is ITextMessage textMessage))
+            if (message is not ITextMessage textMessage)
                 return;
 
             OnDebugEvent("MessageHandler(), Broadcast message received");
