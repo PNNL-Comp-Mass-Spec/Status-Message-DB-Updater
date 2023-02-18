@@ -315,7 +315,7 @@ namespace StatusMessageDBUpdater
                     }
                     OnDebugEvent("Size: " + concatMessages.Length);
 
-                    // Update the database by calling stored procedure UpdateManagerAndTaskStatusXML
+                    // Update the database by calling stored procedure update_manager_and_task_status_xml
                     var success = mDba.UpdateDatabase(concatMessages, out var message);
 
                     // Save the XML to disk, keeping the 30 most recent status files

@@ -20,7 +20,7 @@ namespace StatusMessageDBUpdater
         }
 
         /// <summary>
-        /// Post message to database using stored procedure UpdateManagerAndTaskStatusXML
+        /// Post message to database using stored procedure update_manager_and_task_status_xml
         /// </summary>
         /// <param name="statusMessages"></param>
         /// <param name="result"></param>
@@ -29,7 +29,7 @@ namespace StatusMessageDBUpdater
         {
             try
             {
-                var cmd = mDBTools.CreateCommand("UpdateManagerAndTaskStatusXML", CommandType.StoredProcedure);
+                var cmd = mDBTools.CreateCommand("update_manager_and_task_status_xml", CommandType.StoredProcedure);
 
                 mDBTools.AddParameter(cmd, "@Return", SqlType.Int, ParameterDirection.ReturnValue);
                 mDBTools.AddParameter(cmd, "@parameters", SqlType.Text).Value = statusMessages.ToString();
