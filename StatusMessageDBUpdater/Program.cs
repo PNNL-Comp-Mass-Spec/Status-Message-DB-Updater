@@ -1,6 +1,5 @@
 using System;
 using PRISM;
-using PRISM.FileProcessor;
 using PRISM.Logging;
 
 namespace StatusMessageDBUpdater
@@ -18,7 +17,8 @@ namespace StatusMessageDBUpdater
             {
                 mLogger = new FileLogger(@"Logs\StatusMsgDBUpdater", BaseLogger.LogLevels.INFO);
 
-                var appVersion = ProcessFilesOrDirectoriesBase.GetEntryOrExecutingAssembly().GetName().Version.ToString();
+                var appVersion = AppUtils.GetEntryOrExecutingAssembly().GetName().Version.ToString();
+
                 mLogger.Info("=== Started StatusMessageDBUpdater V" + appVersion + " =====");
 
                 var restart = true;
@@ -38,7 +38,7 @@ namespace StatusMessageDBUpdater
 
                         if (!mainProcess.InitMgr(startTime))
                         {
-                            ProgRunner.SleepMilliseconds(1500);
+                            AppUtils.SleepMilliseconds(1500);
                             return;
                         }
 
@@ -51,12 +51,15 @@ namespace StatusMessageDBUpdater
                     {
                         ShowErrorMessage("Error running the main process", ex2);
                         runFailureCount++;
+
                         var sleepSeconds = 1.5 * runFailureCount;
+
                         if (sleepSeconds > 30)
                         {
                             sleepSeconds = 30;
                         }
-                        ProgRunner.SleepMilliseconds((int)(sleepSeconds * 1000));
+
+                        AppUtils.SleepMilliseconds((int)(sleepSeconds * 1000));
                     }
                 }
 
@@ -67,7 +70,7 @@ namespace StatusMessageDBUpdater
                 ShowErrorMessage("Error starting application", ex);
             }
 
-            ProgRunner.SleepMilliseconds(1500);
+            AppUtils.SleepMilliseconds(1500);
         }
 
         private static void MainProcess_DebugEvent(string message)

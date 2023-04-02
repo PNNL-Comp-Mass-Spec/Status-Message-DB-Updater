@@ -80,7 +80,7 @@ namespace StatusMessageDBUpdater
                 RegisterEvents(mMgrSettings);
                 mMgrSettings.CriticalErrorEvent += OnErrorEvent;
 
-                var mgrExePath = PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath();
+                var mgrExePath = AppUtils.GetAppPath();
                 var localSettings = mMgrSettings.LoadMgrSettingsFromFile(mgrExePath + ".config");
 
                 if (localSettings == null)
@@ -140,7 +140,7 @@ namespace StatusMessageDBUpdater
             // Status message skeleton
             mXmlStatusDocument = new XmlDocument();
 
-            var exePath = new FileInfo(PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppPath());
+            var exePath = new FileInfo(AppUtils.GetAppPath());
 
             if (exePath.DirectoryName == null)
             {
@@ -541,7 +541,7 @@ namespace StatusMessageDBUpdater
 
             try
             {
-                var appDirPath = PRISM.FileProcessor.ProcessFilesOrDirectoriesBase.GetAppDirectoryPath();
+                var appDirPath = AppUtils.GetAppDirectoryPath();
                 var recentStatusMsgDir = new DirectoryInfo(Path.Combine(appDirPath, "RecentStatusMsgs"));
 
                 if (!recentStatusMsgDir.Exists)
