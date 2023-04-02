@@ -24,37 +24,38 @@ namespace StatusMessageDBUpdater
 
         private const int RECENT_STATUS_FILES_TO_KEEP = 30;
 
-        private string mMgrName;
-
         private DBAccess mDba;
 
         private int mDBUpdateIntervalSeconds;
 
         private bool mKeepRunning = true;
 
-        private bool mRestartAfterShutdown;
+        private DateTime mLastUpdate = DateTime.UtcNow;
 
         private bool mLogStatusToMessageQueue;
 
-        private bool mMgrActive = true;
-
-        private DateTime mStartTime;
-
         private int mMaxRuntimeHours = 1000;
-
-        private DateTime mLastUpdate = DateTime.UtcNow;
-
-        private MgrSettings mMgrSettings;
 
         private MessageHandler mMessageHandler;
 
+        private bool mMgrActive = true;
+
+        private string mMgrName;
+
+        private MgrSettings mMgrSettings;
+
+        private MessageAccumulator mMsgAccumulator;
+
         private bool mMsgQueueInitSuccess;
+
+        private bool mRestartAfterShutdown;
 
         private readonly Queue mSendMessageQueue = new();
 
         private System.Timers.Timer mSendMessageQueueProcessor;
 
-        private MessageAccumulator mMsgAccumulator;
+        private DateTime mStartTime;
+
 
         private XmlDocument mXmlStatusDocument;
 
