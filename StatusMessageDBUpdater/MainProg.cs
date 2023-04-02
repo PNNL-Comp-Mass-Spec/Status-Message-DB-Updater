@@ -18,7 +18,10 @@ namespace StatusMessageDBUpdater
     public class MainProgram : EventNotifier
     {
         private const string MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL = "CheckForUpdateInterval";
+
         private const string MGR_PARAM_MAX_RUN_TIME_HOURS = "MaxRunTimeHours";
+
+        private const string MGR_PARAM_STATUS_UPDATE_PROCEDURE_NAME = "StatusUpdateProcedureName";
 
         private const int TIMER_UPDATE_INTERVAL_MSEC = 1000;
 
@@ -56,6 +59,7 @@ namespace StatusMessageDBUpdater
 
         private DateTime mStartTime;
 
+        private string mStatusUpdateProcedureName;
 
         private XmlDocument mXmlStatusDocument;
 
@@ -74,7 +78,8 @@ namespace StatusMessageDBUpdater
                     { MgrSettings.MGR_PARAM_MGR_NAME, Properties.Settings.Default.MgrName },
                     { MgrSettings.MGR_PARAM_USING_DEFAULTS, Properties.Settings.Default.UsingDefaults },
                     { MGR_PARAM_CHECK_FOR_UPDATE_INTERVAL, Properties.Settings.Default.CheckForUpdateInterval },
-                    { MGR_PARAM_MAX_RUN_TIME_HOURS, Properties.Settings.Default.MaxRunTimeHours }
+                    { MGR_PARAM_MAX_RUN_TIME_HOURS, Properties.Settings.Default.MaxRunTimeHours },
+                    { MGR_PARAM_STATUS_UPDATE_PROCEDURE_NAME, Properties.Settings.Default.StatusUpdateProcedureName }
                 };
 
                 mMgrSettings = new MgrSettingsDB();
@@ -110,6 +115,7 @@ namespace StatusMessageDBUpdater
                 }
 
                 var success = mMgrSettings.LoadSettings(localSettings, true);
+
                 if (!success)
                 {
                     if (string.Equals(mMgrSettings.ErrMsg, MgrSettings.DEACTIVATED_LOCALLY))
@@ -117,6 +123,8 @@ namespace StatusMessageDBUpdater
 
                     throw new ApplicationException("Unable to initialize manager settings class: " + mMgrSettings.ErrMsg);
                 }
+
+                mStatusUpdateProcedureName = mMgrSettings.GetParam(MGR_PARAM_STATUS_UPDATE_PROCEDURE_NAME, string.Empty);
 
                 OnStatusEvent("Loaded manager settings from Manager Control Database");
             }
@@ -246,6 +254,13 @@ namespace StatusMessageDBUpdater
 
             QueueMessageToSend(mXmlStatusDocument.InnerXml);
 
+            if (string.IsNullOrWhiteSpace(mStatusUpdateProcedureName))
+            {
+                // Manager parameter StatusUpdateProcedureName not defined
+                OnErrorEvent("Manager parameter {0} not defined in file StatusMessageDBUpdater.exe.local.config", MGR_PARAM_STATUS_UPDATE_PROCEDURE_NAME);
+                return false;
+            }
+
             while (mKeepRunning)
             {
                 // Sleep for 5 seconds, wake up and count down
@@ -256,6 +271,7 @@ namespace StatusMessageDBUpdater
                 {
                     Thread.Sleep(5000);
                     timeRemaining -= 5;
+
                     if (!mKeepRunning)
                         break;
                 } while (timeRemaining > 0);
@@ -304,20 +320,24 @@ namespace StatusMessageDBUpdater
                     foreach (var processor in processors)
                     {
                         var doc = new XmlDocument();
+
                         if (!mMsgAccumulator.StatusList.TryGetValue(processor, out var statusXML))
                             continue;
 
                         doc.LoadXml(statusXML);
+
                         var rootNode = doc.SelectSingleNode("//Root");
+
                         if (rootNode != null)
                         {
                             concatMessages.Append(rootNode.OuterXml);
                         }
                     }
+
                     OnDebugEvent("Size: " + concatMessages.Length);
 
-                    // Update the database by calling stored procedure update_manager_and_task_status_xml
-                    var success = mDba.UpdateDatabase(concatMessages, out var message);
+                    // Update the database by calling stored procedure update_manager_and_task_status_xml or update_capture_task_manager_and_task_status_xml
+                    var success = mDba.UpdateDatabase(concatMessages, mStatusUpdateProcedureName, out var message);
 
                     // Save the XML to disk, keeping the 30 most recent status files
                     WriteStatusXmlToDisk(concatMessages);
@@ -372,6 +392,7 @@ namespace StatusMessageDBUpdater
 
             // Sleep for 5 seconds to allow the message to be sent
             var dtContinueTime = DateTime.UtcNow.AddMilliseconds(5000);
+
             while (DateTime.UtcNow < dtContinueTime)
             {
                 Thread.Sleep(500);

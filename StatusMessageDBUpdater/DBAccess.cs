@@ -20,16 +20,17 @@ namespace StatusMessageDBUpdater
         }
 
         /// <summary>
-        /// Post message to database using stored procedure update_manager_and_task_status_xml
+        /// Post message to database using stored procedure update_manager_and_task_status_xml or update_capture_task_manager_and_task_status_xml
         /// </summary>
         /// <param name="statusMessages"></param>
+        /// <param name="procedureName">Procedure to call</param>
         /// <param name="result"></param>
         /// <returns>True if success, false if an error</returns>
-        public bool UpdateDatabase(StringBuilder statusMessages, out string result)
+        public bool UpdateDatabase(StringBuilder statusMessages, string procedureName, out string result)
         {
             try
             {
-                var cmd = mDBTools.CreateCommand("update_manager_and_task_status_xml", CommandType.StoredProcedure);
+                var cmd = mDBTools.CreateCommand(procedureName, CommandType.StoredProcedure);
 
                 mDBTools.AddParameter(cmd, "@Return", SqlType.Int, ParameterDirection.ReturnValue);
                 mDBTools.AddParameter(cmd, "@parameters", SqlType.Text).Value = statusMessages.ToString();
