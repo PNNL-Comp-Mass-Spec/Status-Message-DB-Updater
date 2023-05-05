@@ -33,13 +33,13 @@ namespace StatusMessageDBUpdater
                 var cmd = mDBTools.CreateCommand(procedureName, CommandType.StoredProcedure);
 
                 mDBTools.AddParameter(cmd, "@Return", SqlType.Int, ParameterDirection.ReturnValue);
-                mDBTools.AddParameter(cmd, "@parameters", SqlType.Text).Value = statusMessages.ToString();
-                var resultParam = mDBTools.AddParameter(cmd, "@result", SqlType.VarChar, 4096, ParameterDirection.Output);
+                mDBTools.AddParameter(cmd, "@managerStatusXML", SqlType.Text).Value = statusMessages.ToString();
+                var messageParam = mDBTools.AddParameter(cmd, "@message", SqlType.VarChar, 4096, ParameterDirection.Output);
 
                 var returnCode = mDBTools.ExecuteSP(cmd);
 
-                // Get values for output parameters
-                result = mDBTools.GetString(resultParam.Value);
+                // Get output parameter value
+                result = mDBTools.GetString(messageParam.Value);
 
                 if (returnCode == 0)
                 {
