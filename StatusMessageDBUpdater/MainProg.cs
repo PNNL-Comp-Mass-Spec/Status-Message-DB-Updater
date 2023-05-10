@@ -213,6 +213,7 @@ namespace StatusMessageDBUpdater
             var connectionStringToUse = DbToolsFactory.AddApplicationNameToConnectionString(dbConnStr, mMgrName);
 
             mDba = new DBAccess(connectionStringToUse);
+            RegisterEvents(mDba);
 
             return true;
         }

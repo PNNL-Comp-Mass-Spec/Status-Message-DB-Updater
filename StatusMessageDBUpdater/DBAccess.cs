@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Data;
 using System.Text;
+using PRISM;
 using PRISMDatabaseUtils;
 
 namespace StatusMessageDBUpdater
 {
-    internal class DBAccess
+    internal class DBAccess : EventNotifier
     {
         private readonly IDBTools mDBTools;
 
@@ -61,7 +62,7 @@ namespace StatusMessageDBUpdater
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                OnErrorEvent(ex.Message, ex);
                 result = ex.Message;
             }
 
