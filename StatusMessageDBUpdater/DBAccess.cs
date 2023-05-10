@@ -53,12 +53,21 @@ namespace StatusMessageDBUpdater
                 var returnValue = DBToolsBase.GetReturnCode(returnParam);
 
                 // Get output parameter value
-                result = mDBTools.GetString(messageParam.Value);
+                result = messageParam.Value.CastDBVal<string>();
 
                 if (returnValue == 0)
                 {
                     return true;
                 }
+
+                var outputMessage = messageParam.Value.CastDBVal<string>();
+                var message = string.IsNullOrWhiteSpace(outputMessage) ? "Unknown error" : outputMessage;
+
+                OnErrorEvent(
+                    "Error sending status messages, {0} returned {1}, message: {2}",
+                    procedureName, returnValue, message);
+
+                return false;
             }
             catch (Exception ex)
             {
