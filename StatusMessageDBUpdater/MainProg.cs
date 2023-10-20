@@ -341,7 +341,8 @@ namespace StatusMessageDBUpdater
                     var success = mDba.UpdateDatabase(concatMessages, mStatusUpdateProcedureName, out var message);
 
                     // Save the XML to disk, keeping the 30 most recent status files
-                    WriteStatusXmlToDisk(concatMessages);
+                    // If success is false, use a different prefix
+                    WriteStatusXmlToDisk(concatMessages, success);
 
                     // Send status
                     if (mLogStatusToMessageQueue)
@@ -558,9 +559,11 @@ namespace StatusMessageDBUpdater
         /// Deletes old text files so that only 30 files are present in the RecentStatusMsgs directory
         /// </summary>
         /// <param name="statusMessages"></param>
-        private void WriteStatusXmlToDisk(StringBuilder statusMessages)
+        /// <param name="dbUpdateSuccess">True if the call to update_manager_and_task_status_xml or update_capture_task_manager_and_task_status_xml was successful, otherwise false</param>
+        private void WriteStatusXmlToDisk(StringBuilder statusMessages, bool dbUpdateSuccess)
         {
             const string STATUS_MSG_FILE_PREFIX = "StatusMsgs_";
+            const string FAILED_STATUS_MSG_FILE_PREFIX = "FailedStatusMsgs_";
 
             try
             {
@@ -570,8 +573,11 @@ namespace StatusMessageDBUpdater
                 if (!recentStatusMsgDir.Exists)
                     recentStatusMsgDir.Create();
 
+                var prefixToUse = dbUpdateSuccess ? STATUS_MSG_FILE_PREFIX : FAILED_STATUS_MSG_FILE_PREFIX;
+
                 // Example filename: StatusMsgs_2018-04-19_12.34.26.xml
-                var statusMsgFileName = string.Format("{0}{1:yyyy-MM-dd_hh.mm.ss}.xml", STATUS_MSG_FILE_PREFIX, DateTime.Now);
+                var statusMsgFileName = string.Format("{0}{1:yyyy-MM-dd_hh.mm.ss}.xml", prefixToUse, DateTime.Now);
+
                 var statusMsgFilePath = Path.Combine(recentStatusMsgDir.FullName, statusMsgFileName);
 
                 var doc = XDocument.Parse("<StatusMessages>" + statusMessages + "</StatusMessages>");
@@ -582,7 +588,7 @@ namespace StatusMessageDBUpdater
                 }
 
                 // Look for old files to delete
-                var statusMsgFiles = recentStatusMsgDir.GetFileSystemInfos(STATUS_MSG_FILE_PREFIX + "*.xml").ToList();
+                var statusMsgFiles = recentStatusMsgDir.GetFileSystemInfos(prefixToUse + "*.xml").ToList();
                 var numToDelete = statusMsgFiles.Count - RECENT_STATUS_FILES_TO_KEEP;
 
                 if (numToDelete < 1)
