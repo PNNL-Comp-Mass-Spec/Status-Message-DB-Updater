@@ -116,6 +116,10 @@ namespace StatusMessageDBUpdater
 
                 var success = mMgrSettings.LoadSettings(localSettings, true);
 
+                // The default connection string is defined by Properties.Settings.Default.MgrCnfgDbConnectStr
+                // However, will have been customized if file StatusMessageDBUpdater.exe.db.config exists
+                var dbConnectionString = mMgrSettings.GetParam(MgrSettings.MGR_PARAM_MGR_CFG_DB_CONN_STRING, string.Empty);
+
                 if (!success)
                 {
                     if (string.Equals(mMgrSettings.ErrMsg, MgrSettings.DEACTIVATED_LOCALLY))
@@ -123,13 +127,13 @@ namespace StatusMessageDBUpdater
 
                     throw new ApplicationException(string.Format(
                         "Unable to initialize manager settings class using connection string {0}: {1}",
-                        Properties.Settings.Default.MgrCnfgDbConnectStr,
+                        dbConnectionString,
                         mMgrSettings.ErrMsg));
                 }
 
                 mStatusUpdateProcedureName = mMgrSettings.GetParam(MGR_PARAM_STATUS_UPDATE_PROCEDURE_NAME, string.Empty);
 
-                OnStatusEvent("Loaded manager settings from Manager Control tables using connection string {0}", Properties.Settings.Default.MgrCnfgDbConnectStr);
+                OnStatusEvent("Loaded manager settings from Manager Control tables using connection string {0}", dbConnectionString);
             }
             catch (Exception ex)
             {
