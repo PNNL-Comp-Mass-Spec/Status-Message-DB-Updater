@@ -121,12 +121,15 @@ namespace StatusMessageDBUpdater
                     if (string.Equals(mMgrSettings.ErrMsg, MgrSettings.DEACTIVATED_LOCALLY))
                         throw new ApplicationException(MgrSettings.DEACTIVATED_LOCALLY);
 
-                    throw new ApplicationException("Unable to initialize manager settings class: " + mMgrSettings.ErrMsg);
+                    throw new ApplicationException(string.Format(
+                        "Unable to initialize manager settings class using connection string {0}: {1}",
+                        Properties.Settings.Default.MgrCnfgDbConnectStr,
+                        mMgrSettings.ErrMsg));
                 }
 
                 mStatusUpdateProcedureName = mMgrSettings.GetParam(MGR_PARAM_STATUS_UPDATE_PROCEDURE_NAME, string.Empty);
 
-                OnStatusEvent("Loaded manager settings from Manager Control Database");
+                OnStatusEvent("Loaded manager settings from Manager Control tables using connection string {0}", Properties.Settings.Default.MgrCnfgDbConnectStr);
             }
             catch (Exception ex)
             {
